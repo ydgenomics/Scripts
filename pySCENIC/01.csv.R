@@ -7,8 +7,15 @@
 
 library(Seurat)
 library(stringr)
+library(optparse)
 
-rds_path <- 
+option_list <- list(
+    make_option(c("-r", "--rds_path"), type = "character", default = "input.rds",
+                            help = "Path to the input RDS file [default %default]", metavar = "character")
+)
+opt_parser <- OptionParser(option_list = option_list)
+opt <- parse_args(opt_parser)
+rds_path <- opt$rds_path
 
 seu <- readRDS(rds_path)
 colnames(seu@meta.data)
