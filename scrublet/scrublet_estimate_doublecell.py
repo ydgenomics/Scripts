@@ -1,5 +1,5 @@
 # Title: scrublet_estimate_doublecell.py
-# Date: 2024-04-22
+# Date: 2024-05-07
 # Attention: how to rationally get a multi-matrix anndata including FilterMatrix, SpliceMatrix and UnspliceMatrix.
 
 import numpy as np
@@ -16,6 +16,7 @@ import sys
 import scrublet
 import leidenalg
 import argparse
+#import logging
 
 #get outdoor parameter
 species = sys.argv[1]
@@ -83,20 +84,6 @@ def copy_and_process(matrixfile, featuresfile, barcodesfile, target_folder):
             f_out.write(line.strip() + '\t' + line.strip() + '\n')
     os.chdir(original_dir)
 
-def process_missing_genes(adata, all_genes):
-    adata = adata[:, adata.var['gene_symbols'].isin(all_genes)].copy()
-    missing_genes = np.setdiff1d(all_genes, adata.var['gene_symbols'])
-    if len(missing_genes) > 0:
-        missing_data = ad.AnnData(
-            X=np.zeros((adata.n_obs, len(missing_genes))),
-            var=pd.DataFrame(index=missing_genes, data=missing_genes, columns=['gene_symbols']),
-            obs=adata.obs.copy()
-        )
-        missing_data.var.set_index('gene_symbols', inplace=True)
-        adata = ad.concat([adata, missing_data], axis=1, join='outer')
-    adata.var.set_index('gene_symbols', inplace=True)
-    return adata
-
 def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mito_genes, mito_threshold):
     adatas = {}
     for i in range(len(sample_names)): 
@@ -104,15 +91,33 @@ def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample
         adata_filter = sc.read_10x_mtx(trans_matrix_list[i], var_names='gene_ids')
         adata_splice = sc.read_10x_mtx(trans_splice_list[i], var_names='gene_ids')
         adata_unsplice = sc.read_10x_mtx(trans_unsplice_list[i], var_names='gene_ids')
-        all_genes = adata_filter.var_names
-        adata_filter = process_missing_genes(adata_filter, all_genes)
-        adata_splice = process_missing_genes(adata_splice, all_genes)
-        adata_unsplice = process_missing_genes(adata_unsplice, all_genes)
+        # 根据交集的基因列表过滤每个数据集
+        genes_filter = set(adata_filter.var_names)
+        print(f"sample: {key}, the number of genes in matrix is {len(genes_filter)}")
+        genes_splice = set(adata_splice.var_names)
+        print(f"sample: {key}, the number of genes in splice_matrix is {len(genes_splice)}")
+        genes_unsplice = set(adata_unsplice.var_names)
+        print(f"sample: {key}, the number of genes in unsplice_matrix is {len(genes_unsplice)}")
+        common_genes = genes_filter.intersection(genes_splice).intersection(genes_unsplice)
+        print(f"sample: {key}, the number of common genes is {len(common_genes)}")
+        adata_filter = adata_filter[:, adata_filter.var_names.isin(common_genes)]
+        adata_splice = adata_splice[:, adata_splice.var_names.isin(common_genes)]
+        adata_unsplice = adata_unsplice[:, adata_unsplice.var_names.isin(common_genes)]
+        # 根据交集的细胞列表过滤每个数据集
+        cells_filter = set(adata_filter.obs_names)
+        cells_splice = set(adata_splice.obs_names)
+        cells_unsplice = set(adata_unsplice.obs_names)
+        common_cells = cells_filter.intersection(cells_splice).intersection(cells_unsplice) # 找到三个数据集共有的细胞
+        print(f"sample: {key}, the number of common cells is {len(common_cells)}")
+        adata_filter = adata_filter[adata_filter.obs_names.isin(common_cells), :]
+        adata_splice = adata_splice[adata_splice.obs_names.isin(common_cells), :]
+        adata_unsplice = adata_unsplice[adata_unsplice.obs_names.isin(common_cells), :]
         adata = adata_filter.copy()
         adata.layers['splice'] = adata_splice.X
         adata.layers['unsplice'] = adata_unsplice.X
         # rename cells to include sample key
         adata.obs_names = [f"{cell_name}_{key}" for cell_name in adata.obs_names]
+        print(adata.obs_names[:10])
         # store in dictionary
         adatas[key] = adata
     adata = ad.concat(adatas, label=group_key, join="inner")  # the variable [join] is key, could select "outer" or "inner".
@@ -134,6 +139,8 @@ def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample
         sc.pl.violin(adata,["n_genes_by_counts", "total_counts", "pct_counts_mt"],jitter=0.4,multi_panel=True,save="_mitogene.pdf")
         sc.pl.scatter(adata, "total_counts", "n_genes_by_counts", color="pct_counts_mt", save="_mitogenes.pdf")
         adata = adata[adata.obs.pct_counts_mt < mito_threshold].copy()
+        sc.pl.violin(adata,["n_genes_by_counts", "total_counts", "pct_counts_mt"],jitter=0.4,multi_panel=True,save="_mitogene_filtered.pdf")
+        sc.pl.scatter(adata, "total_counts", "n_genes_by_counts", color="pct_counts_mt", save="_mitogenes_filtered.pdf")
     else:
         print("mitochondrial list not exist")
         sc.pp.calculate_qc_metrics(adata, inplace=True, log1p=True)
@@ -152,8 +159,19 @@ def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample
     sc.pp.log1p(adata)
     sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=group_key)
     sc.tl.pca(adata)
-    sc.pl.pca(adata, color=[group_key, "doublet_score", "log1p_total_counts", "log1p_n_genes_by_counts"],
-              dimensions=[(0, 1), (2, 3), (0, 1), (2, 3)], ncols=2, size=2, save='_potentially_undesired_features.pdf')
+    # Check the obs whether exist
+    if group_key not in adata.obs:
+        raise ValueError(f"Group key '{group_key}' not found in adata.obs")
+    features = [group_key, group_key]
+    if 'pct_counts_mt' in adata.obs:
+        features.extend(['pct_counts_mt', 'pct_counts_mt'])
+    features.extend(['doublet_score', 'doublet_score'])
+    dimensions = [(0, 1), (2, 3)] * (len(features) // 2)
+    save_filename = '_potentially_undesired_features'
+    if 'pct_counts_mt' in adata.obs:
+        save_filename += '_with_mt'
+    save_filename += '.pdf'
+    sc.pl.pca(adata, color=features, dimensions=dimensions, ncols=2, size=2, save=save_filename)
     sc.pp.neighbors(adata)
     sc.tl.umap(adata)
     sc.pl.umap(adata, color=group_key, size=2, save="_batch.pdf")
@@ -176,6 +194,8 @@ def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample
         f.write('Average counts per cell: ' + str(adata.obs['total_counts'].mean()) + '\n')
         f.write('Median counts per cell: ' + str(adata.obs['total_counts'].median()) + '\n')
     adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
+    adata.X = adata.layers["counts"]
+    adata.write_h5ad(filename=species + '_raw.h5ad', compression="gzip") # Supply two selection: X is raw or is normalize.
 
 trans_matrix_list = []
 trans_splice_list = []
