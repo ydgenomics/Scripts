@@ -12,15 +12,15 @@
 After running the analyses described above, you will obtain similarity matrices or clustering trees that reflect the relationships between cell types or clusters across datasets. Here’s how to interpret the results:
 
 - **MetaNeighbor**: The output is an AUROC matrix, where each value represents the similarity between cell types across batches or datasets. Higher AUROC values indicate greater similarity and more consistent annotation between datasets.
-  ![alt text](image-1.png)
-  ![alt text](image.png)
+  <img src="image-1.png" alt="alt text" width="300"/>
+  <img src="image.png" alt="alt text" width="300"/>
 - **Jaccard Index**: The Jaccard similarity score quantifies the overlap between marker gene sets of different clusters or cell types. A higher score means more shared marker genes, suggesting functional or biological similarity.
   ![alt text](image-2.png)
 - **Hierarchical Clustering (hclust)**: The resulting dendrogram visually groups clusters or cell types based on gene expression similarity. Clusters that are closer together in the tree are more similar in their expression profiles.
   ![alt text](image-3.png)
 Use these results to assess annotation consistency, validate new cell types, or compare biological similarity across datasets or conditions.
 
-## Learn metaNeighbor [metaNeighbor.R]()
+## Learn metaNeighbor [metaNeighbor.R](https://github.com/ydgenomics/Scripts/blob/main/metaneighbor/metaNeighbor.R)
 [github metaneighbor](https://github.com/maggiecrow/MetaNeighbor)
 [[R包] MetaNeighbor 第一期 评估不同数据集中细胞类型注释的一致性](https://mp.weixin.qq.com/s/cb9DWJm8zNc1J9wEUNTUVg)
 包含应用的两个场景和结果解读
@@ -41,7 +41,7 @@ Aurocs_matrix = MetaNeighborUS(var_genes = global_hvgs, 
 ```
 计算的是矩阵的那一层呢？counts还是data。计算的是SCT，先判断是否具有SCT，然后在做计算，如果还存在批次的话可以使用harmony做一个整合去批次
 
-## Jaccard指数和hclust [jaccard_hclust.R]()
+## Jaccard指数和hclust [jaccard_hclust.R](https://github.com/ydgenomics/Scripts/blob/main/metaneighbor/jaccard_hclust.R)
 [常被提起的Jaccard指数是什么？怎么在单细胞中运用和实现Jaccard相似性比较？](https://mp.weixin.qq.com/s/-6iM2phNUh2Qo0wbN0Azpw)
 jaccard指数常被文章用来衡量细胞间的相似度
 运用jaccrd指数衡量相似性实际上被广泛运用于:
