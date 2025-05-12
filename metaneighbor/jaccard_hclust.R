@@ -1,4 +1,6 @@
 # Title: jaccard_hclust.R
+# Date: 2025-05-12
+# 做了jaccard相似性的计算基于SCT的FindAllMarkers的基因和hclust基于SCT的counts的基因表达
 # Â© EMBL-European Bioinformatics Institute, 2023
 # Yuyao Song <ysong@ebi.ac.uk>
 
@@ -13,59 +15,52 @@ library(optparse)
 
 option_list <- list(
   make_option(c("-i", "--input_file"),
-    type = "character", default = NULL,
+    type = "character", default = "/data/work/integration/input/Peanut-unsoupx.cg.rds",
     help = "Path to input file"
   ),
   make_option(c("-o", "--output_name"),
-    type = "character", default = NULL,
+    type = "character", default = "peanut",
     help = "Output file prefix name"
+  ),
+  make_option(c("-b", "--batch_key"),
+    type = "character", default = "biosample",
+    help = "Batch key for integration"
+  ),
+  make_option(c("-c", "--cluster_key"),
+    type = "character", default = "leiden_res_0.50",
+    help = "Cluster key for integration"
   )
 )
 opt <- parse_args(OptionParser(option_list = option_list))
-if (is.null(opt$input_file)){
-  opt$input_file <- "/data/work/integration/input/Peanut-unsoupx.cg.rds"
-} 
-if (is.null(opt$output_name)){
-  opt$output_name <- "data"
-} 
 input_file <- opt$input_file
 out_put_name <- opt$output_name
-batch_key <- "biosample"
-cluster_key <- "leiden_res_0.50"
+batch_key <- opt$batch_key
+cluster_key <- opt$cluster_key
 
-
-scRNA=readRDS(input_file)
+scRNA <- readRDS(input_file)
 scRNA
+colnames(scRNA@meta.data)
 #scRNA <- subset(scRNA, cells = sample(Cells(scRNA), 500))
-# 如果输入对象不包含SCT层才做这个处理
+# Preprocess: Check whether existing SCT
 if (!"SCT" %in% Assays(scRNA)) {
     print("SCT layer not existing, so run SCTransform and integrateLayers.")
-    scRNA[["RNA"]] <- split(scRNA[["RNA"]], f = scRNA@meta.data[batch_key])
+    scRNA[["RNA"]] <- split(scRNA[["RNA"]], f = scRNA@meta.data[[batch_key]]) # this command will split object in layers!
     scRNA <- SCTransform(scRNA, vst.flavor = "v2")
     scRNA <- RunPCA(scRNA, npcs = 30, verbose = FALSE)
     scRNA <- IntegrateLayers(object = scRNA, method = HarmonyIntegration,
-                      orig.reduction = "pca", new.reduction = 'harmony',
-                       assay = "SCT", verbose = FALSE)
+                             orig.reduction = "pca", new.reduction = 'harmony',
+                             assay = "SCT", verbose = FALSE)
 }
 
+DefaultAssay(scRNA) <-"SCT"
+Idents(scRNA) <- paste0(scRNA@meta.data[[cluster_key]],"_of_",scRNA@meta.data[[batch_key]])
 
-DefaultAssay(object = scRNA) <-"SCT"
-#don't found scRNA$celltype, so use leiden_res_0.50 replaced celltype
-#### in order to solve the empty problem of celltype
-if ("celltype" %in% colnames(scRNA@meta.data)) {
-  if (all(is.na(scRNA@meta.data$celltype))) {
-    scRNA@meta.data$celltype <- scRNA@meta.data$leiden_res_0.50
-  }
-} else {
-  scRNA@meta.data$celltype <- scRNA@meta.data$leiden_res_0.50
-}
-
-Idents(scRNA) <- paste0(scRNA$celltype,"_of_",scRNA$batch)
-
+# Find Idents() All markers
 scRNA <- PrepSCTFindMarkers(scRNA)
 df_gene=FindAllMarkers(scRNA,only.pos = T,logfc.threshold = 0.1)
-#table(df_gene$cluster)
+table(df_gene$cluster)
 
+# Calculate
 cluster=names(table(df_gene$cluster))
 ## jaccard
 df_ja=c()
@@ -77,17 +72,18 @@ for (i in cluster) {
     b=df_gene[df_gene$cluster==j,]
     b=b$gene
     jaccard=length(intersect(a,b))/length(union(a,b))
-
     ja=c(ja,jaccard)
   }
   df_ja=rbind(df_ja,ja)
 }
-
 rownames(df_ja)=cluster
 colnames(df_ja)=cluster
+head(df_ja)
+# df_ja2
 df_ja2 <- as.data.frame(df_ja)
 df_ja2$cluster1 <- rownames(df_ja2)
 df_ja2 <- tidyr::pivot_longer(df_ja2,!cluster1, names_to="cluster2",values_to ="jaccard")
+head(df_ja2)
 
 # this is cribbed from 
 # https://stackoverflow.com/questions/42047896/joining-a-dendrogram-and-a-heatmap
@@ -98,8 +94,8 @@ df_ja2 <- tidyr::pivot_longer(df_ja2,!cluster1, names_to="cluster2",values_to ="
 #  return((x - m)/s)
 #}
 #mat = switch('row', none = df_ja, row = scale_rows(df_ja), column = t(scale_rows(t(df_ja))))
-d = dist(df_ja, method = 'euclidean')
-ddgram = hclust(d, method = 'complete')
+d = dist(df_ja, method = 'euclidean') #计算距离矩阵
+ddgram = hclust(d, method = 'complete') #层次聚类
 
 #ddgram <- hclust(dist(df_ja))
 ddata <- dendro_data(ddgram, type = 'rectangle') # extract into lists of data
@@ -152,8 +148,9 @@ p <- plot_grid(fancy_tree_plot, NULL, dotplot, nrow = 1, rel_widths = c(0.5,-0.1
 p
 #ggsave2(p,file=paste0("Jaccard_",out_put_name,".pdf"),width=20,height=15)
 file_name <- paste("Jaccard_", out_put_name, ".pdf", sep = "")
-ggsave2(p, file = file_name, width = 20, height = 15)
-sample.cluster<-AggregateExpression(scRNA,group.by = "ident",slot="counts")$SCT
+number <- length(unique(Idents(scRNA)))/2
+ggsave2(p, file = file_name, width = number, height = number)
+sample.cluster <- AggregateExpression(scRNA,group.by = "ident",slot="counts")$SCT
 #sample.cluster <- AggregateExpression(scRNA, group.by = "ident", layer="counts")$SCT
 hc = hclust(dist(t(as.matrix(sample.cluster))))
 #save(sample.cluster,hc,file="hc.RData")
@@ -178,7 +175,7 @@ for (name in labels(dend))
     color <- colors[which(names(colors)==tissue)]
     cols <- c(cols,color)}
 file_name2 <- paste("hclust_", out_put_name, ".pdf", sep = "")
-pdf(file_name2,height=8,width=8)
+pdf(file_name2,height=number,width=number)
 #plot(as.phylo(hc), type = "fan",tip.color = cols,
 #     label.offset = 1, cex = 0.7)
 
@@ -200,3 +197,11 @@ circlize_dendrogram(dend,labels_track_height =0.5,dend_track_height = 0.3)
 #    angle= -90 - 360 / length(labels(dend)) * seq_along(labels(dend))))
 #  coord_radial(rotate_angle = TRUE, expand = FALSE)
 dev.off()
+
+#obj <- JoinLayers(obj)
+#obj [["RNA"]] <- JoinLayers(obj [["RNA"]])
+
+# Assay RNA changing from Assay5 to Assay
+#obj[["RNA"]] <- as(obj[["RNA"]], "Assay")
+
+#saveRDS(obj, file = out_rds)
