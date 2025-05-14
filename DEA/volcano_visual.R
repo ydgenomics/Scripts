@@ -1,5 +1,6 @@
 # Title: volcano_visual.R
-# Date: 2025-04-10
+# Date: 2025-05-14
+# csv: avg_log2FC, p_val_adj, gene, cluster
 
 library(optparse)
 library(ggplot2)
@@ -28,7 +29,7 @@ pval_threshold <- opt$pval_threshold
 
 markers <- read.csv(gene_csv, header = TRUE, stringsAsFactors = FALSE)
 head(markers)
-# csv: avg_log2FC, p_val_adj, gene_id, cluster
+# csv: avg_log2FC, p_val_adj, gene, cluster
 
 plot_volcano <- function(data, coef_col, pval_col, coef_threshold, pval_threshold, title, filename) {
   #Significance
@@ -64,7 +65,7 @@ plot_volcano <- function(data, coef_col, pval_col, coef_threshold, pval_threshol
       data = data %>%
         filter(Significance != "Not Significant") %>%
         top_n(10, -!!sym(pval_col)),  # p_val_adj top10
-      aes(label = gene_id),
+      aes(label = gene),
       size = 3,
       box.padding = 0.35,
       point.padding = 0.5,

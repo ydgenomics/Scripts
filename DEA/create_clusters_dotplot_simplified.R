@@ -10,13 +10,11 @@ library(ggrepel)
 library(optparse)
 
 option_list <- list(
-  make_option(c("-i", "--input"), type = "character", default = "/data/work/test/result/markers_peanut.csv",
-              help = "输入文件路径，默认为 '/data/work/test/result/markers_peanut.csv'"),
-  make_option(c("-m", "--minp"), type = "numeric", default = 0.05,
-              help = "最小 p 值，默认为 0.05")
+  make_option(c("-g", "--gene_csv"), type = "character", default = "/data/work/test/result/markers_peanut.csv",
+              help = "Input file path, default is '/data/work/test/result/markers_peanut.csv'")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
-markers <- read.csv(opt$input, row.names = NULL)
+markers <- read.csv(opt$gene_csv, row.names = NULL)
 head(markers)
 markers$cell_types <- markers$cluster
 cell_types <- unique(markers$cell_types)

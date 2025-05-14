@@ -54,7 +54,7 @@ if (assay == "RNA") {
 # "p_val" "avg_log2FC" "pct.1" "pct.2" "p_val_adj" "cluster" "gene"
 if ("FindAllMarkers" %in% tool) {
     Idents(seu) <- group_var
-    allmarkers <- FindAllMarkers(seu, assay = assay, slot = slot, group.by = group_var, only.pos =T, min.pct = min_pct, logfc.threshold = log_fc) # nolint
+    allmarkers <- FindAllMarkers(seu, assay = assay, slot = slot, group.by = group_var, only.pos = FALSE, min.pct = min_pct, logfc.threshold = log_fc) # nolint
     print(dim(allmarkers))
     print(head(allmarkers))
     write.csv(allmarkers, paste0("allmarkers_", name, ".csv"), row.names = TRUE)
@@ -138,7 +138,7 @@ if ("FindMultiMarkers" %in% tool) {
           assay = assay,
           slot = slot,
           group.by = sample_var,
-          only.pos = TRUE,
+          only.pos = FALSE,
           min.pct = min_pct,
           logfc.threshold = log_fc
         ) # nolint
