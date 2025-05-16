@@ -1,6 +1,7 @@
 # Title: scrublet_estimate_doublecell.py
-# Date: 2024-05-07
+# Date: 2024-05-16
 # Attention: how to rationally get a multi-matrix anndata including FilterMatrix, SpliceMatrix and UnspliceMatrix.
+# Marker_csv: gene, cluster, p_val_adj, avg_log2FC
 
 import numpy as np
 import pandas as pd
@@ -181,10 +182,20 @@ def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample
     for res in [0.02, 0.2, 0.5, 0.8, 1.0, 1.3, 1.6, 2.0]:
         sc.tl.leiden(adata, key_added=f"leiden_res_{res:4.2f}", resolution=res)
     sc.pl.umap(adata, color=["leiden_res_0.02", "leiden_res_0.20", "leiden_res_0.50", "leiden_res_0.80", "leiden_res_1.00", "leiden_res_1.30", "leiden_res_1.60", "leiden_res_2.00"], legend_loc="on data", save="_leiden_clus.pdf")
-    sc.tl.rank_genes_groups(adata, groupby="leiden_res_0.50", method="wilcoxon")
-    sc.pl.rank_genes_groups_dotplot(adata, groupby="leiden_res_0.50", standard_scale="var", n_genes=5, save="marker.pdf")
-    marker = sc.get.rank_genes_groups_df(adata, group=None)
-    marker.to_csv("leiden_res_0.50.markers.csv")
+    # Marker
+    output_dir = "marker_csv"
+    os.makedirs(output_dir)
+    resolutions = ["leiden_res_0.50", "leiden_res_0.80", "leiden_res_1.00"]
+    for res in resolutions:
+        sc.tl.rank_genes_groups(adata, groupby=res, method="wilcoxon")
+        sc.pl.rank_genes_groups_dotplot(adata, groupby=res, standard_scale="var", n_genes=5, save=f"{res}_marker.pdf")
+        marker = sc.get.rank_genes_groups_df(adata, group=None)
+        marker['gene'] = marker['names']
+        marker['cluster'] = marker['group']
+        marker['p_val_adj'] = marker['pvals_adj']
+        marker['avg_log2FC'] = marker['logfoldchanges']
+        marker.to_csv(f"{output_dir}/{res}.markers.csv", index=False)
+    # Summmary
     with open('summary.txt', 'w') as f:
         f.write(species + ' data summary' + '\n')
         f.write('Total cells: ' + str(adata.n_obs) + '\n')
