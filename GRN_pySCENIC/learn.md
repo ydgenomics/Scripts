@@ -37,6 +37,7 @@ motif 到转录因子（Transcription Factor, TF） 的注释文件。这些文�
 [TF prediction](https://planttfdb.gao-lab.org/prediction.php)
 [TFBS prediction](https://plantregmap.gao-lab.org/binding_site_prediction.php)
 prediction更像是比对，将其比对到已有的TF和TFBS关系上，进而拿到比对质量的结果，并未有发现新的TF和TFBS关系。
+花生二倍体野生种Arachis duranensis和Arachis ipaensis
 
 跑lili师姐的pySCENIC脚本需要用到的三个文件！
 Seurat镜像做第一部分，pySCENIC做第二步，第三步是SCENIC的可视化
