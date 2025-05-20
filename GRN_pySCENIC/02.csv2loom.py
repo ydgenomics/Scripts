@@ -12,14 +12,13 @@ import numpy as np
 import scanpy as sc
 import argparse
 
-parser = argparse.ArgumentParser(description="Example script")
-parser.add_argument("-n", "--name", type=str, help="Your name")
-parser.add_argument("-a", "--age", type=int, help="Your age")
+# Using argparse to handle command line arguments
+parser = argparse.ArgumentParser(description="csv to loom")
+parser.add_argument("-i", "--input_csv", type=str, default="scenic.data.csv", help="Input CSV file (default: scenic.data.csv)")
+parser.add_argument("-o", "--output_loom", type=str, default="scenic.loom", help="Output loom file (default: scenic.loom)")
+args = parser.parse_args()
 
-scenic_csv_path="scenic.data.csv"
-scenic_loom_path="scenic.loom"
-
-x=sc.read_csv(fiscenic_csv_pathle1);
+x=sc.read_csv(args.input_csv);
 row_attrs={"Gene":np.array(x.var_names),};
 col_attrs={"CellID":np.array(x.obs_names)};
-lp.create(scenic_loom_path,x.X.transpose(),row_attrs,col_attrs);
+lp.create(args.output_loom,x.X.transpose(),row_attrs,col_attrs);
