@@ -43,3 +43,7 @@ prediction更像是比对，将其比对到已有的TF和TFBS关系上，进而�
 Seurat镜像做第一部分，pySCENIC做第二步，第三步是SCENIC的可视化
 镜像pySCENIC不适合做可视化
 
+**真正的优质的详细的教程的，非常的全面，很好的撰写逻辑，respect老师！**
+
+[*老俊俊的生信笔记*--pySCENIC 转录因子调控网络分析教程](https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw?search_click_id=13216281811696875058-1747754421401-4602496906)
+[*老俊俊的生信笔记*--pyscenic 构建自己的 cisTarget 数据库](https://mp.weixin.qq.com/s/7-vKrLiFS4Tlkt-rHxEGeQ)
