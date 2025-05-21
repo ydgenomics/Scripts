@@ -28,7 +28,9 @@ option_list <- list(
     make_option(c("-r", "--input_rds"), type = "character", default = "/data/work/output/pySCENIC/EFM/Annotated_EFM_RNA_T_0.5.rds",
                             help = "Path to input Seurat RDS file", metavar = "character"),
     make_option(c("-k", "--cluster_key"), type = "character", default = "assign.ident",
-                            help = "Cluster key in Seurat metadata", metavar = "character")
+                            help = "Cluster key in Seurat metadata", metavar = "character"),
+    make_option(c("-a", "--assay"), type = "character", default = "RNA",
+                            help = "Assay name in Seurat object", metavar = "character")
 )
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
@@ -71,8 +73,9 @@ close_loom(loom)
 #seu <- readRDS("/data/work/tomato/1.annotation/SixTime_SCT_cellannotation.rds")
 seu <- readRDS(opt$input_rds)
 seu <- UpdateSeuratObject(seu)
+DefaultAssay(seu) <- opt$assay
+DefaultAssay(seu) <- "RNA" # Because the fisrt step extracting the matrix is RNA, the downstream analysis is also RNA!
 seu
-#DefaultAssay(seu) <- "RNA"
 colnames(seu@meta.data)
 
 Idents(seu) <- opt$cluster_key

@@ -1,7 +1,7 @@
 # Title: 02.csv2loom.py
 # Author: ydgenomics
 # Date: 20250520
-# Image: 
+# Image: GRN-SCENIC-R--03 /opt/conda/bin/python
 # Description: This script is the preparation of runing pySCENIC.
 # Pre-requiry:
 # params: rds_path

@@ -1,9 +1,10 @@
 # Title: 01.csv.R
-# Author: ydgenomics
-# Date: 20250520
+# Reference: https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw
+# Image: GRN-SCENIC-R--03 /opt/conda/bin/R
+# Author: lili, ydgenomics
+# Date: 20250521
 # Description: This script is the preparation of runing pySCENIC.
-# Pre-requiry:
-# params: rds_path
+# Attention: Matrix comes from Seurat[RNA@counts] and the matrix is transposed.
 
 library(Seurat)
 library(stringr)
