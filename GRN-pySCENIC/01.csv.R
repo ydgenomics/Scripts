@@ -11,8 +11,8 @@ library(stringr)
 library(optparse)
 
 option_list <- list(
-    make_option(c("-i", "--input_rds"), type = "character", default = "input.rds",help = "Path to the input RDS file", metavar = "character"),
-    make_option(c("-o", "--output_csv"), type = "character", default = "scenic.data.csv",help = "Path to the output CSV file", metavar = "character"),
+    make_option(c("-i", "--input_rds"), type = "character", default = "input.rds", help = "Path to the input RDS file", metavar = "character"),
+    make_option(c("-o", "--output_csv"), type = "character", default = "scenic.data.csv", help = "Path to the output CSV file", metavar = "character")
 )
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
