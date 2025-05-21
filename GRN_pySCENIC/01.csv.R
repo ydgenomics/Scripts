@@ -18,6 +18,7 @@ opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
 
 seu <- readRDS(opt$input_rds)
+seu
 colnames(seu@meta.data)
 head(t(as.matrix(seu@assays$RNA@counts))[1:3,1:3])
 head(colnames(t(as.matrix(seu@assays$RNA@counts))))

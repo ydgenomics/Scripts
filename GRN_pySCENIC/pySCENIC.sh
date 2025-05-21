@@ -7,6 +7,7 @@
 Rscript 01.csv.R \
 --input_rds /data/users/yuantingting/yuantingting_fd18e4ec5adc46dd89e2e5c607e9e7e3/online/output/PlantPhone/Seurat/Merge/EFM/RNA_T_0.5/Annotated_EFM_RNA_T_0.5.rds \
 --output_csv scenic.data.csv # Image: GRN-SCENIC-R--03 /opt/conda/bin/R
+
 python 02.csv2loom.py \
 --input_csv scenic.data.csv \
 --output_loom scenic.loom # Image:GRN-SCENIC-R--03 /opt/conda/bin/python
