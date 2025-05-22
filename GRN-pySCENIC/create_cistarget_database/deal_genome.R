@@ -1,8 +1,27 @@
+# Title: deal_genome.R
+# Date: 20250522
+# Coder: ydgenomics
+# Description:
+# Input: gtf file and fasta file
+# Output:
+# Image: 
+# Reference: https://mp.weixin.qq.com/s/7-vKrLiFS4Tlkt-rHxEGeQ; https://github.com/aertslab/create_cisTarget_databases
+
 library(rtracklayer)
 library(tidyverse)
 library(Biostrings)
+library(optparse)
 
-gtf <- import("/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.ann2.PVFB.gene_models_main.gtf", format = "gtf") %>%
+option_list <- list(
+  make_option(c("-g", "--gtf"),type = "character",default = "/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.ann2.PVFB.gene_models_main.gtf",help = "Input gtf file"),
+  make_option(c("-f", "--fasta"),type = "character",default = "/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.J5K5.genome_main.fa",help = "Input FASTA file")
+)
+
+opt <- parse_args(OptionParser(option_list = option_list))
+input_gtf <- opt$gtf
+input_fasta <- opt$fasta
+
+gtf <- import(input_gtf, format = "gtf") %>%
   as.data.frame()
 
 head(gtf)
@@ -28,7 +47,7 @@ head(genes) # genes$seqnames必须要和names(genome)一致
 
 ########## Rename chromosomes of genome ##########
 # load genome
-genome <- readDNAStringSet("/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.J5K5.genome_main.fa")
+genome <- readDNAStringSet(input_fasta)
 genome
 
 # rename seqnames

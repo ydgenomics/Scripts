@@ -1,3 +1,8 @@
+# Title: create_cistarget_motif_databases.py
+# Reference: https://github.com/aertslab/create_cisTarget_databases/blob/master/create_cistarget_motif_databases.py
+# Editor: ydgenomics
+# Date: 20250522
+# Image: GRN-SCENIC-database--01 python
 #!/usr/bin/env python3
 
 """
@@ -17,6 +22,9 @@ import time
 from typing import Tuple
 
 import pandas as pd
+
+import sys # edited by ydgenomics
+sys.path.append('/software/create_cisTarget_databases/') # edited by ydgenomics
 
 from cistarget_db import (
     CisTargetDatabase,

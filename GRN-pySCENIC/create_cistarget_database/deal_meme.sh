@@ -1,3 +1,12 @@
+# Title: deal_genome.R
+# Date: 20250522
+# Coder: ydgenomics
+# Description:
+# Input: gtf file and fasta file
+# Output:
+# Image: 
+# Reference: https://mp.weixin.qq.com/s/7-vKrLiFS4Tlkt-rHxEGeQ; https://github.com/aertslab/create_cisTarget_databases
+
 cd /data/work/0.peanut/GRN/output
 # 1.使用R代码在PlantTFDB下载合适meme文件
 less -S /data/work/0.peanut/GRN/input/Ath_TF_binding_motifs.meme
