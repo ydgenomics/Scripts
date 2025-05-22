@@ -1,10 +1,10 @@
-# Title: deal_genome.R
+# Title: extra_promoters.R
 # Date: 20250522
 # Coder: ydgenomics
 # Description:
 # Input: gtf file and fasta file
-# Output:
-# Image: 
+# Output: 3kpromoter.fasta
+# Image: # Image: GRN-SCENIC-database--01 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/7-vKrLiFS4Tlkt-rHxEGeQ; https://github.com/aertslab/create_cisTarget_databases
 
 library(rtracklayer)
