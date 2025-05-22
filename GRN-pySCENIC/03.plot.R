@@ -4,7 +4,7 @@
 # Description: Using SCENIC(R) to plot the results of pySCENIC
 # Input: 
 # Output:
-# Image: GRN-SCENIC-R--03 /opt/conda/bin/R
+# Image: GRN-SCENIC-database--01 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw
 
 library(Seurat)
