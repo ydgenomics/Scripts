@@ -7,13 +7,15 @@
 BLASTP本身主要用于单序列与数据库的比对，而不是用于多序列比对
 [史上最详细的blast安装附视频](https://mp.weixin.qq.com/s/rEBqjN-fGOp_loTmyEuMJA)
 ```shell
+cd /software
 wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.16.0+-x64-linux.tar.gz
 tar -zxvf ncbi-blast-2.16.0+-x64-linux.tar.gz
 # environment location: /software/ncbi-blast-2.16.0+/bin
 vim ~/.bashrc
 export PATH=/software/ncbi-blast-2.16.0+/bin:$PATH
-source ~/.bashrc
+#source ~/.bashrc
 blastp -h
+rm ncbi-blast-2.16.0+-x64-linux.tar.gz
 ```
 
 blastp不适合多序列比对，使用Clustal加快序列比对

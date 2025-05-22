@@ -47,3 +47,24 @@ Seurat镜像做第一部分，pySCENIC做第二步，第三步是SCENIC的可视
 
 [*老俊俊的生信笔记*--pySCENIC 转录因子调控网络分析教程](https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw?search_click_id=13216281811696875058-1747754421401-4602496906)
 [*老俊俊的生信笔记*--pyscenic 构建自己的 cisTarget 数据库](https://mp.weixin.qq.com/s/7-vKrLiFS4Tlkt-rHxEGeQ)
+
+# 准备.tbl文件
+通过plantTFDB获取Arabidopsis thaliana的TF_motif信息
+```R
+download.file(
+  url = "https://planttfdb.gao-lab.org/download/motif/Ath_TF_binding_motifs_information.txt",
+  destfile = "Ath_TF_binding_motifs_information.txt",
+  mode = "wb"
+)
+```
+# 准备.feather文件
+通过plantTFDB获取Arabidopsis thaliana的motif信息[All motifs in one file](https://planttfdb.gao-lab.org/download/motif/Ath_TF_binding_motifs.meme.gz)
+根据老俊俊的笔记分别做motif的处理
+后面就是以peanut建index的genome.fas和genome.gtf来找promoters
+最后用pySCENIC作者提供的create_cistarget_motif_databases.py脚本拿到ranking.feather文件
+
+# 准备TF_list.txt文件
+使用blastp进行同源同源比对，去除低质量的比对数据。注意存在多对一的情况，如何解决这种问题，对到的拟南芥必须只出现一次，通过比较准确值，保留最佳的比对结果！使其最后结果是一对一。
+根据这样，将拟南芥的TF txt进行重命名，只保留存在于一对一的基因
+处理tbl文件，将gene_name跟一对一列表进行匹配和重命名，未匹配的全部删除
+对genome的fas和gtf文件尽心处理，拿到feather文件，注意里面的基因命名系统要跟外面的一致就好
