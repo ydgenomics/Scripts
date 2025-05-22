@@ -1,8 +1,12 @@
-# Title: pySCENIC plot
-# Author: lili, ydgenomics
-# Date: 20250521
+# Title: 03.plot.R
+# Date: 20250522
+# Coder: lili, ydgenomics
+# Description: Using SCENIC(R) to plot the results of pySCENIC
+# Input: 
+# Output:
 # Image: GRN-SCENIC-R--03 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw
+
 library(Seurat)
 library(SCopeLoomR) 
 library(AUCell)
@@ -23,9 +27,9 @@ library(circlize)
 library(optparse)
 
 option_list <- list(
-    make_option(c("-l", "--aucell_loom"), type = "character", default = "/data/work/output/pySCENIC/EFM/aucell.loom",
+    make_option(c("-l", "--aucell_loom"), type = "character", default = "/data/work/tomato/3.pySCENIC/test/aucell.loom",
                             help = "Path to aucell.loom file", metavar = "character"),
-    make_option(c("-r", "--input_rds"), type = "character", default = "/data/work/output/pySCENIC/EFM/Annotated_EFM_RNA_T_0.5.rds",
+    make_option(c("-r", "--input_rds"), type = "character", default = "/data/work/tomato/1.annotation/SixTime_SCT_cellannotation.rds",
                             help = "Path to input Seurat RDS file", metavar = "character"),
     make_option(c("-k", "--cluster_key"), type = "character", default = "assign.ident",
                             help = "Cluster key in Seurat metadata", metavar = "character"),
@@ -209,10 +213,11 @@ Heatmap(
 dev.off()
 
 # 对细胞聚类
-pdf("Heatmap_Binary_regulons_of_allcells.pdf", height = 4, width = 8)
+pdf("Heatmap_Binary_regulons_cluster_allcells.pdf", height = 4, width = 8)
 Heatmap(
     matrix = binary_tfs,
-    name = "Binary activity of regulon",
+    name = "Binary activity of regulon in cluster",
+    cluster_columns = T, # if cell more than 65536 will error!
     col = c("white", "black"),
     top_annotation = col_anno,
     right_annotation = tfs_mark,
