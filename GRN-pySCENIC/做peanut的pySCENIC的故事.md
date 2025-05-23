@@ -19,3 +19,6 @@ motif处理环境：
 对peanut的genome文件处理，提取启动子序列保存未fasta文件；
 利用[create_cistarget_motif_databases.py](https://github.com/aertslab/create_cisTarget_databases/blob/master/create_cistarget_motif_databases.py)将提取到的peanut启动子序列比对到motif信息上，拿到peanut存在的motif信息，即ranking.feather文件；
 基于peanut和拟南芥比对信息，将拟南芥的tf_list和tbl信息进行替换，没匹配的拟南芥信息删除。
+
+下载拟南芥的TF列表和对应的蛋白质序列文件,TF_motif对应信息和motif.meme文件
+![AT_gene_protein](41968314807c9211f55fac97dd358ac.png)
