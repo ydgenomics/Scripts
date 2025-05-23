@@ -69,7 +69,7 @@ head -n 3 $protein_fasta
 
 ## 4.获取花生基因组的启动子序列，并根据motif信息构建cistarget的database
 [extra_promoters.R](./create_cistarget_database/extra_promoters.R)拿到`3kpromoter.fasta`
-使用[create_cistarget_motif_databases.py](create_cistarget_database\create_cistarget_motif_databases.py)构建cistarget_database，其中`peanut.regions_vs_motifs.rankings.feather`用做后面分析
+使用[create_cistarget_motif_databases.py](./create_cistarget_database/create_cistarget_motif_databases.py)构建cistarget_database，其中`peanut.regions_vs_motifs.rankings.feather`用做后面分析
 ```shell
 python /data/work/0.peanut/GRN/create_cistarget_motif_databases.py \
 -f /data/work/0.peanut/GRN/output/3kpromoter.fasta \
