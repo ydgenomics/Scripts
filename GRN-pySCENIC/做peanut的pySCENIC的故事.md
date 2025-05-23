@@ -68,7 +68,7 @@ head -n 3 $protein_fasta
 ```
 
 ## 4.获取花生基因组的启动子序列，并根据motif信息构建cistarget的database
-[extra_promoters.R](create_cistarget_database\extra_promoters.R)拿到`3kpromoter.fasta`
+[extra_promoters.R](./create_cistarget_database/extra_promoters.R)拿到`3kpromoter.fasta`
 使用[create_cistarget_motif_databases.py](create_cistarget_database\create_cistarget_motif_databases.py)构建cistarget_database，其中`peanut.regions_vs_motifs.rankings.feather`用做后面分析
 ```shell
 python /data/work/0.peanut/GRN/create_cistarget_motif_databases.py \
@@ -79,7 +79,7 @@ python /data/work/0.peanut/GRN/create_cistarget_motif_databases.py \
 -o peanut
 ```
 
-## 5.安装blastp并做两个物种的蛋白质比对找同源基因
+## 5.安装blastp并做两个物种的蛋白质比对找[同源基因](../Ortho_gene/)
 **Reference：** [史上最详细的blast安装附视频](https://mp.weixin.qq.com/s/rEBqjN-fGOp_loTmyEuMJA)
 ```shell
 ########## Install blastp ##########
@@ -105,9 +105,9 @@ blastp -query $query_fasta -db arabidopsis_db -out blastp_results.txt -outfmt 6 
 ```
 
 ## 6.处理比对信息拿到花生和拟南芥一对一的关系文件，修改拟南芥的tbl和TF_list，拿到peanut的tbl和TF_list
-[get_one2one_map2AT.file.py](create_cistarget_database\get_one2one_map2AT.file.py)
+[get_one2one_map2AT.file.py](./create_cistarget_database/get_one2one_map2AT.file.py)
 
-## 7.三个准备文件可以了，就是运行pySCENIC
+## 7.三个准备文件可以了，就是运行[pySCENIC](../GRN-pySCENIC/)
 ```shell
 Rscript 01.csv.R \
 --input_rds /data/work/0.peanut/GRN/peanut/peanut_dataget_Anno_concat.cg_cgn.rds \
