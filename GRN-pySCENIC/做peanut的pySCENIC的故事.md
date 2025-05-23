@@ -40,7 +40,7 @@ download.file(
 ```
 
 ## 2.处理拟南芥的TF_motif和motif.meme文件 
-[get_AT.file.sh](create_cistarget_database/get_AT.file.sh)
+[get_AT.file.sh](./create_cistarget_database/get_AT.file.sh)
 ```shell
 # Output
 TF_binding_motifs_information.tbl 
