@@ -7,15 +7,26 @@
 BLASTP本身主要用于单序列与数据库的比对，而不是用于多序列比对
 [史上最详细的blast安装附视频](https://mp.weixin.qq.com/s/rEBqjN-fGOp_loTmyEuMJA)
 ```shell
+########## Install blastp ##########
 cd /software
 wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.16.0+-x64-linux.tar.gz
 tar -zxvf ncbi-blast-2.16.0+-x64-linux.tar.gz
 # environment location: /software/ncbi-blast-2.16.0+/bin
 vim ~/.bashrc
 export PATH=/software/ncbi-blast-2.16.0+/bin:$PATH
-#source ~/.bashrc
+source ~/.bashrc
 blastp -h
 rm ncbi-blast-2.16.0+-x64-linux.tar.gz
+```
+```shell
+########## Using blastp ##########
+subject_fasta="/data/work/0.peanut/GRN/input/Ath_pep.fas"
+query_fasta="/data/work/0.peanut/GRN/input/arahy.Tifrunner.gnm2.ann2.PVFB.protein.faa"
+#cd /data/work/0.peanut/GRN/input/arabidopsis_db
+# Make database of AT/Others
+makeblastdb -in $subject_fasta -dbtype prot -out arabidopsis_db
+# Query input fasta
+blastp -query $query_fasta -db arabidopsis_db -out blastp_results.txt -outfmt 6 -evalue 1e-5
 ```
 
 blastp不适合多序列比对，使用Clustal加快序列比对
