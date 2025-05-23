@@ -11,13 +11,13 @@ import pandas as pd
 from io import StringIO
 import argparse
 parser = argparse.ArgumentParser(description="Get one-to-one mapping and tf binding motif info.")
-parser.add_argument('--blastp', default="/data/work/0.peanut/GRN/input/arabidopsis_db/blastp_results.txt", help="Input BLASTP results file")
-parser.add_argument('--tf_list', default="/data/work/0.peanut/GRN/input/Ath_TF_list.txt", help="Input Arabidopsis TF list file")
-parser.add_argument('--tf_motifs', default="/data/work/0.peanut/GRN/output/Ath_TF_binding_motifs_information.tbl", help="Input TF binding motifs file")
+parser.add_argument('--blastp_txt', default="/data/work/0.peanut/GRN/input/arabidopsis_db/blastp_results.txt", help="Input BLASTP results file")
+parser.add_argument('--tf_list_txt', default="/data/work/0.peanut/GRN/input/Ath_TF_list.txt", help="Input Arabidopsis TF list file")
+parser.add_argument('--tf_motifs_tbl', default="/data/work/0.peanut/GRN/output/Ath_TF_binding_motifs_information.tbl", help="Input TF binding motifs file")
 args = parser.parse_args()
-input_blastp_txt = args.blastp
-input_AT_TF_list_txt = args.tf_list
-input_Ath_TF_motifs__tbl = args.tf_motifs
+input_blastp_txt = args.blastp_txt
+input_AT_TF_list_txt = args.tf_list_txt
+input_Ath_TF_motifs_tbl = args.tf_motifs_tbl
 
 ########## Get the one-to-one mapping result for blastp ##########
 with open(input_blastp_txt, 'r') as file:
@@ -70,7 +70,7 @@ len(filtered_blastp_df2["query_id"].unique())
 len(filtered_blastp_df2["subject_id"].unique())
 
 ######### Get the TF binding motifs information ##########
-data = pd.read_csv(input_Ath_TF_motifs__tbl, sep="\t")
+data = pd.read_csv(input_Ath_TF_motifs_tbl, sep="\t")
 # 创建一个字典，将 filtered_blastp_df2 中的 subject_id2 映射到 query_id
 blastp_dict = dict(zip(filtered_blastp_df2['subject_id2'], filtered_blastp_df2['query_id']))
 # 在 data 中匹配 subject_id2 到 query_id
