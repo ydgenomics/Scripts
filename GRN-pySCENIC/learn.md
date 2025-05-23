@@ -68,3 +68,12 @@ download.file(
 根据这样，将拟南芥的TF txt进行重命名，只保留存在于一对一的基因
 处理tbl文件，将gene_name跟一对一列表进行匹配和重命名，未匹配的全部删除
 对genome的fas和gtf文件尽心处理，拿到feather文件，注意里面的基因命名系统要跟外面的一致就好
+
+修改
+```R
+# 修改细胞名中以 -1 为后缀的值为 .1
+cellsPerGroup <- lapply(cellsPerGroup, function(cells) {
+  gsub("-1$", ".1", cells)
+})
+```
+应该是在提取表达矩阵的时候细胞名自动将-1替换为.1，这个问题我们可以一开始检查存在的-，将其全部替换为_。这样再去替换就不会有问题了。
