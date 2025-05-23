@@ -21,12 +21,12 @@ motif处理环境：
 基于peanut和拟南芥比对信息，将拟南芥的tf_list和tbl信息进行替换，没匹配的拟南芥信息删除。
 
 ## 1.下载拟南芥的TF列表和对应的蛋白质序列文件,TF_motif对应信息和motif.meme文件
-![AT_gene_protein](AT_gene_name.png)
+![AT_gene_protein](./png/AT_gene_name.png)
 
 [**Download:** Arabidopsis thaliana TF list](https://planttfdb.gao-lab.org/download/TF_list/Ahy_TF_list.txt.gz)
 [**Download:** Arabidopsis thaliana Protein sequences](https://planttfdb.gao-lab.org/download/seq/Ath_pep.fas.gz)
 
-![AT_tfmotif_meme](AT_tfmotif_meme.png)
+![AT_tfmotif_meme](./png/AT_tfmotif_meme.png)
 
 [**Download:** Arabidopsis thaliana TF_binding_motifs](https://planttfdb.gao-lab.org/download/motif/Ath_TF_binding_motifs_information.txt)
 [**Download:** Arabidopsis thaliana motifs.meme](https://planttfdb.gao-lab.org/download/motif/Ath_TF_binding_motifs.meme.gz)
