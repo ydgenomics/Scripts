@@ -4,7 +4,7 @@
 # Description:
 # Input: gtf file and fasta file
 # Output: 3kpromoter.fasta
-# Image: # Image: GRN-SCENIC-database--01 /opt/conda/bin/R
+# Image: GRN-SCENIC-database--01 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/7-vKrLiFS4Tlkt-rHxEGeQ; https://github.com/aertslab/create_cisTarget_databases
 
 library(rtracklayer)
@@ -13,7 +13,7 @@ library(Biostrings)
 library(optparse)
 
 option_list <- list(
-  make_option(c("-g", "--gtf"),type = "character",default = "/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.ann2.PVFB.gene_models_main.gtf",help = "Input gtf file"),
+  make_option(c("-g", "--gtf"),type = "character",default = "/data/work/0.peanut/GRN/output/updated_gtf_file_standard.gtf",help = "Input gtf file"),
   make_option(c("-f", "--fasta"),type = "character",default = "/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.J5K5.genome_main.fa",help = "Input FASTA file")
 )
 
