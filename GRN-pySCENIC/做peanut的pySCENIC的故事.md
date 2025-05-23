@@ -20,7 +20,7 @@ motif处理环境：
 利用[create_cistarget_motif_databases.py](https://github.com/aertslab/create_cisTarget_databases/blob/master/create_cistarget_motif_databases.py)将提取到的peanut启动子序列比对到motif信息上，拿到peanut存在的motif信息，即ranking.feather文件；
 基于peanut和拟南芥比对信息，将拟南芥的tf_list和tbl信息进行替换，没匹配的拟南芥信息删除。
 
-## 下载拟南芥的TF列表和对应的蛋白质序列文件,TF_motif对应信息和motif.meme文件
+## 1.下载拟南芥的TF列表和对应的蛋白质序列文件,TF_motif对应信息和motif.meme文件
 ![AT_gene_protein](AT_gene_name.png)
 
 [**Download:** Arabidopsis thaliana TF list](https://planttfdb.gao-lab.org/download/TF_list/Ahy_TF_list.txt.gz)
@@ -39,9 +39,16 @@ download.file(
 )
 ```
 
-## 处理拟南芥的motif.meme文件
+## 2.处理拟南芥的TF_motif和motif.meme文件 
+[get_AT.file.sh](create_cistarget_database/get_AT.file.sh)
+```shell
+# Output
+TF_binding_motifs_information.tbl 
+./motif_dir 
+motifs_id.txt
+```
 
-## 准备花生的基因组相关文件用于比对和建cistarget库
+## 3.准备花生的基因组相关文件用于比对和建cistarget库
 ```shell
 genome_fasta="/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.J5K5.genome_main.fa"
 genome_gtf="/data/work/0.peanut/GRN/output/updated_gtf_file_standard.gtf"
@@ -59,7 +66,20 @@ head -n 3 $protein_fasta
 #MSVAADSPIHSSSSDDFIAYLDDALAASSPDASSDKEVENQDELESGRIKRCKFESAEETEESTSEGIVKQNLEEYVCTHPGSFGDMCIRCGQKLDGESGVTFGYIHKGLRLHDEEISRLRNTDVKNLLIRKKLYLILDLDHTLLNSTHLAHLNSEELHLISQADSLGDVSKGSLFKLDKMHMMTKLRPFVRTFLKEASEMFEMYIYTMGDRPYALEMAKLLDPLGEYFNAKVISRDDGTQKHQKGLDIVLGQESAVVILDDTEHAWVKHKDNLILMERYHFFGSSCRQFGFNCKSLAELKSDEDEAEGALTKILKVLKQVHSKFFDELKEDIAERDVRQVLKSVRREVLSGCVVVFSRIFHGALPPLRQMAEQLGATCLMELDPSVTHVVATDAGTEKARWAVKEKKFLVHPRWIEAANYFWEKQPEENFVLKKKQ
 #>arahy.Tifrunner.gnm2.ann2.Ah01g000400.1
 ```
-## 安装blastp并做两个物种的蛋白质比对找同源基因
+
+## 4.获取花生基因组的启动子序列，并根据motif信息构建cistarget的database
+[extra_promoters.R](create_cistarget_database\extra_promoters.R)拿到`3kpromoter.fasta`
+使用[create_cistarget_motif_databases.py](create_cistarget_database\create_cistarget_motif_databases.py)构建cistarget_database，其中`peanut.regions_vs_motifs.rankings.feather`用做后面分析
+```shell
+python /data/work/0.peanut/GRN/create_cistarget_motif_databases.py \
+-f /data/work/0.peanut/GRN/output/3kpromoter.fasta \
+-M /data/work/0.peanut/GRN/output/motif_dir/ \
+-m /data/work/0.peanut/GRN/output/motifs_id.txt \
+-t 30 \
+-o peanut
+```
+
+## 5.安装blastp并做两个物种的蛋白质比对找同源基因
 **Reference：** [史上最详细的blast安装附视频](https://mp.weixin.qq.com/s/rEBqjN-fGOp_loTmyEuMJA)
 ```shell
 ########## Install blastp ##########
@@ -83,3 +103,38 @@ makeblastdb -in $subject_fasta -dbtype prot -out arabidopsis_db
 # Query input fasta
 blastp -query $query_fasta -db arabidopsis_db -out blastp_results.txt -outfmt 6 -evalue 1e-5
 ```
+
+## 6.处理比对信息拿到花生和拟南芥一对一的关系文件，修改拟南芥的tbl和TF_list，拿到peanut的tbl和TF_list
+[get_one2one_map2AT.file.py](create_cistarget_database\get_one2one_map2AT.file.py)
+
+## 7.三个准备文件可以了，就是运行pySCENIC
+```shell
+Rscript 01.csv.R \
+--input_rds /data/work/0.peanut/GRN/peanut/peanut_dataget_Anno_concat.cg_cgn.rds \
+--output_csv scenic.data.csv # Image: GRN-SCENIC-R--03 /opt/conda/bin/R
+
+python 02.csv2loom.py \
+--input_csv scenic.data.csv \
+--output_loom scenic.loom # Image:GRN-SCENIC-R--03 /opt/conda/bin/python
+
+# step1 grn
+pyscenic grn \
+--num_workers 20 \
+--output grn.tsv \
+--method grnboost2 scenic.loom \
+/data/work/0.peanut/GRN/peanut/TF_gene_PlantTFDB.txt # Image: pySCENIC
+
+# step2 ctx
+pyscenic ctx \
+grn.tsv \
+/data/work/0.peanut/GRN/peanut/peanut.regions_vs_motifs.rankings.feather \
+--annotations_fname /data/work/0.peanut/GRN/peanut/Ath_TF_binding_motifs_information2.tbl \
+--expression_mtx_fname scenic.loom \
+--mode "dask_multiprocessing" \
+--output ctx.csv \
+--num_workers 20 \
+--mask_dropouts # Image: pySCENIC
+```
+
+## 8.用R版本的SCENIC做可视化
+[03.plot.R](03.plot.R)
