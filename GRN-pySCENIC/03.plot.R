@@ -1,5 +1,5 @@
 # Title: 03.plot.R
-# Date: 20250522
+# Date: 20250524
 # Coder: lili, ydgenomics
 # Description: Using SCENIC(R) to plot the results of pySCENIC
 # Input: 
@@ -27,11 +27,11 @@ library(circlize)
 library(optparse)
 
 option_list <- list(
-    make_option(c("-l", "--aucell_loom"), type = "character", default = "/data/work/tomato/3.pySCENIC/test/aucell.loom",
+    make_option(c("-l", "--aucell_loom"), type = "character", default = "/data/work/0.peanut/GRN/peanut/aucell.loom",
                             help = "Path to aucell.loom file", metavar = "character"),
-    make_option(c("-r", "--input_rds"), type = "character", default = "/data/work/tomato/1.annotation/SixTime_SCT_cellannotation.rds",
+    make_option(c("-r", "--input_rds"), type = "character", default = "/data/work/0.peanut/GRN/peanut/peanut_dataget_Anno_concat.cg_cgn.rds",
                             help = "Path to input Seurat RDS file", metavar = "character"),
-    make_option(c("-k", "--cluster_key"), type = "character", default = "assign.ident",
+    make_option(c("-k", "--cluster_key"), type = "character", default = "cell",
                             help = "Cluster key in Seurat metadata", metavar = "character"),
     make_option(c("-a", "--assay"), type = "character", default = "RNA",
                             help = "Assay name in Seurat object", metavar = "character")
@@ -115,11 +115,12 @@ cellClusters <- data.frame(
     row.names=colnames(seu),
     seurat_clusters=as.character(seu@meta.data[[opt$cluster_key]])) |>
 dplyr::mutate(seurat_clusters=ifelse(is.na(seurat_clusters),"unkown",seurat_clusters))
-
+head(cellClusters)
 # 这段代码的意思是创建一个名为"cellClusters"的数据框，其中的行名（row.names）是来自于"seurat.data"数据集的列名（colnames），而"seurat_clusters"列则是将"seurat.data$seurat_annotations"转换为字符型数据后的结果。
 # 接下来，使用dplyr包中的mutate函数对"seurat_clusters"列进行处理。如果"seurat_clusters"列中的值为NA（缺失值），则将其替换为"unknown"（未知），否则保持不变。最终将处理结果赋值给"seurat_clusters"列。
 
 cellsPerGroup <- split(rownames(cellClusters),cellClusters$seurat_clusters)
+#head(cellsPerGroup)
 
 # remove extened regulons
 sub_regulonAUC <- sub_regulonAUC[onlyNonDuplicatedExtended(rownames(sub_regulonAUC)),]
@@ -161,13 +162,13 @@ custom_colors
 col_anno <- columnAnnotation(celltype = celltypes, col = list(celltype = custom_colors))
 
 # plot
-pdf("Heatmap_regulons_allcells.pdf", height = 4, width = 8)
+pdf("Heatmap_regulons_allcells.pdf", height = 4, width = 10)
 Heatmap(
     matrix = ht_auc_scale,
     top_annotation = col_anno,
     col = colorRamp2(c(-2,0,2), c("#003399", "white", "#990066")),
     cluster_columns = F,
-    show_row_names = F,
+    show_row_names = T,
     show_column_names = F)
 
 dev.off()
@@ -193,35 +194,32 @@ identical(colnames(binary_tfs),as.character(unlist(cellsPerGroup)))
 #tfs_mark = rowAnnotation(foo = anno_mark(at = at,labels=mark))
                       
 # Do annotation for all genes
-mark <- rownames(binary_tfs)
-at <- match(mark, rownames(binary_tfs))
-tfs_mark <- rowAnnotation(foo = anno_mark(at = at, labels = mark))
+#mark <- rownames(binary_tfs)
+#at <- match(mark, rownames(binary_tfs))
+#tfs_mark <- rowAnnotation(foo = anno_mark(at = at, labels = mark))
 
 # plot
-pdf("Heatmap_Binary_regulons_allcells.pdf", height = 4, width = 8)
+pdf("Heatmap_Binary_regulons_allcells.pdf", height = 4, width = 10)
 Heatmap(
     matrix = binary_tfs,
     name = "Binary activity of regulon",
     cluster_columns = F,
     col = c("white", "black"),
     top_annotation = col_anno,
-    right_annotation = tfs_mark,
-    # km = 5,
-    show_row_names = F,
+    show_row_names = T,
     show_column_names = F)
 
 dev.off()
 
 # 对细胞聚类
-pdf("Heatmap_Binary_regulons_cluster_allcells.pdf", height = 4, width = 8)
+pdf("Heatmap_Binary_regulons_cluster_allcells.pdf", height = 4, width = 10)
 Heatmap(
     matrix = binary_tfs,
     name = "Binary activity of regulon in cluster",
     cluster_columns = T, # if cell more than 65536 will error!
     col = c("white", "black"),
     top_annotation = col_anno,
-    right_annotation = tfs_mark,
-    show_row_names = F,
+    show_row_names = T,
     show_column_names = F)
 
 dev.off()
