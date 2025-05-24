@@ -77,3 +77,5 @@ cellsPerGroup <- lapply(cellsPerGroup, function(cells) {
 })
 ```
 应该是在提取表达矩阵的时候细胞名自动将-1替换为.1，这个问题我们可以一开始检查存在的-，将其全部替换为_。这样再去替换就不会有问题了。
+
+## [Q&A 什么是Motif?](./Q&A/what_is_motif.md)
