@@ -78,4 +78,53 @@ cellsPerGroup <- lapply(cellsPerGroup, function(cells) {
 ```
 应该是在提取表达矩阵的时候细胞名自动将-1替换为.1，这个问题我们可以一开始检查存在的-，将其全部替换为_。这样再去替换就不会有问题了。
 
+我刚才想到一个问题，就是用one2one对不对，理论上多个转录因子用同一个motif也很正常，还有就是可能这两个基因都是这个基因的同源基因，而为了one2one就丢弃掉这个数据，显然不合理。那么应该保留many2many的信息，尤其在TF_list和TF_blinding_motif.tbl文件里面。一个motif可能是多个target基因的前序列，也可以是多个转录因子的结合位点，一个转录因子也应该有多个motif结合位点，所以都是many2many的关系
+
+然而我检查拟南芥的TF_motif信息竟然是一对一的关系
+```shell
+>>> data = pd.read_csv(input_Ath_TF_motifs_tbl, sep="\t")
+>>> data.head()
+  #motif_id motif_name motif_description source_name  source_version  ... similar_motif_description  orthologous_identity orthologous_gene_name orthologous_species                 description
+0   MP00119    MP00119         AT1G01060   PlantTFDB             5.0  ...                      None                     1                  None                None  gene is directly annotated
+1   MP00120    MP00120         AT1G01250   PlantTFDB             5.0  ...                      None                     1                  None                None  gene is directly annotated
+2   MP00100    MP00100         AT1G01260   PlantTFDB             5.0  ...                      None                     1                  None                None  gene is directly annotated
+3   MP00121    MP00121         AT1G01720   PlantTFDB             5.0  ...                      None                     1                  None                None  gene is directly annotated
+4   MP00090    MP00090         AT1G02065   PlantTFDB             5.0  ...                      None                     1                  None                None  gene is directly annotated
+
+[5 rows x 13 columns]
+>>> len(data["motif_description"])
+619
+>>> len(data["motif_description"].unique())
+619
+>>> len(data["motif_name"])
+619
+>>> len(data["motif_name"].unique())
+619
+>>> 
+```
+
+我通过kimi和尝试认为一对一关系非常的不合理，同时检查了一下师姐tomato项目的tbl文件也是存在多对多的情况，从计算层面说明可以按多对多的方向来做
+```shell
+>>> data = pd.read_csv("/data/work/0.peanut/GRN/input/ITAG4.1_MOTIF_PlantTFDB.tbl", sep="\t")
+>>> data.head()
+  #motif_id motif_name      motif_description source_name  source_version  ... similar_motif_description  orthologous_identity orthologous_gene_name orthologous_species                 description
+0   MP00295    MP00295  gene:Solyc09g010680.3   PlantTFDB             1.1  ...                      None                     1                  None                None  gene is directly annotated
+1   MP00254    MP00254  gene:Solyc01g005060.3   PlantTFDB             1.1  ...                      None                     1                  None                None  gene is directly annotated
+2   MP00521    MP00521  gene:Solyc01g005630.3   PlantTFDB             1.1  ...                      None                     1                  None                None  gene is directly annotated
+3   MP00233    MP00233  gene:Solyc01g006650.2   PlantTFDB             1.1  ...                      None                     1                  None                None  gene is directly annotated
+4   MP00367    MP00367  gene:Solyc01g009170.4   PlantTFDB             1.1  ...                      None                     1                  None                None  gene is directly annotated
+
+[5 rows x 13 columns]
+>>> len(data["motif_description"])
+319
+>>> len(data["motif_description"].unique())
+316
+>>> len(data["motif_name"])
+319
+>>> len(data["motif_name"].unique())
+312
+>>> 
+```
+
 ## [Q&A 什么是Motif?](./Q&A/what_is_motif.md)
+## [motif和TF是严格的一对一关系吗？存不存在几个motif对应同一TF]
