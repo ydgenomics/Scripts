@@ -2,7 +2,7 @@
 # Reference: https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw
 # Image: GRN-SCENIC-database--01 /opt/conda/bin/R
 # Author: lili, ydgenomics
-# Date: 20250521
+# Date: 20250525
 # Description: This script is the preparation of runing pySCENIC.
 # Attention: Matrix comes from Seurat[RNA@counts] and the matrix is transposed.
 
