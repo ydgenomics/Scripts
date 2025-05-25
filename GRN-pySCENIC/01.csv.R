@@ -1,6 +1,6 @@
 # Title: 01.csv.R
 # Reference: https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw
-# Image: GRN-SCENIC-R--03 /opt/conda/bin/R
+# Image: GRN-SCENIC-database--01 /opt/conda/bin/R
 # Author: lili, ydgenomics
 # Date: 20250521
 # Description: This script is the preparation of runing pySCENIC.

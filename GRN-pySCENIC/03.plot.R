@@ -1,5 +1,5 @@
 # Title: 03.plot.R
-# Date: 20250524
+# Date: 20250525
 # Coder: lili, ydgenomics
 # Description: Using SCENIC(R) to plot the results of pySCENIC
 # Input: 
@@ -27,9 +27,9 @@ library(circlize)
 library(optparse)
 
 option_list <- list(
-    make_option(c("-l", "--aucell_loom"), type = "character", default = "/data/work/0.peanut/GRN/peanut/aucell.loom",
+    make_option(c("-l", "--aucell_loom"), type = "character", default = "/data/work/0.peanut/GRN/peanut/H2014/aucell.loom",
                             help = "Path to aucell.loom file", metavar = "character"),
-    make_option(c("-r", "--input_rds"), type = "character", default = "/data/work/0.peanut/GRN/peanut/peanut_dataget_Anno_concat.cg_cgn.rds",
+    make_option(c("-r", "--input_rds"), type = "character", default = "/data/work/0.peanut/convert/H2014_dataget_Anno_rename_threelayers.cg_cgn.rds",
                             help = "Path to input Seurat RDS file", metavar = "character"),
     make_option(c("-k", "--cluster_key"), type = "character", default = "cell",
                             help = "Cluster key in Seurat metadata", metavar = "character"),
@@ -103,8 +103,13 @@ pdf("FeaturePlot_regulons.pdf", height = 8, width = 12)
 FeaturePlot(object=seu,features=gene_list)
 dev.off()
 
-pdf("RidgePlot_regulons.pdf", height = 4, width = 8)
+pdf("RidgePlot_regulons.pdf", height = 4, width = 12)
 RidgePlot(seu,features=gene_list,ncol=2)
+dev.off()
+
+pdf("DotPlot_regulons.pdf", height = 8, width = 12)
+p <- DotPlot(seu, features = gene_list) + RotatedAxis()
+print(p)
 dev.off()
 
 # 热图可视化
