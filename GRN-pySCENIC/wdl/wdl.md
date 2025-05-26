@@ -13,8 +13,7 @@
 ---
 
 ## Quick Start
-  - **Overview**
-    The pipeline consists of four main steps:
+  - **Overview** pipeline consists of four main steps:
     1. *scdatacg*: Prepare input data by generating `.rds` and `.h5ad` files.
     2. *get_loom*: Extract the raw expression matrix from the Seurat object and convert it to `.loom` format.
     3. *pyscenic*: Run the pySCENIC workflow, including GRN inference, motif enrichment (ctx), and regulon activity scoring (AUCell).
@@ -44,7 +43,7 @@
 
 | EntityID | rdsORh5ad | tf_txt | tbl_file | feather_file | rank_threshold | cluster_key | cpu | mem |
 |----------|-----------|--------|----------|--------------|----------------|-------------|-----|-----|
-| yd_test  | /Files/yangdong/pySCENIC/scenic.loom | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/TF_gene_maped.txt | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/H1314_dataget_Anno_rename_threelayers.cg_cgn.rds | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/peanut.regions_vs_motifs.rankings.feather | 20000 | cell | 10 | 50 |
+| yd_test  | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/H1314_dataget_Anno_rename_threelayers.cg_cgn.rds | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/TF_gene_maped.txt | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/TF_motifs_many2many.tbl | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/peanut.regions_vs_motifs.rankings.feather | 20000 | cell | 10 | 50 |
 
 ## Comprehensive information
   - **Plotting Results**
