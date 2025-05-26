@@ -1,7 +1,7 @@
-# Title: create_cistarget_motif_databases.py
+# Title: create_cistarget_motif_databases_yd.py
 # Reference: https://github.com/aertslab/create_cisTarget_databases/blob/master/create_cistarget_motif_databases.py
 # Editor: ydgenomics
-# Date: 20250522
+# Date: 20250526
 # Image: GRN-SCENIC-database--01 python
 #!/usr/bin/env python3
 

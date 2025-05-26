@@ -15,7 +15,7 @@ library(optparse)
 option_list <- list(
   make_option(c("-g", "--gtf"),type = "character",default = "/data/work/0.peanut/GRN/AT/Athaliana_TAIR10.54.gtf",help = "Input gtf file"),
   make_option(c("-f", "--fasta"),type = "character",default = "/data/work/0.peanut/GRN/AT/Athaliana_TAIR10.54.dna.fa",help = "Input FASTA file"),
-  make_option(c("-s", "--species"),type = "character",default = "peanut",help = "Species name, e.g., peanut")
+  make_option(c("-s", "--species"),type = "character",default = "AT",help = "Species name, e.g., peanut")
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -43,8 +43,8 @@ genes <- gtf %>%
 #对于正链（strand == "+"），启动子区域从 start - 3000 到 start - 1。
 #对于负链（strand == "-"），启动子区域从 end + 1 到 end + 3000。
 genes$seqnames <- as.character(genes$seqnames)
-genes$seqnames <- sapply(strsplit(genes$seqnames, split = "\\."), "[", 4)
-head(genes$seqnames, 5)
+#genes$seqnames <- sapply(strsplit(genes$seqnames, split = "\\."), "[", 4)
+#head(genes$seqnames, 5)
 head(genes) # genes$seqnames必须要和names(genome)一致
 
 ########## Rename chromosomes of genome ##########
@@ -53,11 +53,9 @@ genome <- readDNAStringSet(input_fasta)
 genome
 
 # rename seqnames
-#names(genome) <- sapply(strsplit(names(genome),split = " "), "[", 1) #unmatch peanut genome
-names(genome) <- sapply(strsplit(names(genome), split = "\\."), "[", 4)
+names(genome) <- sapply(strsplit(names(genome),split = " "), "[", 1) #unmatch peanut genome
+#names(genome) <- sapply(strsplit(names(genome), split = "\\."), "[", 4)
 head(names(genome), 25)
-
-# check seqnames and names(genome)
 unique(names(genome))
 unique(genes$seqnames)
 
@@ -93,4 +91,4 @@ seq_list
 fasta_filtered <- seq_list[width(seq_list) > 1]
 head(fasta_filtered)
 # output fasta format
-writeXStringSet(fasta_filtered, filepath = paste0(specise, "_3kpromoter.fasta"), format = "fasta")
+writeXStringSet(fasta_filtered, filepath = paste0(species, "_3kpromoter.fasta"), format = "fasta")
