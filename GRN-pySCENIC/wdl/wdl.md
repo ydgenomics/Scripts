@@ -11,3 +11,5 @@ ll /data/work/0.peanut/GRN/AT
 >-rw-r--r-- 1 stereonote 165636      45049 May 26 12:10 Ath_TF_binding_motifs_information.txt
 >-rw-r--r-- 1 stereonote 165636     505496 May 26 12:10 Ath_TF_binding_motifs.meme
 >-rw-r--r-- 1 stereonote 165636      63427 May 26 12:10 Ath_TF_list.txt
+
+```shell

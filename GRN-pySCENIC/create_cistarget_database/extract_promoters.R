@@ -1,5 +1,5 @@
-# Title: extra_promoters.R
-# Date: 20250522
+# Title: extract_promoters.R
+# Date: 20250526
 # Coder: ydgenomics
 # Description:
 # Input: gtf file and fasta file
@@ -13,23 +13,25 @@ library(Biostrings)
 library(optparse)
 
 option_list <- list(
-  make_option(c("-g", "--gtf"),type = "character",default = "/data/work/0.peanut/GRN/output/updated_gtf_file_standard.gtf",help = "Input gtf file"),
-  make_option(c("-f", "--fasta"),type = "character",default = "/data/input/Files/husasa/Ref/arahy.Tifrunner.gnm2.J5K5.genome_main.fa",help = "Input FASTA file")
+  make_option(c("-g", "--gtf"),type = "character",default = "/data/work/0.peanut/GRN/AT/Athaliana_TAIR10.54.gtf",help = "Input gtf file"),
+  make_option(c("-f", "--fasta"),type = "character",default = "/data/work/0.peanut/GRN/AT/Athaliana_TAIR10.54.dna.fa",help = "Input FASTA file"),
+  make_option(c("-s", "--species"),type = "character",default = "peanut",help = "Species name, e.g., peanut")
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
 input_gtf <- opt$gtf
 input_fasta <- opt$fasta
+species <- opt$species
 
 gtf <- import(input_gtf, format = "gtf") %>%
   as.data.frame()
 
 head(gtf)
-#> colnames(gtf)
+colnames(gtf)
 # [1] "seqnames"      "start"         "end"           "width"        
 # [5] "strand"        "source"        "type"          "score"        
 # [9] "phase"         "transcript_id" "gene_id"
-#> unique(gtf$type)
+unique(gtf$type)
 #[1] transcript exon       CDS
 
 # get gene promoters regions
@@ -54,6 +56,10 @@ genome
 #names(genome) <- sapply(strsplit(names(genome),split = " "), "[", 1) #unmatch peanut genome
 names(genome) <- sapply(strsplit(names(genome), split = "\\."), "[", 4)
 head(names(genome), 25)
+
+# check seqnames and names(genome)
+unique(names(genome))
+unique(genes$seqnames)
 
 ########### Cycle extracting sequences of promoter ###########
 # extract promter sequences
@@ -87,4 +93,4 @@ seq_list
 fasta_filtered <- seq_list[width(seq_list) > 1]
 head(fasta_filtered)
 # output fasta format
-writeXStringSet(fasta_filtered, filepath = "3kpromoter.fasta", format = "fasta")
+writeXStringSet(fasta_filtered, filepath = paste0(specise, "_3kpromoter.fasta"), format = "fasta")
