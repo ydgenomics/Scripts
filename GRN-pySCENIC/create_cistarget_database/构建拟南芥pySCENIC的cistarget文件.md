@@ -25,7 +25,10 @@ tree -L 2
     ├── extract_promoters.R
     └── get_AT.file.sh
 ```
-用于下游分析的三个文件：`output/Ath_TF_list.txt`, `output/AT_TF_binding_motifs_information.tbl`, `output/AT.regions_vs_motifs.rankings.feather`
+output里面用于下游分析的三个文件：
+- [Ath_TF_list.txt](https://inner.stomics.tech/notebook/st/task-p20z10200n0035-ysygtkak/files/work/0.peanut/GRN/AT/output/Ath_TF_list.txt?_xsrf=2%7Cea536c0a%7C20f17ff539d654c1b150c81e102a5265%7C1748234517)
+- [AT_TF_binding_motifs_information.tbl](https://inner.stomics.tech/notebook/st/task-p20z10200n0035-ysygtkak/files/work/0.peanut/GRN/AT/output/AT_TF_binding_motifs_information.tbl?_xsrf=2%7Cea536c0a%7C20f17ff539d654c1b150c81e102a5265%7C1748234517)
+- [AT.regions_vs_motifs.rankings.feather](https://inner.stomics.tech/notebook/st/task-p20z10200n0035-ysygtkak/files/work/0.peanut/GRN/AT/output/AT.regions_vs_motifs.rankings.feather?_xsrf=2%7Cea536c0a%7C20f17ff539d654c1b150c81e102a5265%7C1748234517)
 
 ## 1.下载拟南芥的TF列表和对应的蛋白质序列文件,TF_motif对应信息和motif.meme文件
 ![AT_gene_protein](../png/AT_gene_name.png)
