@@ -1,7 +1,16 @@
 # Do GRN-analysie in [pySCENIC](https://github.com/aertslab/pySCENIC.git)
 
-- Gene Regulatory Network (GRN) analysis is a powerful tool that illuminates the intricate web of gene regulation within cells. By unraveling the relationships between transcription factors and their target genes, GRN analysis provides critical insights into the fundamental processes that govern cellular function, development, and response to environmental cues.
-- pySCENIC is a lightning-fast python implementation of the SCENIC pipeline (Single-Cell rEgulatory Network Inference and Clustering) which enables biologists to infer transcription factors, gene regulatory networks and cell types from single-cell RNA-seq data.
+**Brief**
+  - Gene Regulatory Network (GRN) analysis is a powerful tool that illuminates the intricate web of gene regulation within cells. By unraveling the relationships between transcription factors and their target genes, GRN analysis provides critical insights into the fundamental processes that govern cellular function, development, and response to environmental cues.
+  - pySCENIC is a lightning-fast python implementation of the SCENIC pipeline (Single-Cell rEgulatory Network Inference and Clustering) which enables biologists to infer transcription factors, gene regulatory networks and cell types from single-cell RNA-seq data.
+
+**Contents**
+- [Do GRN-analysie in pySCENIC](#do-grn-analysie-in-pyscenic)
+  - [Quick Start](#quick-start)
+  - [Comprehensive information](#comprehensive-information)
+  - [Reference](#reference)
+  - [Editor information](#editor-information)
+---
 
 ## Quick Start
   - **Overview**
