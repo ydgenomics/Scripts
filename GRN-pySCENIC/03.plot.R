@@ -1,12 +1,26 @@
 # Title: 03.plot.R
-# Date: 20250525
+# Date: 20250527
 # Coder: lili, ydgenomics
 # Description: Using SCENIC(R) to plot the results of pySCENIC
 # Input: 
 # Output:
-# Image: GRN-SCENIC-database--01 /opt/conda/bin/R
+# Image: GRN-allSCENIC--01 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw
 
+# check hdf5 of this image and specify!
+Sys.setenv(HDF5_DIR="/usr/local/hdf5-1.8.13")
+hdf5_dir <- Sys.getenv("HDF5_DIR")
+print(hdf5_dir)
+path <- Sys.getenv("PATH")
+print(path)
+ld_library_path <- Sys.getenv("LD_LIBRARY_PATH")
+print(ld_library_path)
+dyn.load("/usr/local/hdf5-1.8.13/lib/libhdf5.so")
+dyn.load("/usr/local/hdf5-1.8.13/lib/libhdf5_hl.so")
+library(hdf5r)
+library(SCopeLoomR)
+
+# library
 library(Seurat)
 library(SCopeLoomR) 
 library(AUCell)
