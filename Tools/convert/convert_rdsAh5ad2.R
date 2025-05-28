@@ -1,5 +1,5 @@
 # Title: convert_rdsAh5ad2.R
-# Date: 20250526
+# Date: 20250528
 # Coder: ydgenomics
 # Description: Using sceasy(R) and schard to convert single-cell data between Seurat and AnnData formats.
 # Image: /software/conda/Anaconda/bin/R
@@ -15,7 +15,7 @@ library(optparse)
 
 option_list <- list(
   make_option(c("-i", "--input_file"),type = "character", 
-  default = "/data/work/convert/0525test/multi_layers/H1314_dataget_Anno_rename_threelayers.hr.rds", 
+  default = "/data/work/0.peanut/annotation/three_layers/H1314_dataget_Anno_rename_threelayers.h5ad", 
   help = "Path to input file for convrting")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -23,9 +23,8 @@ input_path <- opt$input_file
 ext <- tools::file_ext(input_path)
 print(paste0("input file extension is : ", ext))
 
-# Using reticulate to call Python functions
+# Using reticulate to call Python
 use_python("/opt/conda/bin/python")
-source_python("/script/deal_layers_ydgenomics.py")
 
 if (ext == "rds") {
     message(paste0("from seurat to anndata, input: ", input_path))
@@ -52,8 +51,10 @@ if (ext == "rds") {
     file_name <- basename(input_path)
     output_path <- sub("\\.rds$", ".rh.h5ad", file_name)
     file_name_without_ext <- sub("\\.rds$", "", file_name)
+    getwdpath <- getwd()
     for (i in assays) {
         h5ad_path <- sprintf("%s_%s_rh.h5ad", file_name_without_ext, i)
+        h5ad_path <- paste0(getwdpath, "/", h5ad_path)
         sceasy::convertFormat(
             temp0,
             from = "seurat",
@@ -65,25 +66,18 @@ if (ext == "rds") {
         cat("Converted rds to h5ad. Output: ", h5ad_path, "\n")
         h5ad_paths <- c(h5ad_paths, h5ad_path)
     }
-    py$get_multi_layers_h5ad(h5ad_paths, assays, output_path)
-    # 遍历每个文件路径并删除文件
-    for (file_path in h5ad_paths) {
-      if (file.exists(file_path)) {
-        file.remove(file_path)
-        cat("Deleted file:", file_path, "\n")
-      } else {
-        cat("File does not exist, could not delete:", file_path, "\n")
-      }
-    }
+    writeLines(paste(h5ad_paths, collapse = ","), "saved_paths.txt")
+    writeLines(paste(assays, collapse = ","), "saved_layers.txt")
 } else if (ext == "h5ad") {
     file_name <- basename(input_path)
     output_path <- sub("\\.h5ad$", ".hr.rds", file_name)
     message(paste0("from anndata to seurat, input: ", input_path))
     source("/script/convert_rdsAh5ad.R")
     # 调用 Python 函数
-    layers_list <- py$get_single_layer_h5ad(input_path)
-    saved_layers <- layers_list[[1]]
-    saved_paths <- layers_list[[2]]
+    saved_layers <- unlist(strsplit(readLines("saved_layers.txt"), ","))
+    print(saved_layers)
+    saved_paths <- unlist(strsplit(readLines("saved_paths.txt"), ","))
+    print(saved_paths)
     rds_paths <- c()
     for (path in saved_paths) {
         cat("Processing file:", path, "\n")
@@ -101,6 +95,7 @@ if (ext == "rds") {
         cat(sprintf("Layer: %s, Added to Seurat object\n", saved_layer))
     }
     print(seu)
+    DefaultAssay(seu) <- "RNA"
     saveRDS(seu, output_path)
     # Delete the temporary files
     files_to_delete <- c(saved_paths, rds_paths)
