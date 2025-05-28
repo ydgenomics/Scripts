@@ -10,27 +10,27 @@ option_list <- list(
     make_option(
         c("--input_marker_csv"), type = "character",
         default = "/data/work/multi_anno/rice_leaf_marker.csv",
-        help = "Path to marker csv file [default: %default]"
+        help = "Path to marker csv file"
     ),
     make_option(
         c("--tissue"), type = "character",
         default = "leaf",
-        help = "Tissue type [default: %default]"
+        help = "Tissue type"
     ),
     make_option(
         c("--input_query_rds"), type = "character",
         default = "/data/users/yangdong/yangdong_f6fd22e6e3a247ceaae97934225564ba/online/result/scPlant/test/NipLSD1_obj_after_choir.rds",
-        help = "Path to input Seurat RDS file [default: %default]"
+        help = "Path to input Seurat RDS file"
     ),
     make_option(
         c("--cluster_key"), type = "character",
         default = "CHOIR_clusters_0.05",
-        help = "Cluster key in Seurat object [default: %default]"
+        help = "Cluster key in Seurat object"
     ),
     make_option(
         c("--umap_name"), type = "character",
         default = "CHOIR_P0_reduction_UMAP",
-        help = "UMAP reduction name [default: %default]"
+        help = "UMAP reduction name"
     )
 )
 

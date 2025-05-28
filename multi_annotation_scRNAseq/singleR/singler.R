@@ -12,19 +12,19 @@ option_list <- list(
         c("-r", "--input_ref_rds"),
         type = "character",
         default = "data/immune_ref.rds",
-        help = "Path to the reference dataset [default: %default]"
+        help = "Path to the reference dataset"
     ),
     make_option(
         c("-q", "--input_query_rds"),
         type = "character",
         default = "data/immune_query.rds",
-        help = "Path to the query dataset [default: %default]"
+        help = "Path to the query dataset"
     ),
     make_option(
         c("-k", "--ref_cluster_key"),
         type = "character",
         default = "Celltype",
-        help = "Metadata key for clustering in the reference dataset [default: %default]"
+        help = "Metadata key for clustering in the reference dataset"
     )
 )
 
