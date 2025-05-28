@@ -10,3 +10,10 @@
 第三种策略：应用机器学习方法
 第四种策略：使用算法方法或专用软件
 第五种策略：结合领域知识进行手动注释
+
+
+测试
+![scPlantDB下载拟南芥根的1w细胞数据集做测试](png/download_testdata.png)
+
+[单细胞全自动注释篇(四)——ScType](https://mp.weixin.qq.com/s/hKBiZCHwDdoJOk0YChbtMA)
+[使用singleR基于自建数据库来自动化注释单细胞转录组亚群](https://mp.weixin.qq.com/s/GpOxe4WLIrBOjbdH5gfyOQ)
