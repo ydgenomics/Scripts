@@ -1,4 +1,10 @@
-
+# Title: singler.R
+# Date: 20250528
+# Coder: ydgenomics
+# Description: Using SingleR to annotate single-cell RNA-seq data based on a custom reference dataset.
+# Input: reference .rds has RNA, query .rds files, and a metadata key for clustering in the reference dataset
+# Output: `_refsingleR.Rdata` and `_singleR.rds files`
+# Image: Seurat-R--04 /software/miniconda/envs/Seurat/bin/R
 # Reference: [使用singleR基于自建数据库来自动化注释单细胞转录组亚群](https://mp.weixin.qq.com/s/GpOxe4WLIrBOjbdH5gfyOQ)
 
 library(Seurat)
@@ -9,31 +15,16 @@ library(optparse)
 
 option_list <- list(
     make_option(
-        c("-r", "--input_ref_rds"),
-        type = "character",
-        default = "data/immune_ref.rds",
-        help = "Path to the reference dataset"
-    ),
+        c("-r", "--input_ref_rds"), type = "character", default = "data/immune_ref.rds", help = "Path to the reference dataset"),
     make_option(
-        c("-q", "--input_query_rds"),
-        type = "character",
-        default = "data/immune_query.rds",
-        help = "Path to the query dataset"
-    ),
+        c("-q", "--input_query_rds"), type = "character", default = "data/immune_query.rds", help = "Path to the query dataset"),
     make_option(
-        c("-k", "--ref_cluster_key"),
-        type = "character",
-        default = "Celltype",
-        help = "Metadata key for clustering in the reference dataset"
-    )
+        c("-k", "--ref_cluster_key"), type = "character", default = "Celltype",help = "Metadata key for clustering in the reference dataset")
 )
-
 opt <- parse_args(OptionParser(option_list = option_list))
 input_ref_rds <- opt$input_ref_rds
 input_query_rds <- opt$input_query_rds
 ref_cluster_key <- opt$ref_cluster_key
-
-
 
 # Step 1: Load the reference dataset and create a singleR reference Rdata object
 create_ref_singler <- function(input_ref_rds, ref_cluster_key) {

@@ -1,6 +1,11 @@
-# /software/miniconda/envs/Seurat/bin/R
-# [单细胞全自动注释篇(四)——ScType](https://mp.weixin.qq.com/s/hKBiZCHwDdoJOk0YChbtMA)
-
+# Title: sctype.R
+# Date: 20250528
+# Coder: ydgenomics
+# Description: Using sctype to annotate single-cell RNA-seq data based on marker gene csv.
+# Input: marker_csv file, query .rds file, cluster key in query .rds object, and UMAP reduction name
+# Output: "_sctype.rds" and "_sctype_umap.pdf" files
+# Image: Seurat-R--04 /software/miniconda/envs/Seurat/bin/R
+# Reference: [单细胞全自动注释篇(四)——ScType](https://mp.weixin.qq.com/s/hKBiZCHwDdoJOk0YChbtMA)
 
 lapply(c("ggraph","igraph","tidyverse", "data.tree"), library, character.only = T)
 lapply(c("dplyr","Seurat","HGNChelper", "optparse"), library, character.only = T)
@@ -8,32 +13,16 @@ library(optparse)
 
 option_list <- list(
     make_option(
-        c("--input_marker_csv"), type = "character",
-        default = "/data/work/multi_anno/rice_leaf_marker.csv",
-        help = "Path to marker csv file"
-    ),
+        c("--input_marker_csv"), type = "character", default = "/data/work/multi_anno/rice_leaf_marker.csv", help = "Path to marker csv file"),
     make_option(
-        c("--tissue"), type = "character",
-        default = "leaf",
-        help = "Tissue type"
-    ),
+        c("--tissue"), type = "character", default = "leaf", help = "Tissue type"),
     make_option(
-        c("--input_query_rds"), type = "character",
-        default = "/data/users/yangdong/yangdong_f6fd22e6e3a247ceaae97934225564ba/online/result/scPlant/test/NipLSD1_obj_after_choir.rds",
-        help = "Path to input Seurat RDS file"
-    ),
+        c("--input_query_rds"), type = "character", default = "/data/users/yangdong/yangdong_f6fd22e6e3a247ceaae97934225564ba/online/result/scPlant/test/NipLSD1_obj_after_choir.rds", help = "Path to input Seurat RDS file"),
     make_option(
-        c("--cluster_key"), type = "character",
-        default = "CHOIR_clusters_0.05",
-        help = "Cluster key in Seurat object"
-    ),
+        c("--cluster_key"), type = "character", default = "seurat_clusters", help = "Cluster key in Seurat object"), # e.g. `CHOIR_clusters_0.05`
     make_option(
-        c("--umap_name"), type = "character",
-        default = "CHOIR_P0_reduction_UMAP",
-        help = "UMAP reduction name"
-    )
+        c("--umap_name"), type = "character", default = "umap", help = "UMAP reduction name") # `CHOIR_P0_reduction_UMAP`
 )
-
 opt <- parse_args(OptionParser(option_list = option_list))
 input_marker_csv <- opt$input_marker_csv
 tissue <- opt$tissue

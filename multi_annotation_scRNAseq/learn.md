@@ -20,3 +20,6 @@ sctype：csv格式的marker基因列表。关注查询数据集的scale.data的�
 
 [使用singleR基于自建数据库来自动化注释单细胞转录组亚群](https://mp.weixin.qq.com/s/GpOxe4WLIrBOjbdH5gfyOQ)
 singleR: 拿到参考数据集的RNA@counts矩阵后，计算每种细胞的平均表达量后做log处理。而查询数据集的data矩阵按每个细胞去拟合参考数据集的细胞类型表达模式，所有两个数据集共同所有的基因数很重要
+我有一个疑问,构建reference对counts做的logcounts处理和查询数据做了Normalization的data，在计算方式上不一样，这样会影响singleR注释。假设不考虑两次数据实验误差。我想到了，如果singleR设计的时候查看的是不同基因的波动而非专注于某个值的话，就不会在意这个问题
+logcounts()：对原始计数数据进行对数转换，减少数据的偏态分布。输出对数转换后的矩阵，值的范围通常在0到10之间。
+Normalization()：对原始计数数据进行归一化处理，调整每个细胞的总读数。输出归一化后的矩阵，值的范围通常在0到1之间。
