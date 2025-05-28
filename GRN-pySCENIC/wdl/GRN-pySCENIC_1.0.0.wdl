@@ -1,4 +1,3 @@
-
 version 1.0
 #You need to declaration version information(version 1.0)
 workflow grn_pyscenic{
@@ -7,26 +6,30 @@ workflow grn_pyscenic{
     File tf_txt
     File tbl_file
     File feather_file
-    Int rank_threshold=20000
+    Int rank_threshold=5000
     String cluster_key="cell"
-    Int cpu=10
-    Int mem=50
+    Int pyscenic_cpu=10
+    Int pyscenic_mem=50
+    Int mem_scdatacg=10
+    Int mem_get_loom=30
+    Int mem_plot=20
+    String url_scdatacg="stereonote_hpc/yangdong_fdef4b449e2641c8b0110b33d0ae1bfe_private:latest"
+    String url_allscenic="stereonote_hpc/yangdong_4a8497ef4b8d46eea0a6c572c8389923_private:latest"
+    String url_pyscenic="stereonote_hpc_external/yangdong_168e88e158bc4b66bda4b279ce72d6b3_private:latest"
   }
-  String scdatacg_url="stereonote_hpc/yangdong_7cfe3e163ce6494ebacca860d323ace7_private:latest"
-  String pyscenic_url="stereonote_hpc/yangdong_4c7d8cb9b2104ff095a4138d29351ca3_private:latest"
   call scdatacg{
     input:
     scdata=rdsORh5ad,
     cpu=2,
-    mem=10,
-    url=scdatacg_url,
+    mem=mem_scdatacg,
+    url=url_scdatacg,
   }
   call get_loom{
     input:
     rds=scdatacg.rds,
     cpu=2,
-    mem=30,
-    url=pyscenic_url,
+    mem=mem_get_loom,
+    url=url_pyscenic,
   }
   call pyscenic{
     input:
@@ -36,9 +39,9 @@ workflow grn_pyscenic{
     tbl_file=tbl_file,
     rank_threshold=rank_threshold,
     auc_threshold=0.05,
-    cpu=cpu,
-    mem=mem,
-    url="stereonote_hpc_external/yangdong_168e88e158bc4b66bda4b279ce72d6b3_private:latest",
+    cpu=pyscenic_cpu,
+    mem=pyscenic_mem,
+    url=url_pyscenic,
   }
   call plot{
     input:
@@ -48,8 +51,8 @@ workflow grn_pyscenic{
     aucell_csv=pyscenic.aucell_csv,
     cluster_key=cluster_key,
     cpu=2,
-    mem=20,
-    url=pyscenic_url,
+    mem=mem_plot,
+    url=url_allscenic,
   }
   output{
     File pyscenic_plot=plot.pyscenic_plot
@@ -72,18 +75,18 @@ task scdatacg{
     echo "File extension: $file_extension"
     if [[ "$file_extension" == "rds" ]]; then
         echo "Converting rds to h5ad..."
-        /software/conda/Anaconda/bin/Rscript /script/convert_rdsAh5ad2.R \
-        --input_file $input_file
+        /software/conda/Anaconda/bin/Rscript /script/convert_rdsAh5ad2.R --input_file $input_file
+        python /script/deal_layers_ydgenomics.py --input_path $input_file --sctype $ext
         echo "Copying rds file..."
         cp "$input_file" ./
     elif [[ "$file_extension" == "h5ad" ]]; then
         echo "Converting h5ad to rds..."
-        /software/conda/Anaconda/bin/Rscript /script/convert_rdsAh5ad2.R \
-        --input_file $input_file
+        python /script/deal_layers_ydgenomics.py --input_path $input_file --sctype $ext
+        /software/script/Rscript /data/work/convert/0528test/convert_rdsAh5ad2.R --input_file $input_file 
         echo "Copying h5ad file..."
         cp "$input_file" ./
     else
-        echo "Unsupported file type: $file_extension"
+        echo "Error: Unsupported file extension '$ext'. Only 'rds' and 'h5ad' are supported."
     fi
   >>>
   runtime {
@@ -107,12 +110,10 @@ task get_loom{
   command {
     #get_csv
     Rscript /script/grn_pyscenic/01.csv.R \
-    --input_rds /data/work/0.peanut/convert/H2014_dataget_Anno_rename_threelayers.cg_cgn.rds \
-    --output_csv scenic.data.csv # Image: GRN-SCENIC-R--03 /opt/conda/bin/R
+    --input_rds ~{rds} --output_csv scenic.data.csv # Image: GRN-SCENIC-R--03 /opt/conda/bin/R
     #csv2loom
     python /script/grn_pyscenic/02.csv2loom.py \
-    --input_csv scenic.data.csv \
-    --output_loom scenic.loom # Image:GRN-SCENIC-R--03 /opt/conda/bin/python
+    --input_csv scenic.data.csv --output_loom scenic.loom # Image:GRN-SCENIC-R--03 /opt/conda/bin/python
   }
   runtime {
     docker_url: "~{url}"
