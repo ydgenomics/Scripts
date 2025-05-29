@@ -13,18 +13,18 @@ library(scater)
 library(SingleR)
 library(optparse)
 
-option_list <- list(
-    make_option(
-        c("-r", "--input_ref_rds"), type = "character", default = "data/immune_ref.rds", help = "Path to the reference dataset"),
-    make_option(
-        c("-q", "--input_query_rds"), type = "character", default = "data/immune_query.rds", help = "Path to the query dataset"),
-    make_option(
-        c("-k", "--ref_cluster_key"), type = "character", default = "Celltype",help = "Metadata key for clustering in the reference dataset")
-)
-opt <- parse_args(OptionParser(option_list = option_list))
-input_ref_rds <- opt$input_ref_rds
-input_query_rds <- opt$input_query_rds
-ref_cluster_key <- opt$ref_cluster_key
+# option_list <- list(
+#     make_option(
+#         c("-r", "--input_ref_rds"), type = "character", default = "data/immune_ref.rds", help = "Path to the reference dataset"),
+#     make_option(
+#         c("-q", "--input_query_rds"), type = "character", default = "data/immune_query.rds", help = "Path to the query dataset"),
+#     make_option(
+#         c("-k", "--ref_cluster_key"), type = "character", default = "Celltype",help = "Metadata key for clustering in the reference dataset")
+# )
+# opt <- parse_args(OptionParser(option_list = option_list))
+# input_ref_rds <- opt$input_ref_rds
+# input_query_rds <- opt$input_query_rds
+# ref_cluster_key <- opt$ref_cluster_key
 
 # Step 1: Load the reference dataset and create a singleR reference Rdata object
 create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
@@ -44,12 +44,15 @@ create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
     return(ref_sce)
 }
 
-ref_sce <- create_ref_singler(input_ref_rds, ref_cluster_key)
 
 # Step 2: Load the query dataset and run singleR for annotation
-run_singler <- function(input_query_rds, ref_sce) {
-    query_seu <- readRDS(input_query_rds)
-    DefaultAssay(query_seu) <- "RNA"
+run_singler <- function(input_query_rds, input_ref_rdata, input_ref_rds, ref_cluster_key) {
+    if (!is.null(input_ref_rdata) && file.exists(input_ref_rdata)) {
+        load(input_ref_rdata)
+    } else {
+        ref_sce <- create_ref_singler(input_ref_rds, ref_cluster_key)
+    }
+    query_seu <- readRDS(input_query_rds); DefaultAssay(query_seu) <- "RNA"
     query_seu <- NormalizeData(query_seu, normalization.method = "LogNormalize", scale.factor = 10000)
     query_data <- GetAssayData(query_seu, slot = "data")
     common_genes <- intersect(rownames(query_data), rownames(ref_sce))
@@ -65,7 +68,8 @@ run_singler <- function(input_query_rds, ref_sce) {
     )
     query_seu$singleR <- pred$labels
     output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_singleR.rds")
-    saveRDS(query_seu, file = output_query_rds)
+    #saveRDS(query_seu, file = output_query_rds)
+    return(query_seu)
 }
 
-run_singler(input_query_rds, ref_sce)
+# run_singler(input_query_rds, ref_sce)
