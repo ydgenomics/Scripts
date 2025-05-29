@@ -14,7 +14,32 @@
 
 测试
 ![scPlantDB下载拟南芥根的1w细胞数据集做测试](png/download_testdata.png)
-
+```R
+# 无法顺利构建对象，那我就先转h5ad来处理这个问题
+seu <- readRDS("/data/work/multi_anno/AT_root_SRP273996.rds")
+seu
+# An object of class Seurat 
+# 79128 features across 10431 samples within 3 assays 
+# Active assay: integrated (2000 features, 2000 variable features)
+#  2 layers present: data, scale.data
+#  2 other assays present: RNA, SCT
+#  2 dimensional reductions calculated: pca, umap
+DefaultAssay(seu) <- "RNA"; seu
+# An object of class Seurat 
+# 79128 features across 10431 samples within 3 assays 
+# Active assay: RNA (53678 features, 0 variable features)
+#  2 layers present: counts, data
+#  2 other assays present: SCT, integrated
+#  2 dimensional reductions calculated: pca, umap
+rna_data <- GetAssayData(seu, assay = "RNA", layer = "counts")
+seu2 <- CreateAssayObject(counts = rna_data, name = "RNA")
+seu2 <- AddMetaData(seu2, metadata = seu@RNA@meta.data); seu2
+```
+```R
+sceasy::convertFormat(temp0,from = "seurat",to = "anndata",assay = "RNA",main_layer = "counts",outFile = "/data/work/multi_anno/AT_root_SRP273996_RNA_rh.h5ad")
+sceasy::convertFormat(temp0,from = "seurat",to = "anndata",assay = "SCT",main_layer = "counts",outFile = "/data/work/multi_anno/AT_root_SRP273996_SCT_rh.h5ad")
+sceasy::convertFormat(temp0,from = "seurat",to = "anndata",assay = "integrated",main_layer = "counts",outFile = "/data/work/multi_anno/AT_root_SRP273996_integrated_rh.h5ad")
+```
 [单细胞全自动注释篇(四)——ScType](https://mp.weixin.qq.com/s/hKBiZCHwDdoJOk0YChbtMA)
 sctype：csv格式的marker基因列表。关注查询数据集的scale.data的矩阵，按查询分群来做注释，一个群可能会被分到多个细胞类型，取最优，同时如果太差会被认定为unknown。csv的marker基因要尽可能多的存在于查询数据的基因中
 
