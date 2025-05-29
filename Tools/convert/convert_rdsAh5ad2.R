@@ -88,7 +88,7 @@ if (ext == "rds") {
     file_name <- basename(input_path)
     output_path <- sub("\\.h5ad$", ".hr.rds", file_name)
     message(paste0("from anndata to seurat, input: ", input_path))
-    source("/data/work/multi_anno/AT_root/convert_rdsAh5ad.R")
+    source("/script/convert_rdsAh5ad.R")
     # 调用 Python 函数
     saved_layers <- unlist(strsplit(readLines("saved_layers.txt"), ","))
     if ("counts" %in% saved_layers) {saved_layers[saved_layers == "counts"] <- "RNA"}; print(saved_layers)
