@@ -37,9 +37,9 @@
     - If your species is not a model organism and lacks sufficient information in [PlantTFDB](https://planttfdb.gao-lab.org/), such as *Arachis hypogaea* (peanut), you can map your species to a model species (e.g., *Arabidopsis thaliana*). For guidance, refer to [构建非模式物种花生pySCENIC的cistarget文件](https://github.com/ydgenomics/Scripts/blob/main/GRN-pySCENIC/create_cistarget_database/%E6%9E%84%E5%BB%BA%E9%9D%9E%E6%A8%A1%E5%BC%8F%E7%89%A9%E7%A7%8D%E8%8A%B1%E7%94%9FpySCENIC%E7%9A%84cistarget%E6%96%87%E4%BB%B6.md).
   - **Submit task with table**
 
-| EntityID | rdsORh5ad | tf_txt | tbl_file | feather_file | rank_threshold | cluster_key | pyscenic_cpu | pyscenic_mem |
-|----------|------------|--------|----------|--------------|----------------|-------------|--------------|--------------|
-| yd_test | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/H1314_dataget_Anno_rename_threelayers.cg_cgn.rds | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/TF_gene_maped.txt | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/TF_motifs_many2many.tbl | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/peanut.regions_vs_motifs.rankings.feather | 20000 | cell | 10 | 50 |
+| EntityID | rds_h5ad                                                                 | layers | tf_txt                                                                 | tbl_file                                                                 | feather_file                                                                 | rank_threshold | cluster_key | pyscenic_cpu | pyscenic_mem |
+|----------|---------------------------------------------------------------------------|--------|-------------------------------------------------------------------------|---------------------------------------------------------------------------|-----------------------------------------------------------------------------|----------------|-------------|--------------|--------------|
+| yd_test  | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/H1314_dataget_Anno_rename_threelayers.cg_cgn.rds | RNA    | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/TF_gene_maped.txt       | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/TF_motifs_many2many.tbl | /Files/yangdong/pySCENIC/NB20250525080807qmkcrf01/peanut.regions_vs_motifs.rankings.feather | 20000          | cell        | 10           | 50           |
 
 ## Comprehensive information
   - **Plotting Results**

@@ -2,25 +2,27 @@ version 1.0
 #You need to declaration version information(version 1.0)
 workflow grn_pyscenic{
   input{
-    File rdsORh5ad
+    File rds_h5ad
+    String layers="RNA"
     File tf_txt
     File tbl_file
     File feather_file
     Int rank_threshold=5000
-    String cluster_key="cell"
+    String cluster_key
     Int pyscenic_cpu=10
     Int pyscenic_mem=50
     Int mem_scdatacg=10
     Int mem_get_loom=30
     Int mem_plot=20
-    String url_scdatacg="stereonote_hpc/yangdong_fdef4b449e2641c8b0110b33d0ae1bfe_private:latest"
+    String url_scdatacg="stereonote_hpc/yangdong_6c3a7cd28b5d4861ad87065a5644f7ca_private:latest"
     String url_allscenic="stereonote_hpc/yangdong_4a8497ef4b8d46eea0a6c572c8389923_private:latest"
     String url_pyscenic="stereonote_hpc_external/yangdong_168e88e158bc4b66bda4b279ce72d6b3_private:latest"
   }
   call scdatacg{
     input:
-    scdata=rdsORh5ad,
-    cpu=2,
+    rds_h5ad=rds_h5ad,
+    layers=layers,
+    cpu=1,
     mem=mem_scdatacg,
     url=url_scdatacg,
   }
@@ -61,28 +63,30 @@ workflow grn_pyscenic{
     File ctx=pyscenic.ctx
   }
 }
+
 task scdatacg{
   input {
-    File scdata
+    File rds_h5ad
+    String layers
     Int cpu
     Int mem
     String url
   }
   command <<<
     #!/bin/bash
-    input_file="~{scdata}"
-    file_extension="${input_file##*.}"
-    echo "File extension: $file_extension"
-    if [[ "$file_extension" == "rds" ]]; then
+    input_file=~{rds_h5ad}
+    ext="${input_file##*.}"
+    echo "input file extension is: $ext"
+    if [ "$ext" == "rds" ]; then
         echo "Converting rds to h5ad..."
-        /software/conda/Anaconda/bin/Rscript /script/convert_rdsAh5ad2.R --input_file $input_file
+        /software/conda/Anaconda/bin/Rscript /script/convert_rdsAh5ad2.R --input_file $input_file --layers ~{layers}
         python /script/deal_layers_ydgenomics.py --input_path $input_file --sctype $ext
         echo "Copying rds file..."
         cp "$input_file" ./
-    elif [[ "$file_extension" == "h5ad" ]]; then
+    elif [ "$ext" == "h5ad" ]; then
         echo "Converting h5ad to rds..."
         python /script/deal_layers_ydgenomics.py --input_path $input_file --sctype $ext
-        /software/script/Rscript /data/work/convert/0528test/convert_rdsAh5ad2.R --input_file $input_file 
+        /software/conda/Anaconda/bin/Rscript /script/convert_rdsAh5ad2.R --input_file $input_file --layers ~{layers}
         echo "Copying h5ad file..."
         cp "$input_file" ./
     else
