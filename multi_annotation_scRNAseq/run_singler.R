@@ -27,8 +27,9 @@ library(optparse)
 # ref_cluster_key <- opt$ref_cluster_key
 
 # Step 1: Load the reference dataset and create a singleR reference Rdata object
-create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
-    ref_seu <- readRDS(input_ref_rds)
+create_ref_singler <- function(ref_seu, ref_cluster_key) {
+    #ref_seu <- readRDS(input_ref_rds)
+    print(ref_seu); print(colnames(ref_seu))
     Idents(ref_seu) <- ref_seu@meta.data[[ref_cluster_key]]
     av <- AggregateExpression(
         ref_seu, group.by = ref_cluster_key, assays = "RNA"
@@ -46,13 +47,9 @@ create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
 
 
 # Step 2: Load the query dataset and run singleR for annotation
-run_singler <- function(input_query_rds, input_ref_rdata, input_ref_rds, ref_cluster_key) {
-    if (!is.null(input_ref_rdata) && file.exists(input_ref_rdata)) {
-        load(input_ref_rdata)
-    } else {
-        ref_sce <- create_ref_singler(input_ref_rds, ref_cluster_key)
-    }
-    query_seu <- readRDS(input_query_rds); DefaultAssay(query_seu) <- "RNA"
+run_singler <- function(query_seu, ref_sce) {
+    #query_seu <- readRDS(input_query_rds); DefaultAssay(query_seu) <- "RNA"
+    DefaultAssay(query_seu) <- "RNA"
     query_seu <- NormalizeData(query_seu, normalization.method = "LogNormalize", scale.factor = 10000)
     query_data <- GetAssayData(query_seu, slot = "data")
     common_genes <- intersect(rownames(query_data), rownames(ref_sce))
@@ -67,7 +64,7 @@ run_singler <- function(input_query_rds, input_ref_rdata, input_ref_rds, ref_clu
         test = query_data, ref = ref_sce, labels = ref_sce$Type
     )
     query_seu$singleR <- pred$labels
-    output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_singleR.rds")
+    #output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_singleR.rds")
     #saveRDS(query_seu, file = output_query_rds)
     return(query_seu)
 }

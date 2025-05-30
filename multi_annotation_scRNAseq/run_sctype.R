@@ -102,16 +102,16 @@ sctype_score <- function(scRNAseqData, scaled = !0, gs, gs2 = NULL, gene_names_t
  
   es.max
 }
-
-run_sctype <- function(input_query_seu, cluster_key, input_marker_csv, tissue, umap_name="umap", plot_width=14, plot_height=10){
+#' Run ScType for cell type annotation
+run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="umap", plot_width=14, plot_height=10){
   # Input
   gs_list <- gene_sets_prepare(input_marker_csv, tissue); str(gs_list)
 
   #seu <- readRDS(input_query_rds); DefaultAssay(seu) <- "RNA" # set default assay to RNA
-  seu <- seu; DefaultAssay(seu) <- "RNA"
-  message("Running FindVariableFeatures, NormalizeData and ScaleData.")
-  seu <- FindVariableFeatures(seu)
+  DefaultAssay(seu) <- "RNA"; print(seu)
+  message("Running NormalizeData, FindVariableFeatures, and ScaleData.")
   seu <- NormalizeData(seu, normalization.method = "LogNormalize", scale.factor = 10000)
+  seu <- FindVariableFeatures(seu)
   seu <- ScaleData(seu, features = rownames(seu), vars.to.regress = NULL, do.scale = TRUE, do.center = TRUE)
 
   # check Seurat object version (scRNA-seq matrix extracted differently in Seurat v4/v5)
