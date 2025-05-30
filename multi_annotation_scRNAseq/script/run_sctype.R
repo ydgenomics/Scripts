@@ -112,7 +112,7 @@ run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="um
   message("Running NormalizeData, FindVariableFeatures, and ScaleData.")
   seu <- NormalizeData(seu, normalization.method = "LogNormalize", scale.factor = 10000)
   seu <- FindVariableFeatures(seu)
-  seu <- ScaleData(seu, features = rownames(seu), vars.to.regress = NULL, do.scale = TRUE, do.center = TRUE)
+  seu <- ScaleData(seu)
 
   # check Seurat object version (scRNA-seq matrix extracted differently in Seurat v4/v5)
   seurat_package_v5 <- isFALSE('counts' %in% names(attributes(seu[["RNA"]])));

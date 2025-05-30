@@ -27,9 +27,8 @@ library(optparse)
 # ref_cluster_key <- opt$ref_cluster_key
 
 # Step 1: Load the reference dataset and create a singleR reference Rdata object
-create_ref_singler <- function(ref_seu, ref_cluster_key) {
-    #ref_seu <- readRDS(input_ref_rds)
-    print(ref_seu); print(colnames(ref_seu))
+create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
+    ref_seu <- readRDS(input_ref_rds);print(ref_seu); print(colnames(ref_seu))
     Idents(ref_seu) <- ref_seu@meta.data[[ref_cluster_key]]
     av <- AggregateExpression(
         ref_seu, group.by = ref_cluster_key, assays = "RNA"
