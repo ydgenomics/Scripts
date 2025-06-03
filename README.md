@@ -24,4 +24,4 @@
 
   ### [**GRN-pySCENIC**](GRN-pySCENIC): *Construct gene regulatory networks with pySCENIC.*
 
-  ### [**cell_similarity**](cell_similarity): *Calculate and visualize similarity across multiple groups using Jaccard and MetaNeighbor.*
+  ### [**cell_similarity**](cell_similarity): *Calculate and visualize similarity across multiple groups using Jaccard, hclust, and MetaNeighbor.*
