@@ -2,7 +2,7 @@
 *First important work is sum all workflow and get a gold standard!*
 
 ## Undering building……
-## [**plant_database**](): *Sum plant's database and assess high quality and using databses.*
+### [**plant_database**](): *Sum plant's database and assess high quality and using databses.*
   - Reference:
     - [*小杜的生信笔记*·植物学中常用的数据库 | 通用数据库](https://mp.weixin.qq.com/s/eWRKpZbVN8iY1qmu5mue2g)
     - [*基迪奥生物*·研究植物转录调控，你不能不知道的数据库](https://mp.weixin.qq.com/s/yee680uNUmQQUOXISr479A) [PlantTFDB](http://planttfdb.cbi.pku.edu.cn/)
@@ -12,6 +12,40 @@
       - [PlantCellMarker](https://www.tobaccodb.org/pcmdb/homePage) [*生信益站*·单细胞专题25| 植物细胞类型注释数据库: PlantCellMarker](https://mp.weixin.qq.com/s/Y1AyXa8jkQBV4yWo_HihTw)
       - [PsctH](http://jinlab.hzau.edu.cn/PsctH/) [*植物科学最前言*·PBJ | 华中农大开发出植物单细胞转录组综合数据库，提供综合全面的单细胞Marker基因资源和单细胞研究的workflow](https://mp.weixin.qq.com/s/5dMORWQeX4eTFgH0e1YkTg)
       - [PlantscRNAdb](http://ibi.zju.edu.cn/plantscrnadb/index.php)
+
+### [test_data](): *Test data of model organism for check all analysis pipline*
+  [The data of *Arabidopsis thaliana*(True leaf)](test_data/ERP132245.h5ad) downloaded from scPlantdb, having 2018 cells and two conditions including mild drought and normal.
+
+### [SCPiplines](test_data/SCPiplines/): *Pack some codes as functions to high efficiently use*
+  Although SCP had do this, but it could do personal works. If I want do some new works, it couldn't adapt to my need, so i decided do myself single cell piplines.
+  - First question is building a image of enough do most works
+```shell
+# R of environment: SCr
+conda create -n SCr r=4.4 -y
+conda activate SCr
+conda install conda-forge::r-biocmanager -y
+conda install conda-forge::r-devtools -y
+conda install conda-forge::r-remotes
+conda install conda-forge::r-seurat -y
+Rscript -e 'remotes::install_github("corceslab/CHOIR", ref="main", repos = BiocManager::repositories(), upgrade = "never")'
+#Rscript -e 'remotes::install_github("corceslab/CHOIR", ref="dev", repos = BiocManager::repositories(), upgrade = "never")'
+conda install conda-forge::r-soupx -y
+conda install bioconda::bioconductor-decontx -y
+conda install conda-forge::r-hgnchelper -y
+conda install conda-forge::r-openxlsx -y
+conda install bioconda::bioconductor-singler -y
+conda install conda-forge::r-harmony -y
+conda install bioconda::r-presto -y
+conda install bioconda::bioconductor-clusterprofiler -y
+conda install bioconda::bioconductor-aucell -y
+Rscript -e 'install.packages("GeneNMF")'
+Rscript -e 'install_github("Jasonxu0109/PlantPhoneDB")'
+Rscript -e 'BiocManager::install(c("WGCNA", "UCell", "GenomicRanges", "GeneOverlap"))'
+
+# python of environment: SCpy
+
+
+```
 
 ## Built
   ### [**dataget_scRNAseq**](dataget_scRNAseq): *Perform quality control of single-cell RNA-seq data using SoupX and Scrublet.*
