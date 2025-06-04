@@ -21,18 +21,21 @@
   - First question is building a image of enough do most works
 ```shell
 # R of environment: SCr
-conda create -n SCr r=4.4 -y
+conda create -n CHOIR r-base=4.2 -y
+conda install icu=58.2
+#devtools::install_github("pengminshi/mrtree")
+
+conda create -n SCr r-base=4.3 -y
 conda activate SCr
 conda install conda-forge::r-biocmanager -y
 conda install conda-forge::r-devtools -y
 conda install conda-forge::r-remotes
 conda install conda-forge::r-seurat -y
-Rscript -e 'remotes::install_github("corceslab/CHOIR", ref="main", repos = BiocManager::repositories(), upgrade = "never")'
-#Rscript -e 'remotes::install_github("corceslab/CHOIR", ref="dev", repos = BiocManager::repositories(), upgrade = "never")'
+#Rscript -e 'remotes::install_github("corceslab/CHOIR", ref="main", repos = BiocManager::repositories(), upgrade = "never")'
+Rscript -e 'remotes::install_github("corceslab/CHOIR", ref="dev", repos = BiocManager::repositories(), upgrade = "never")'
 conda install conda-forge::r-soupx -y
 conda install bioconda::bioconductor-decontx -y
 conda install conda-forge::r-hgnchelper -y
-conda install conda-forge::r-openxlsx -y
 conda install bioconda::bioconductor-singler -y
 conda install conda-forge::r-harmony -y
 conda install bioconda::r-presto -y
@@ -41,11 +44,23 @@ conda install bioconda::bioconductor-aucell -y
 Rscript -e 'install.packages("GeneNMF")'
 Rscript -e 'install_github("Jasonxu0109/PlantPhoneDB")'
 Rscript -e 'BiocManager::install(c("WGCNA", "UCell", "GenomicRanges", "GeneOverlap"))'
-
-# python of environment: SCpy
-
-
+# R plot
+conda install conda-forge::r-openxlsx -y
+conda install bioconda::bioconductor-complexheatmap -y
 ```
+
+```shell
+# python of environment: SCpy
+conda create -n SCpy python=3.12 -y
+conda install -c conda-forge scanpy python-igraph leidenalg -y
+pip install memento-de
+conda install bioconda::scrublet -y
+```
+
+### [Velocity and Trajectory](): *Two methods to reveal developmental process*
+  Reference: [单细胞RNA速率极简教程 (3)](https://mp.weixin.qq.com/s/JAVNLCZGJlmDkzHwoD106g)
+![轨迹分析的原理](Trajectory/png/轨迹分析的原理.png)
+![轨迹分析和RNA速率的比较](Trajectory/png/轨迹分析和RNA速率的比较.png)
 
 ## Built
   ### [**dataget_scRNAseq**](dataget_scRNAseq): *Perform quality control of single-cell RNA-seq data using SoupX and Scrublet.*
