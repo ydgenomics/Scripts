@@ -21,9 +21,31 @@
   - First question is building a image of enough do most works
 ```shell
 # R of environment: SCr
-conda create -n CHOIR r-base=4.2 -y
-conda install icu=58.2
+conda create -n CHOIR r-base=4.2.2 -y
+conda activate CHOIR
+# devtools::install_github("pengminshi/mrtree")
+#conda install icu=58.2
 #devtools::install_github("pengminshi/mrtree")
+
+library(Seurat)
+library(CHOIR)
+library(presto)
+library(SoupX)
+library(decontX)
+lapply(c("dplyr","Seurat","HGNChelper","openxlsx"), library, character.only = T)
+library(SingleR)
+library(harmony)
+library(clusterProfiler)
+library(AUCell)
+library(GeneNMF)
+library(PlantPhoneDB)
+library(WGCNA)
+library(ComplexHeatmap)
+library(MetaNeighbor)
+library(optparse)
+library(DropletUtils)
+library(tidyverse)
+library(AnnotationForge)
 
 conda create -n SCr r-base=4.3 -y
 conda activate SCr
@@ -38,15 +60,24 @@ conda install bioconda::bioconductor-decontx -y
 conda install conda-forge::r-hgnchelper -y
 conda install bioconda::bioconductor-singler -y
 conda install conda-forge::r-harmony -y
-conda install bioconda::r-presto -y
+#conda install bioconda::r-presto -y
+# library(devtools)
+# install_github('immunogenomics/presto')
 conda install bioconda::bioconductor-clusterprofiler -y
 conda install bioconda::bioconductor-aucell -y
 Rscript -e 'install.packages("GeneNMF")'
 Rscript -e 'install_github("Jasonxu0109/PlantPhoneDB")'
 Rscript -e 'BiocManager::install(c("WGCNA", "UCell", "GenomicRanges", "GeneOverlap"))'
+conda install bioconda::bioconductor-metaneighbor -y
+conda install conda-forge::r-optparse -y
+conda install bioconda::bioconductor-dropletutils -y
+conda install conda-forge::r-tidyverse -y
+conda install bioconda::bioconductor-annotationforge -y
 # R plot
 conda install conda-forge::r-openxlsx -y
 conda install bioconda::bioconductor-complexheatmap -y
+conda install r::r-ambient -y
+conda install conda-forge::r-ggsci -y
 ```
 
 ```shell
