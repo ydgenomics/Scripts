@@ -65,3 +65,7 @@ scv.pl.velocity_embedding_stream(adata, basis="umap")
 
 通过上述工具和方法，你可以有效地进行轨迹分析、拟时序分析和 RNA 速率分析，从而更好地理解细胞的分化和发育过程。
 
+
+![轨迹分析的原理](Trajectory/png/轨迹分析的原理.png)
+![轨迹分析和RNA速率的比较](Trajectory/png/轨迹分析和RNA速率的比较.png)
+

@@ -3,3 +3,9 @@ multi_annotation_scRNAseq/data/AT_root_SRP273996.rds
 multi_annotation_scRNAseq/data/arabidopsis_thaliana.marker_fd.csv
 
 enrich_scRNAseq/data
+
+GRN-hdWGCNA/data
+
+GRN-pySCENIC/data
+
+test_data/ERP132245.h5ad
