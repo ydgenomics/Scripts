@@ -1,19 +1,7 @@
-# 用SoupX和scrublet做质控QC(dataget_scRNAseq)
-<span style="font-size: 1.4em;">**Latest Version:** 1.2.1</span>
-**Fix:**
- - 1.2.0
-    - 0606 修改因`CreateSeuratObject()`自动更改基因名中'_'为'-'的问题，将task封装为函数即`run_*`
-    - 20250516 统一了输出的marker基因csv包含的列`gene,cluster,p_val_adj,avg_log2FC`，便于下游分析；另外对多个resolution的marker基因的pdf和csv进行了保存`0.5, 0.8, 1.0`
-    - 20250507 修改了三个矩阵存在细胞数不同的情况(Soupx处理后的矩阵)--取交集，修改了可视化pct_counts_mt的判断
-    - 20250429 修改了三个矩阵整合为取基因的交集，另外为scrublet_estimate_doublecell.py运行添加了` > log.txt 2>&1`，用于保存运行过程信息
-    - 20250417 优化了三个矩阵得到一个对象的基因选择，都以FilterMatrix为基准
-    - 20250414 1.引入了splice和unsplice矩阵到anndata对象的layers中，有利于后面的RNA velocity分析; 2.将sample名作为后缀加到细胞名后面，保证了每个样本的细胞名不重复; 3.根据SoupX的默认参数maxrho为0.2，根据样本实际情况调整; 4.放弃了原先的大目录检索，之前的不利于流程维护，更加推荐大家使用表格投递任务
-  - 1.0.0
-    - 20250305 修复了无线粒体基因和有线粒体基因数据在QC质控的判断
-
+# 用[SoupX](https://github.com/constantAmateur/SoupX)和[scrublet](https://github.com/swolock/scrublet)做质控QC(dataget_scRNAseq)
+<span style="font-size: 1.4em;">**Latest Version:** 1.2.0</span>
 <span style="font-size: 1.4em;">**Scripts:**</span>
 [Github repository of dataget_scRNAseq](https://github.com/ydgenomics/Scripts/tree/main/dataget_scRNAseq)
-
 <span style="font-size: 1.4em;">**Result explain:**</span>
 [scanpy visual result](https://mp.weixin.qq.com/s/xsxtCRFCi-y_3unfOkT-kQ)
 
@@ -108,17 +96,20 @@
 
 # Reference 
 > **Sincerely thank all teachers and researchers who provide open source resources**
-> 1. [aertslab](https://scenic.aertslab.org/)
-> 2. [pySCENIC](https://github.com/aertslab/pySCENIC.git)
-> 3. [create_cisTarget_databases](https://github.com/aertslab/create_cisTarget_databases.git)
-> 4. [PlantTFDB](https://planttfdb.gao-lab.org/)
-> 5. [*老俊俊的生信笔记*·pyscenic 构建自己的 cisTarget 数据库](https://mp.weixin.qq.com/s/7-vKrLiFS4Tlkt-rHxEGeQ)
-> 6. [*老俊俊的生信笔记*·pySCENIC 转录因子调控网络分析教程](https://mp.weixin.qq.com/s/9n1ITFcC3fT8uyQGlL3Qtw)
-> 7. [单细胞pySCENIC](https://mp.weixin.qq.com/s/fECULduAzhbyv7BTzzqxFA)
+> 1. [SoupX——去除RNA污染](https://mp.weixin.qq.com/s/7g9Zo6IPqTafSjKCeAFNIQ)
 
 # Editor information
-  - **Editor:** yangdong(yangdong@genomics.cn), lili
+  - **Editor:** yangdong(yangdong@genomics.cn)
   - **Github:** [ydgenomics](https://github.com/ydgenomics)
   - **Prospect:** Do interesting and competitive works, open source and make progress!
-  - **Repository:** 
+  - **Repository:** [Scripts/dataget_scRNAseq](https://github.com/ydgenomics/Scripts/tree/main/dataget_scRNAseq)
   - **Log:**
+    - 1.2.0
+      - 0606 修改因`CreateSeuratObject()`自动更改基因名中'_'为'-'的问题，将task封装为函数即`run_*`
+      - 20250516 统一了输出的marker基因csv包含的列`gene,cluster,p_val_adj,avg_log2FC`，便于下游分析；另外对多个resolution的marker基因的pdf和csv进行了保存`0.5, 0.8, 1.0`
+      - 20250507 修改了三个矩阵存在细胞数不同的情况(Soupx处理后的矩阵)--取交集，修改了可视化pct_counts_mt的判断
+      - 20250429 修改了三个矩阵整合为取基因的交集，另外为scrublet_estimate_doublecell.py运行添加了` > log.txt 2>&1`，用于保存运行过程信息
+      - 20250417 优化了三个矩阵得到一个对象的基因选择，都以FilterMatrix为基准
+      - 20250414 1.引入了splice和unsplice矩阵到anndata对象的layers中，有利于后面的RNA velocity分析; 2.将sample名作为后缀加到细胞名后面，保证了每个样本的细胞名不重复; 3.根据SoupX的默认参数maxrho为0.2，根据样本实际情况调整; 4.放弃了原先的大目录检索，之前的不利于流程维护，更加推荐大家使用表格投递任务
+    - 1.0.0
+      - 20250305 修复了无线粒体基因和有线粒体基因数据在QC质控的判断
