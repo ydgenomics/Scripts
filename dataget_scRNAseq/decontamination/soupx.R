@@ -1,50 +1,42 @@
-# soupx.R 250117
+# Title: soupx.R 
+# Date: 2025-04-14
 # /opt/conda/bin/R
 library(optparse)
 library(DropletUtils)
 library(SoupX)
 library(Seurat)
 
-args <- commandArgs(trailingOnly = TRUE)
+option_list <- list(
+    make_option(c("-r", "--raw"), type = "character", default = "raw_matrix.txt", help = "Path to raw matrix file", metavar = "character"),
+    make_option(c("-f", "--filter"), type = "character", default = "filter_matrix.txt", help = "Path to filtered matrix file", metavar = "character"),
+    make_option(c("-s", "--samples"), type = "character", default = "samples.txt", help = "Path to samples file", metavar = "character"),
+    make_option(c("-m", "--minCG"), type = "numeric", default = 200, help = "Minimum number of genes", metavar = "numeric"),
+    make_option(c("-t", "--tfidfMin"), type = "numeric", default = 0.01, help = "Minimum tf-idf value", metavar = "numeric"),
+    make_option(c("-x", "--highestrho"), type = "numeric", default = 0.2, help = "Highest acceptable rho value", metavar = "numeric")
+)
+opt_parser <- OptionParser(option_list = option_list)
+opt <- parse_args(opt_parser)
+raw_filepath_txt <- opt$raw
+filter_filepath_txt <- opt$filter
+samples_txt_path <- opt$samples
+minCG <- opt$minCG
+tfidfMin <- opt$tfidfMin
+highestrho <- opt$highestrho
 
-files_txt_path <- args[1]
-samples_txt_path <- args[2]
-minCG <- as.numeric(args[3])
-tfidfMin <- as.numeric(args[4])
-highestrho <- as.numeric(args[5])
-before_method <- args[6]
+# Raw matrix
+rawmatrix_list <- readLines(raw_filepath_txt, warn = FALSE)
+rawmatrix_list <- unlist(strsplit(rawmatrix_list, ',', fixed = TRUE))
+print(rawmatrix_list)
 
-input_files_0 <- readLines(files_txt_path, warn = FALSE)
-input_files_0 <- unlist(strsplit(input_files_0, ',', fixed = TRUE))
-input_files_0 <- input_files_0[!is.na(input_files_0) & input_files_0 != '']
-print(input_files_0)
+# Filter Matrix
+filtermatrix_list <- readLines(filter_filepath_txt, warn = FALSE)
+filtermatrix_list <- unlist(strsplit(filtermatrix_list, ',', fixed = TRUE))
+print(filtermatrix_list)
 
-folder_name_list <- readLines(samples_txt_path, warn = FALSE)
-folder_name_list <- unlist(strsplit(folder_name_list, ',', fixed = TRUE))
-folder_name_list <- folder_name_list[!is.na(folder_name_list) & folder_name_list != '']
-print(folder_name_list)
-
-
-if (before_method == 'scRNA-seq_v3') {
-    raw_matrix_list <- sapply(seq_along(input_files_0), function(i) {
-        file.path(input_files_0[i], folder_name_list[i], '02.count', 'raw_matrix')
-    })
-    filter_matrix_list <- sapply(seq_along(input_files_0), function(i) {
-        file.path(input_files_0[i], folder_name_list[i], '02.count', 'filter_matrix')
-    })
-} else if (before_method == 'scRNA-seq_v3.1.5') {
-    raw_matrix_list <- sapply(seq_along(input_files_0), function(i) {
-        file.path(input_files_0[i], '02.cDNAAnno', 'RawMatrix')
-    })
-    filter_matrix_list <- sapply(seq_along(input_files_0), function(i) {
-        file.path(input_files_0[i], '04.Matrix', 'FilterMatrix')
-    })
-} else {
-    stop("Unsupported before_method: ", before_method)
-}
-
-print(raw_matrix_list)
-print(filter_matrix_list)
+# Sample names
+sample_list <- readLines(samples_txt_path, warn = FALSE)
+sample_list <- unlist(strsplit(sample_list, ',', fixed = TRUE))
+print(sample_list)
 
 run_soupx <- function(rawMatrix, filterMatrix, outdir, minCG, tfidfMin, highestrho) {
     options(future.globals.maxSize = 100000 * 1024^3)
@@ -88,8 +80,8 @@ run_soupx <- function(rawMatrix, filterMatrix, outdir, minCG, tfidfMin, highestr
 rho_value_list <- list()
 rho_adjust_list <- list()
 
-for (i in 1:length(folder_name_list)) {
-    result <- run_soupx(raw_matrix_list[i], filter_matrix_list[i], folder_name_list[i], minCG=minCG, tfidfMin=tfidfMin, highestrho=highestrho)
+for (i in 1:length(sample_list)) {
+    result <- run_soupx(rawmatrix_list[i], filtermatrix_list[i], sample_list[i], minCG=minCG, tfidfMin=tfidfMin, highestrho=highestrho)
     rho_value_list[[i]] <- result$rho_value
     rho_adjust_list[[i]] <- result$rho_adjust
 }
@@ -99,8 +91,8 @@ rho_adjust_list
 
 file_conn <- file('soupx_rho.txt', open = "w")
 cat("highestrho:", highestrho, "\n", file = file_conn)
-for (i in seq_along(folder_name_list)) {
-    cat("sample:", folder_name_list[i], "\n", file = file_conn)
+for (i in seq_along(sample_list)) {
+    cat("sample:", sample_list[i], "\n", file = file_conn)
     cat("rho:", rho_value_list[[i]][1], "\n", file = file_conn)  # 提取列表中的向量的第一个值
     cat("how:", rho_adjust_list[[i]][1], "\n", file = file_conn)  # 提取列表中的向量的第一个值
 }
