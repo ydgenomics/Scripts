@@ -2,7 +2,6 @@
 # Image: SoupX-R--03 /opt/conda/bin/R
 # Reference: https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html
 
-
 library(optparse)
 library(DropletUtils)
 library(SoupX)
@@ -12,18 +11,24 @@ option_list <- list(
     make_option(c("-r", "--raw_path"), type = "character", default = "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000009/YS2-V3RNA25012000009/output/raw_matrix", help = "String: Path to raw matrix", metavar = "character"),
     make_option(c("-f", "--filter_path"), type = "character", default = "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000009/YS2-V3RNA25012000009/output/filter_matrix", help = "String: Path to filtered matrix", metavar = "character"),
     make_option(c("-s", "--sample_name"), type = "character", default = "V3RNA25012000009", help = "String: Sample name", metavar = "character"),
-    make_option(c("-m", "--minCG"), type = "numeric", default = 200, help = "Minimum number of genes", metavar = "numeric"),
+    make_option(c("-m", "--minCG"), type = "numeric", default = 100, help = "Minimum number of genes", metavar = "numeric"),
     make_option(c("-t", "--tfidfMin"), type = "numeric", default = 0.01, help = "Minimum tf-idf value", metavar = "numeric"),
     make_option(c("-x", "--highestrho"), type = "numeric", default = 0.2, help = "Highest acceptable rho value", metavar = "numeric")
 )
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
-raw_path <- opt$raw_path
-filter_path <- opt$filter_path
-sample_name <- opt$sample_name
-minCG <- opt$minCG
-tfidfMin <- opt$tfidfMin
-highestrho <- opt$highestrho
+# raw_path <- opt$raw_path
+# filter_path <- opt$filter_path
+# sample_name <- opt$sample_name
+# minCG <- opt$minCG
+# tfidfMin <- opt$tfidfMin
+# highestrho <- opt$highestrho
+raw_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000010/YS2-V3RNA25012000010/output/raw_matrix"
+filter_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000010/YS2-V3RNA25012000010/output/filter_matrix"
+sample_name <- "V3RNA25012000010"
+minCG <- 100
+tfidfMin <- 0.01
+highestrho <- 0.2
 
 run_soupx <- function(raw_path, filter_path, sample_name, minCG, tfidfMin, highestrho) {
     options(future.globals.maxSize = 100000 * 1024^3)
@@ -53,7 +58,7 @@ run_soupx <- function(raw_path, filter_path, sample_name, minCG, tfidfMin, highe
     tod <- tod[rownames(all),]
 
     sc <- SoupChannel(tod, toc)
-    sc <- estimateSoup(sc)
+    #sc <- estimateSoup(sc)
     sc <- setClusters(sc, setNames(matx$seurat_clusters, rownames(matx)))
     pdfrho <- paste0(sample_name, "_rho.pdf")
     pdf(pdfrho, width=9)
@@ -71,8 +76,6 @@ run_soupx <- function(raw_path, filter_path, sample_name, minCG, tfidfMin, highe
     cat("rho:", rho_value, "\n", file = file_conn) 
     cat("how:", rho_adjust, "\n", file = file_conn)
     close(file_conn)
-
-    return(list(rho_value = rho_value, rho_adjust = rho_adjust))
 }
 
 result <- run_soupx(raw_path=raw_path, filter_path=filter_path, sample_name=sample_name, minCG=minCG, tfidfMin=tfidfMin, highestrho=highestrho)

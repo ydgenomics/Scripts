@@ -1,5 +1,4 @@
-# Title: scrublet_estimate_doublecell.py
-# Date: 2025-05-16
+# Date: 20250606
 # Attention: how to rationally get a multi-matrix anndata including FilterMatrix, SpliceMatrix and UnspliceMatrix.
 # Marker_csv: gene, cluster, p_val_adj, avg_log2FC
 
@@ -20,53 +19,40 @@ import argparse
 #import logging
 
 #get outdoor parameter
-species = sys.argv[1]
-input_mingenes = int(sys.argv[2])
-input_mincells = int(sys.argv[3])
-group_key = sys.argv[4]
-matrix_filepath_txt = sys.argv[5]
-splice_filepath_txt = sys.argv[6]
-unsplice_filepath_txt = sys.argv[7]
-samples_txt_path = sys.argv[8]
-print(len(sys.argv))
+parser = argparse.ArgumentParser(description="Estimate double cells using Scrublet and process multi-matrix AnnData.")
+parser.add_argument('--species', type=str, default='zimia', help='Species name')
+parser.add_argument('--group_key', type=str, default='sample', help='Group key for batch')
+parser.add_argument('--matrix_txt', type=str, default="Matrix.txt", help='Path to matrix file list')
+parser.add_argument('--splice_txt', type=str, default="SpliceMatrix.txt", help='Path to splice file list')
+parser.add_argument('--unsplice_txt', type=str, default="UnspliceMatrix.txt", help='Path to unsplice file list')
+parser.add_argument('--sample_txt', type=str, default="samples.txt", help='Path to sample names file')
+parser.add_argument('--input_mingenes', type=int, default=100, help='Minimum number of genes per cell')
+parser.add_argument('--input_mincells', type=int, default=3, help='Minimum number of cells per gene')
+parser.add_argument('--mito_genes', type=str, default="None_mito_genes.csv", help='CSV file with mitochondrial genes')
+parser.add_argument('--mito_threshold', type=float, default=0.05, help='Mitochondrial gene threshold')
 
-try:
-    txt_rho = sys.argv[9]
-except IndexError:
-    print("Warning: txt_rho parameter not provided. Using un-soupx deal.")
-    
-try:
-    if len(sys.argv) in [11, 12]:
-        mito_genes = sys.argv[10] if len(sys.argv) == 12 else sys.argv[9]
-        mito_threshold = float(sys.argv[11]) if len(sys.argv) == 12 else float(sys.argv[10])
-    else:
-        raise ValueError("Invalid number of arguments")
-except (IndexError, ValueError) as e:
-    print(f"Warning: {e}. Using default values for mito_genes and mito_threshold.")
-    mito_genes = "None_mito_genes.csv"
-    mito_threshold = 0.05
-print(f"mito_genes: {mito_genes}")
-print(f"mito_threshold: {mito_threshold}")
+args = parser.parse_args()
+# species = args.species
+# group_key = args.group_key
+# matrix_txt = args.matrix_txt
+# splice_txt = args.splice_txt
+# unsplice_txt = args.unsplice_txt
+# sample_txt = args.sample_txt
+# input_mingenes = args.input_mingenes
+# input_mincells = args.input_mincells
+# mito_genes = args.mito_genes
+# mito_threshold = args.mito_threshold
+species = "peanut"
+group_key = "sample"
+matrix_txt = "Matrix.txt"
+splice_txt = "SpliceMatrix.txt"
+unsplice_txt = "UnspliceMatrix.txt"
+sample_txt = "samples.txt"
+input_mingenes = 100
+input_mincells = 3
+mito_genes = "None_mito_genes.csv"
+mito_threshold = 0.05
 
-#from text transform to array
-with open(matrix_filepath_txt, 'r') as file:
-    matrix_files = file.read().strip().split(',')
-with open(splice_filepath_txt, 'r') as file:
-    splice_files = file.read().strip().split(',')
-with open(unsplice_filepath_txt, 'r') as file:
-    unsplice_files = file.read().strip().split(',')
-with open(samples_txt_path, 'r') as filen:
-    sample_names = filen.read().strip().split(',')
-
-#check soupxmatrix
-if len(matrix_files) == 1 and len(matrix_files) != len(sample_names) and matrix_files[0].endswith("result"):
-    base_path = matrix_files[0]
-    matrix_files = [f"{base_path}/{sample}" for sample in sample_names]
-    #matrix_files = new_matrix_files
-else:
-    matrix_files = matrix_files
-
-print(matrix_files)
 
 def copy_and_process(matrixfile, featuresfile, barcodesfile, target_folder):
     original_dir = os.getcwd()
@@ -85,7 +71,7 @@ def copy_and_process(matrixfile, featuresfile, barcodesfile, target_folder):
             f_out.write(line.strip() + '\t' + line.strip() + '\n')
     os.chdir(original_dir)
 
-def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mito_genes, mito_threshold):
+def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mito_genes, mito_threshold):
     adatas = {}
     for i in range(len(sample_names)): 
         key = sample_names[i]
@@ -94,13 +80,10 @@ def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample
         adata_unsplice = sc.read_10x_mtx(trans_unsplice_list[i], var_names='gene_ids')
         # 根据交集的基因列表过滤每个数据集
         genes_filter = set(adata_filter.var_names)
-        print(f"sample: {key}, the number of genes in matrix is {len(genes_filter)}")
         genes_splice = set(adata_splice.var_names)
-        print(f"sample: {key}, the number of genes in splice_matrix is {len(genes_splice)}")
         genes_unsplice = set(adata_unsplice.var_names)
-        print(f"sample: {key}, the number of genes in unsplice_matrix is {len(genes_unsplice)}")
-        common_genes = genes_filter.intersection(genes_splice).intersection(genes_unsplice)
-        print(f"sample: {key}, the number of common genes is {len(common_genes)}")
+        common_genes = genes_filter & genes_splice & genes_unsplice
+        print(f"sample: {key}, genes in matrix/splice/unsplice/common: {len(genes_filter)}/{len(genes_splice)}/{len(genes_unsplice)}/{len(common_genes)}")
         adata_filter = adata_filter[:, adata_filter.var_names.isin(common_genes)]
         adata_splice = adata_splice[:, adata_splice.var_names.isin(common_genes)]
         adata_unsplice = adata_unsplice[:, adata_unsplice.var_names.isin(common_genes)]
@@ -204,46 +187,68 @@ def run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample
         f.write('Median genes per cell: ' + str(adata.obs['n_genes'].median()) + '\n')
         f.write('Average counts per cell: ' + str(adata.obs['total_counts'].mean()) + '\n')
         f.write('Median counts per cell: ' + str(adata.obs['total_counts'].median()) + '\n')
+        # 写入前十个细胞名和基因名
+        f.write('\nTop 10 cells:\n' + ','.join(adata.obs_names[:10]) + '\n')
+        f.write('\nTop 10 genes:\n' + ','.join(adata.var_names[:10]) + '\n')
+    #adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
+    adata.X = adata.layers["counts"] # Save the raw counts in the X attribute
     adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
-    adata.X = adata.layers["counts"]
-    adata.write_h5ad(filename=species + '_raw.h5ad', compression="gzip") # Supply two selection: X is raw or is normalize.
+    #adata.write_h5ad(filename=species + '_raw.h5ad', compression="gzip") # Supply two selection: X is raw or is normalize.
 
-trans_matrix_list = []
-trans_splice_list = []
-trans_unsplice_list = []
+# Main function to run the scrublet analysis
+def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, input_mingenes=100, input_mincells=3, group_key="sample", mito_genes="None_mito_genes.csv", mito_threshold=0.05):
+    # Load the data: from text transform to array
+    with open(matrix_txt, 'r') as file:
+        matrix_files = file.read().strip().split(',')
+    
+    with open(splice_txt, 'r') as file:
+        splice_files = file.read().strip().split(',')
+    
+    with open(unsplice_txt, 'r') as file:
+        unsplice_files = file.read().strip().split(',')
+    
+    with open(sample_txt, 'r') as filen:
+        sample_names = filen.read().strip().split(',')
 
-process_types = [
-    ("filter", matrix_files),
-    ("splice", splice_files),
-    ("unsplice", unsplice_files)
-]
+    # Preprocess the loaded data
+    trans_matrix_list = []
+    trans_splice_list = []
+    trans_unsplice_list = []
 
-if len(matrix_files) > 0:
-    for i in range(len(sample_names)):
-        sample = sample_names[i]
-        for process_name, file_list in process_types:
-            directory_path = Path(f"./{sample}/{process_name}")
-            directory_path.mkdir(parents=True, exist_ok=True)
-            folder_path = os.path.abspath(directory_path)
-            if process_name == "filter":
-                trans_matrix_list.append(folder_path)
-                matrixfile = file_list[i] + '/matrix.mtx.gz'
-                featuresfile = file_list[i] + '/features.tsv.gz'
-                barcodesfile = file_list[i] + '/barcodes.tsv.gz'
-            elif process_name == "splice":
-                trans_splice_list.append(folder_path)
-                matrixfile = file_list[i] + '/matrix.mtx.gz'
-                featuresfile = file_list[i] + '/features.tsv.gz'
-                barcodesfile = file_list[i] + '/barcodes.tsv.gz'
-            elif process_name == "unsplice":
-                trans_unsplice_list.append(folder_path)
-                matrixfile = file_list[i] + '/unspliced.mtx.gz'
-                featuresfile = file_list[i] + '/features.tsv.gz'
-                barcodesfile = file_list[i] + '/barcodes.tsv.gz'
-            copy_and_process(matrixfile, featuresfile, barcodesfile, folder_path)
-    run_scrublet_view(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mito_genes, mito_threshold)
-else:
-    print("No samples to process")
-    with open('summary.txt', 'w') as f:
-        f.write(species + ' data summary' + '\n')
-        f.write('No samples to process' + '\n')
+    process_types = [
+        ("filter", matrix_files),
+        ("splice", splice_files),
+        ("unsplice", unsplice_files)
+    ]
+    if len(matrix_files) > 0:
+        for i in range(len(sample_names)):
+            sample = sample_names[i]
+            for process_name, file_list in process_types:
+                directory_path = Path(f"./{sample}/{process_name}")
+                directory_path.mkdir(parents=True, exist_ok=True)
+                folder_path = os.path.abspath(directory_path)
+                if process_name == "filter":
+                    trans_matrix_list.append(folder_path)
+                    matrixfile = file_list[i] + '/matrix.mtx.gz'
+                    featuresfile = file_list[i] + '/features.tsv.gz'
+                    barcodesfile = file_list[i] + '/barcodes.tsv.gz'
+                elif process_name == "splice":
+                    trans_splice_list.append(folder_path)
+                    matrixfile = file_list[i] + '/matrix.mtx.gz'
+                    featuresfile = file_list[i] + '/features.tsv.gz'
+                    barcodesfile = file_list[i] + '/barcodes.tsv.gz'
+                elif process_name == "unsplice":
+                    trans_unsplice_list.append(folder_path)
+                    matrixfile = file_list[i] + '/unspliced.mtx.gz'
+                    featuresfile = file_list[i] + '/features.tsv.gz'
+                    barcodesfile = file_list[i] + '/barcodes.tsv.gz'
+                copy_and_process(matrixfile, featuresfile, barcodesfile, folder_path)
+        print(trans_matrix_list); print(trans_splice_list); print(trans_unsplice_list); print(sample_names)
+        run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mito_genes, mito_threshold)
+    else:
+        print("No samples to process")
+        with open('summary.txt', 'w') as f:
+            f.write(species + ' data summary' + '\n')
+            f.write('No samples to process' + '\n')
+
+run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, input_mingenes, input_mincells, group_key, mito_genes, mito_threshold)
