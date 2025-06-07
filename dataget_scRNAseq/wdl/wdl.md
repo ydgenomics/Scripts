@@ -11,7 +11,14 @@
     - 路线2：只做去除双胞（考虑到去污效果差异和过处理）
   - **Parameters**
 
-  - **Submit task**
+  - [**Submit task**](https://github.com/ydgenomics/Scripts/blob/main/dataget_scRNAseq/wdl/dataget_scRNAseq_v1_2_0.csv)
+
+| EntityID | RawMatrix | FilterMatrix | SpliceMatrix | UnspliceMatrix | Sample | Species | Maxrho | Group_key | mem_soupx | mem_scrublet | mem_scdatacg |
+|----------|-----------|--------------|--------------|----------------|--------|---------|--------|-----------|-----------|--------------|--------------|
+| H1314    | `/Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/raw_matrix` | `/Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/filter_matrix` | `/Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/attachment/splice_matrix` | `/Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/attachment/RNAvelocity_matrix` | V3RNA24120200006 | H1314 | 0.2 | sample | 30 | 10 | 8 |
+| H1314    | `/Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/raw_matrix` | `/Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/filter_matrix` | `/Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/attachment/splice_matrix` | `/Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/attachment/RNAvelocity_matrix` | V3RNA24120200007 | - | - | - | - | - | - |
+| H2014    | `/Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/raw_matrix` | `/Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/filter_matrix` | `/Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/attachment/splice_matrix` | `/Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/attachment/RNAvelocity_matrix` | V3RNA24120200008 | H2014 | 0.2 | sample | 30 | 10 | 8 |
+| H2014    | `/Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/raw_matrix` | `/Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/filter_matrix` | `/Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/attachment/splice_matrix` | `/Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/attachment/RNAvelocity_matrix` | V3RNA24120200009 | - | - | - | - | - | - |
 
 
 # Many details
