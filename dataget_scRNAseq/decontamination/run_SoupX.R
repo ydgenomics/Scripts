@@ -1,6 +1,29 @@
-# Date: 20250606
+# Date: 20250607
 # Image: SoupX-R--03 /opt/conda/bin/R
 # Reference: https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html
+
+###################### Input section ############################
+# raw_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000011/YS-V3RNA25012000011/output/raw_matrix"
+# filter_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000011/YS-V3RNA25012000011/output/filter_matrix"
+# sample_name <- "V3RNA25012000011"
+# minCG <- 100
+# tfidfMin <- 0.01
+# highestrho <- 0.2
+
+# raw_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000010/YS2-V3RNA25012000010/output/raw_matrix"
+# filter_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000010/YS2-V3RNA25012000010/output/filter_matrix"
+# sample_name <- "V3RNA25012000010"
+# minCG <- 100
+# tfidfMin <- 0.01
+# highestrho <- 0.2
+
+# raw_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000009/YS2-V3RNA25012000009/output/raw_matrix"
+# filter_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000009/YS2-V3RNA25012000009/output/filter_matrix"
+# sample_name <- "V3RNA25012000009"
+# minCG <- 100
+# tfidfMin <- 0.01
+# highestrho <- 0.2
+################################################################
 
 library(optparse)
 library(DropletUtils)
@@ -17,20 +40,14 @@ option_list <- list(
 )
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
-# raw_path <- opt$raw_path
-# filter_path <- opt$filter_path
-# sample_name <- opt$sample_name
-# minCG <- opt$minCG
-# tfidfMin <- opt$tfidfMin
-# highestrho <- opt$highestrho
-raw_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000010/YS2-V3RNA25012000010/output/raw_matrix"
-filter_path <- "/data/input/Files/cuiyingsi/my-result2/v3/V3RNA25012000010/YS2-V3RNA25012000010/output/filter_matrix"
-sample_name <- "V3RNA25012000010"
-minCG <- 100
-tfidfMin <- 0.01
-highestrho <- 0.2
+raw_path <- opt$raw_path
+filter_path <- opt$filter_path
+sample_name <- opt$sample_name
+minCG <- opt$minCG
+tfidfMin <- opt$tfidfMin
+highestrho <- opt$highestrho
 
-run_soupx <- function(raw_path, filter_path, sample_name, minCG, tfidfMin, highestrho) {
+run_soupx <- function(raw_path, filter_path, sample_name, minCG=100, tfidfMin=0.01, highestrho=0.2) {
     options(future.globals.maxSize = 100000 * 1024^3)
     toc <- Read10X(filter_path, gene.column=1)
     # Because CreateSeuratObject() will replace '_' as '-', in order to keep raw genes' name

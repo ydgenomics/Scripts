@@ -1,4 +1,4 @@
-# Date: 20250606
+# Date: 20250607
 # Attention: how to rationally get a multi-matrix anndata including FilterMatrix, SpliceMatrix and UnspliceMatrix.
 # Marker_csv: gene, cluster, p_val_adj, avg_log2FC
 
@@ -16,9 +16,9 @@ import sys
 import scrublet
 import leidenalg
 import argparse
-#import logging
+# import logging
 
-#get outdoor parameter
+# Get command line arguments
 parser = argparse.ArgumentParser(description="Estimate double cells using Scrublet and process multi-matrix AnnData.")
 parser.add_argument('--species', type=str, default='zimia', help='Species name')
 parser.add_argument('--group_key', type=str, default='sample', help='Group key for batch')
@@ -32,16 +32,6 @@ parser.add_argument('--mito_genes', type=str, default="None_mito_genes.csv", hel
 parser.add_argument('--mito_threshold', type=float, default=0.05, help='Mitochondrial gene threshold')
 
 args = parser.parse_args()
-# species = args.species
-# group_key = args.group_key
-# matrix_txt = args.matrix_txt
-# splice_txt = args.splice_txt
-# unsplice_txt = args.unsplice_txt
-# sample_txt = args.sample_txt
-# input_mingenes = args.input_mingenes
-# input_mincells = args.input_mincells
-# mito_genes = args.mito_genes
-# mito_threshold = args.mito_threshold
 species = "peanut"
 group_key = "sample"
 matrix_txt = "Matrix.txt"
@@ -50,11 +40,19 @@ unsplice_txt = "UnspliceMatrix.txt"
 sample_txt = "samples.txt"
 input_mingenes = 100
 input_mincells = 3
-mito_genes = "None_mito_genes.csv"
-mito_threshold = 0.05
+mito_genes = ""
+if mito_genes == "":
+    mito_genes = "None_mito_genes.csv"
 
+try:
+    mito_threshold = float("") 
+except ValueError:
+    mito_threshold = 0.05
 
 def copy_and_process(matrixfile, featuresfile, barcodesfile, target_folder):
+    """
+    Copy and decompress matrix, features, and barcodes files to the target folder.
+    """
     original_dir = os.getcwd()
     os.chdir(target_folder)
     shutil.copy(matrixfile, "matrix.mtx.gz")
@@ -71,40 +69,104 @@ def copy_and_process(matrixfile, featuresfile, barcodesfile, target_folder):
             f_out.write(line.strip() + '\t' + line.strip() + '\n')
     os.chdir(original_dir)
 
+def complete_genes(adata, all_genes, gene_symbols_col='gene_symbols'):
+    """
+    Complete missing genes in the AnnData object and set their values to 0.
+    
+    Args:
+        adata (AnnData): AnnData object to be completed.
+        all_genes (set): Complete set of genes.
+        gene_symbols_col (str): Column name for gene symbols, default is 'gene_symbols'.
+    
+    Returns:
+        AnnData: AnnData object with completed genes.
+    """
+    current_genes = set(adata.var_names)
+    missing_genes = all_genes - current_genes
+
+    if len(missing_genes) > 0:
+        print(f"Completing missing genes: {len(missing_genes)}")
+        missing_genes_df = pd.DataFrame(
+            0, index=adata.obs_names, columns=list(missing_genes)
+        )
+        missing_genes_adata = ad.AnnData(
+            X=missing_genes_df.values,
+            obs=adata.obs,
+            var=pd.DataFrame(index=list(missing_genes))
+        )
+        missing_genes_adata.var[gene_symbols_col] = missing_genes_adata.var.index
+        adata = ad.concat([adata, missing_genes_adata], axis=1)
+        adata = adata[:, list(all_genes)]
+    else:
+        print("No need to complete, all genes are present in adata.")
+    return adata
+
+def complete_cells(adata, all_cells):
+    """
+    Complete missing cells in the AnnData object and set their values to 0.
+    
+    Args:
+        adata (AnnData): AnnData object to be completed.
+        all_cells (set): Complete set of cells.
+    
+    Returns:
+        AnnData: AnnData object with completed cells.
+    """
+    current_cells = set(adata.obs_names)
+    missing_cells = all_cells - current_cells
+
+    if len(missing_cells) > 0:
+        print(f"Completing missing cells: {len(missing_cells)}")
+        missing_cells_df = pd.DataFrame(
+            0, index=list(missing_cells), columns=adata.var_names
+        )
+        missing_cells_adata = ad.AnnData(
+            X=missing_cells_df.values,
+            obs=pd.DataFrame(index=list(missing_cells)),
+            var=adata.var
+        )
+        adata = ad.concat([adata, missing_cells_adata], axis=0)
+        adata = adata[list(all_cells), :]
+    else:
+        print("No need to complete, all cells are present in adata.")
+    return adata
+
 def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mito_genes, mito_threshold):
+    """
+    Concatenate, QC, filter, and plot AnnData objects for all samples.
+    """
     adatas = {}
     for i in range(len(sample_names)): 
         key = sample_names[i]
         adata_filter = sc.read_10x_mtx(trans_matrix_list[i], var_names='gene_ids')
         adata_splice = sc.read_10x_mtx(trans_splice_list[i], var_names='gene_ids')
         adata_unsplice = sc.read_10x_mtx(trans_unsplice_list[i], var_names='gene_ids')
-        # 根据交集的基因列表过滤每个数据集
+        # Get gene sets for each dataset
         genes_filter = set(adata_filter.var_names)
         genes_splice = set(adata_splice.var_names)
         genes_unsplice = set(adata_unsplice.var_names)
-        common_genes = genes_filter & genes_splice & genes_unsplice
-        print(f"sample: {key}, genes in matrix/splice/unsplice/common: {len(genes_filter)}/{len(genes_splice)}/{len(genes_unsplice)}/{len(common_genes)}")
-        adata_filter = adata_filter[:, adata_filter.var_names.isin(common_genes)]
-        adata_splice = adata_splice[:, adata_splice.var_names.isin(common_genes)]
-        adata_unsplice = adata_unsplice[:, adata_unsplice.var_names.isin(common_genes)]
-        # 根据交集的细胞列表过滤每个数据集
+        all_genes = genes_filter.union(genes_splice).union(genes_unsplice)
+        print(f"sample: {key}, genes in matrix/splice/unsplice/union: {len(genes_filter)}/{len(genes_splice)}/{len(genes_unsplice)}/{len(all_genes)}")
+        adata_filter = complete_genes(adata_filter, all_genes)
+        adata_splice = complete_genes(adata_splice, all_genes)
+        adata_unsplice = complete_genes(adata_unsplice, all_genes)
+        # Get cell sets for each dataset
         cells_filter = set(adata_filter.obs_names)
         cells_splice = set(adata_splice.obs_names)
         cells_unsplice = set(adata_unsplice.obs_names)
-        common_cells = cells_filter.intersection(cells_splice).intersection(cells_unsplice) # 找到三个数据集共有的细胞
-        print(f"sample: {key}, the number of common cells is {len(common_cells)}")
-        adata_filter = adata_filter[adata_filter.obs_names.isin(common_cells), :]
-        adata_splice = adata_splice[adata_splice.obs_names.isin(common_cells), :]
-        adata_unsplice = adata_unsplice[adata_unsplice.obs_names.isin(common_cells), :]
+        all_cells = cells_filter.union(cells_splice).union(cells_unsplice)
+        print(f"sample: {key}, cells in matrix/splice/unsplice/union: {len(cells_filter)}/{len(cells_splice)}/{len(cells_unsplice)}/{len(all_cells)}")
+        adata_filter = complete_cells(adata_filter, all_cells)
+        adata_splice = complete_cells(adata_splice, all_cells)
+        adata_unsplice = complete_cells(adata_unsplice, all_cells)
         adata = adata_filter.copy()
         adata.layers['splice'] = adata_splice.X
         adata.layers['unsplice'] = adata_unsplice.X
-        # rename cells to include sample key
+        # Rename cells to include sample key
         adata.obs_names = [f"{cell_name}_{key}" for cell_name in adata.obs_names]
         print(adata.obs_names[:10])
-        # store in dictionary
         adatas[key] = adata
-    adata = ad.concat(adatas, label=group_key, join="inner")  # the variable [join] is key, could select "outer" or "inner".
+    adata = ad.concat(adatas, label=group_key, join="outer")
     print(adata.obs[group_key].value_counts())
 
     # Set parameters for figures
@@ -112,7 +174,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     sc.logging.print_versions()
     sc.settings.set_figure_params(dpi=80, facecolor='white')
     
-    # Check mitogenes and filter
+    # Check mitochondrial genes and filter
     if os.path.exists(mito_genes):
         mt_genes = pd.read_csv(mito_genes, header=None, names=["gene_name"])
         mt_genes_list = mt_genes["gene_name"].tolist()
@@ -131,7 +193,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     sns.jointplot(data=adata.obs, x="log1p_total_counts", y="log1p_n_genes_by_counts", kind="hex")
     savefig("qc.pdf")
 
-    # Pre-process, control quality, and Scrublet
+    # Pre-process, QC, and Scrublet
     sc.pp.filter_cells(adata, min_genes=input_mingenes)
     sc.pp.filter_genes(adata, min_cells=input_mincells)
     sc.external.pp.scrublet(adata, batch_key=group_key)
@@ -143,7 +205,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     sc.pp.log1p(adata)
     sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=group_key)
     sc.tl.pca(adata)
-    # Check the obs whether exist
+    # Check if group_key exists in obs
     if group_key not in adata.obs:
         raise ValueError(f"Group key '{group_key}' not found in adata.obs")
     features = [group_key, group_key]
@@ -178,7 +240,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
         marker['p_val_adj'] = marker['pvals_adj']
         marker['avg_log2FC'] = marker['logfoldchanges']
         marker.to_csv(f"{output_dir}/{res}.markers.csv", index=False)
-    # Summmary
+    # Summary
     with open('summary.txt', 'w') as f:
         f.write(species + ' data summary' + '\n')
         f.write('Total cells: ' + str(adata.n_obs) + '\n')
@@ -187,26 +249,24 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
         f.write('Median genes per cell: ' + str(adata.obs['n_genes'].median()) + '\n')
         f.write('Average counts per cell: ' + str(adata.obs['total_counts'].mean()) + '\n')
         f.write('Median counts per cell: ' + str(adata.obs['total_counts'].median()) + '\n')
-        # 写入前十个细胞名和基因名
+        # Write top 10 cell and gene names
         f.write('\nTop 10 cells:\n' + ','.join(adata.obs_names[:10]) + '\n')
         f.write('\nTop 10 genes:\n' + ','.join(adata.var_names[:10]) + '\n')
-    #adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
     adata.X = adata.layers["counts"] # Save the raw counts in the X attribute
     adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
-    #adata.write_h5ad(filename=species + '_raw.h5ad', compression="gzip") # Supply two selection: X is raw or is normalize.
 
 # Main function to run the scrublet analysis
 def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, input_mingenes=100, input_mincells=3, group_key="sample", mito_genes="None_mito_genes.csv", mito_threshold=0.05):
+    """
+    Main function to run Scrublet and process multi-matrix AnnData.
+    """
     # Load the data: from text transform to array
     with open(matrix_txt, 'r') as file:
         matrix_files = file.read().strip().split(',')
-    
     with open(splice_txt, 'r') as file:
         splice_files = file.read().strip().split(',')
-    
     with open(unsplice_txt, 'r') as file:
         unsplice_files = file.read().strip().split(',')
-    
     with open(sample_txt, 'r') as filen:
         sample_names = filen.read().strip().split(',')
 
