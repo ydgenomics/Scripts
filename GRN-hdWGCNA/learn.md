@@ -20,3 +20,7 @@
 **Gene significance GS**: To incorporate external information into the co-expression network, we make use of gene significance measures. Abstractly speaking, the higher the absolute value of GS i , the more biologically significant is the i-th gene. For example, GS i could encode pathway membership (e.g. 1 if the gene is a known apoptosis gene and 0 otherwise), knockout essentiality, or the correlation with an external microarray sample trait. A gene significance measure could also be defined by minus log of a p-value. The only requirement is that gene significance of 0 indicates that the gene is not significant with regard to the biological question of interest. The gene significance can take on positive or negative values.
 
 **Module significance**: Module significance is determined as the average absolute gene significance measure for all genes in a given module. When gene significance is defined as the correlation of gene expression profiles with an external trait y, this measure tends to be highly related to the correlation between the module eigengene and y.
+
+# Reference
+> [2024(cell reports)_Relapse to cocaine seeking is regulated by medial habenula NR4A2/NURR1 in mice]()
+> [2023(cell reports method)_hdWGCNA identifies co-expression networks inhigh-dimensional transcriptomics data]()
