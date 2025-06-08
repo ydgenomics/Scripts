@@ -21,6 +21,15 @@
 
 **Module significance**: Module significance is determined as the average absolute gene significance measure for all genes in a given module. When gene significance is defined as the correlation of gene expression profiles with an external trait y, this measure tends to be highly related to the correlation between the module eigengene and y.
 
+hdWGCNA的模块与NMF的模块有什么不一样？
+
 # Reference
-> [2024(cell reports)_Relapse to cocaine seeking is regulated by medial habenula NR4A2/NURR1 in mice]()
-> [2023(cell reports method)_hdWGCNA identifies co-expression networks inhigh-dimensional transcriptomics data]()
+> [2024(cell reports)_Relapse to cocaine seeking is regulated by medial habenula NR4A2NURR1 in mice](paper/2024(cell%20reports)_Relapse%20to%20cocaine%20seeking%20is%20regulated%20by%20medial%20habenula%20NR4A2NURR1%20in%20mice.pdf) [**click CODE**](https://github.com/swaruplabUCI/Relapse-to-cocaine-seeking-is-regulated-by-medial-habenula-Nr4a2)
+
+<img src="png/两分组表达倍数散点图.png" alt="两分组表达倍数散点图" width="300"/>
+Figure5.(I and J) Comparison of differential expression effect sizes from NURR2C vs. GFP between the experienced and naive groups. Genes that are consistently or inconsistently up- or downregulated are colored blue or green, respectively, and the number of genes in these groups are shown in the corners of each plot.
+
+<img src="png/模块做富集分析.png" alt="模块做富集分析" width="300"/>
+Figure6.(C) Selected GO-term enrichment results for each co-expression module.
+
+> [2023(cell reports method)_hdWGCNA identifies co-expression networks inhigh-dimensional transcriptomics data](paper/2023(cell%20reports%20method)_hdWGCNA%20identifies%20co-expression%20networks%20inhigh-dimensional%20transcriptomics%20data.pdf)
