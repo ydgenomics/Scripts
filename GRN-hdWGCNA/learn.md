@@ -32,4 +32,4 @@ Figure5.(I and J) Comparison of differential expression effect sizes from NURR2C
 <img src="png/模块做富集分析.png" alt="模块做富集分析" width="300"/>
 Figure6.(C) Selected GO-term enrichment results for each co-expression module.
 
-> [2023(cell reports method)_hdWGCNA identifies co-expression networks inhigh-dimensional transcriptomics data](paper/2023(cell%20reports%20method)_hdWGCNA%20identifies%20co-expression%20networks%20inhigh-dimensional%20transcriptomics%20data.pdf)
+> [2023(cell reports method)_hdWGCNA identifies co-expression networks inhigh-dimensional transcriptomics data](paper/2023(cell%20reports%20method)_hdWGCNA%20identifies%20co-expression%20networks%20inhigh-dimensional%20transcriptomics%20data.pdf) [**click CODE**](https://github.com/smorabit/hdWGCNA_paper)

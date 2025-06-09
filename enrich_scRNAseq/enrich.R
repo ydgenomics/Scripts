@@ -1,6 +1,5 @@
-# Title: enrich.R
-# Date: 2025-05-16
-# Image: enrich-R--03
+# Date: 20250609
+# Image: enrich-R--04
 # libraries: org.Cthalictroides.eg.db,org.Pcirratum.eg.db,org.Ahypogaea.eg.db
 # gene_csv: gene, cluster, p_val_adj
 
@@ -31,26 +30,42 @@ install.packages(DB, repos = NULL, type = "sources")
 do.call(library, list(db_name))
 db <- get(db_name)
 columns(db)
-print(head(keys(db, keytype = "GID"), 10))
+
 
 markers <- read.csv(opt$gene_csv, header = TRUE, stringsAsFactors = FALSE)
-head(markers) # gene, cluster, p_val_adj
-# Check
-db_gid <- keys(db, keytype = "GID")
-common_genes <- markers$gene[markers$gene %in% db_gid]
-num_common_genes <- length(common_genes)
-total_genes <- length(markers$gene)
-percentage <- (num_common_genes / total_genes) * 100
-sink("log.txt")
-cat("数据库中的前10个GID:\n")
-print(head(db_gid, 10))
-cat("数据库中GID的总数:", length(db_gid), "\n")
-cat("\n输入gene_csv的前10个gene:\n")
-print(head(markers$gene, 10))
-cat("gene_csv的总基因数量:", total_genes, "\n")
-cat("\n存在于数据库中的基因数量:", num_common_genes, "\n")
-cat("输入基因比对到数据库的百分占比:", round(percentage, 2), "%\n")
-sink()
+
+check_marker_genes <- function(markers, db) {
+    required_cols <- c("gene", "cluster", "p_val_adj")
+    missing_cols <- setdiff(required_cols, colnames(markers))
+    if (length(missing_cols) > 0) {
+        stop(paste(
+            "Error: The following required columns are missing in gene_csv:",
+            paste(missing_cols, collapse = ", ")
+        ))
+    }
+    head(markers) # gene, cluster, p_val_adj
+
+    # Check
+    db_gid <- keys(db, keytype = "GID")
+    common_genes <- markers$gene[markers$gene %in% db_gid]
+    num_common_genes <- length(common_genes)
+    total_genes <- length(markers$gene)
+    percentage <- (num_common_genes / total_genes) * 100
+
+    cat("First 10 GIDs in database:\n")
+    print(head(db_gid, 10))
+    cat("Total number of GIDs in database:", length(db_gid), "\n")
+    cat("\nFirst 10 genes in input gene_csv:\n")
+    print(head(markers$gene, 10))
+    cat("Total number of genes in gene_csv:", total_genes, "\n")
+    cat("\nNumber of genes present in database:", num_common_genes, "\n")
+    cat("Percentage of input genes matched to database:",
+            round(percentage, 2), "%\n")
+}
+
+check_marker_genes(markers, db)
+
+
 # pathway and kegg
 pathway2gene <- AnnotationDbi::select(db,keys = keys(db),columns = c("Pathway","Ko")) %>%
   na.omit() %>%
