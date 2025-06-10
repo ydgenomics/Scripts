@@ -4,7 +4,10 @@ dataget_scRNAseq/data/soupx
 multi_annotation_scRNAseq/data/AT_root_SRP273996.rds
 multi_annotation_scRNAseq/data/arabidopsis_thaliana.marker_fd.csv
 
-enrich_scRNAseq/data
+enrich_scRNAseq/data/go-figure
+enrich_scRNAseq/data/tomato
+enrich_scRNAseq/data/enrichplot
+enrich_scRNAseq/data/out.emapper.annotations.xlsx
 
 GRN-hdWGCNA/data
 
