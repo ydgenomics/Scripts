@@ -15,7 +15,8 @@ workflow Enrich_scRNAseq_V1_1_0_4{
     Float minp=0.05
   }
   String url_enrich = "public-library/yangdong_cbd986609f064080b930131023416378_public:latest" # SoupX-R--01
-  String url_gofigure = "stereonote_hpc/yangdong_62c01e5f5e724b32b2591c91a9a722e6_private:latest"
+  String url_orgdb = "stereonote_hpc/yangdong_a59c2bdb0cc74697811f72af890fdfb9_private:latest" # enrich-R--04
+  String url_gofigure = "public-library/yangdong_62c01e5f5e724b32b2591c91a9a722e6_public:latest" # go-figure
   call build_orgdb{
     input:
     emapper_xlsx=emapper_xlsx,
@@ -25,7 +26,7 @@ workflow Enrich_scRNAseq_V1_1_0_4{
     taxid=taxid,
     cpu=2,
     mem=8,
-    url=url_enrich,
+    url=url_orgdb,
   }
   call check{
     input:
@@ -86,10 +87,18 @@ task build_orgdb{
     #/opt/conda/bin/Rscript /script/build_orgdb/build_orgdb.R \
     #--emapper_xlsx ~{emapper_xlsx} --taxid ~{taxid} --genus ~{genus} --species ~{species}
     /opt/conda/bin/R --vanilla --slave <<EOF
-    # Title: build_orgdb.R
-    # Date: 2025-05-14
-    # Description: This script is used to build orgdb database for peanut
+    # Date: 20250610
+    # Image: enrich-R--04
+    # Description: build_orgdb.R--This script is used to build orgdb database for peanut
     # Output: org.Ahypogaea.eg.db/db file
+
+    ########################## input section #######################
+    emapper_annotations_xlsx="~{emapper_xlsx}"
+    kegg_info_RData="~{kegg_info_RData}"
+    tax_id="~{taxid}"
+    genus="~{genus}"
+    species="~{species}"
+    ##############################################################
 
     library(clusterProfiler)
     library(tidyverse)
@@ -104,21 +113,24 @@ task build_orgdb{
     library(readxl)
     library(optparse)
 
-    option_list <- list(
-        make_option(c("-e", "--emapper_xlsx"), type = "character", default = "~{emapper_xlsx}", help = "Path to emapper annotations xlsx file", metavar = "character"),
-        #make_option(c("-k", "--kojson"), type = "character", default = "ko.json", help = "Path to KEGG ko JSON file", metavar = "character"),
-        make_option(c("-t", "--taxid"), type = "character", default = "~{taxid}", help = "Taxonomy ID", metavar = "character"),
-        make_option(c("-g", "--genus"), type = "character", default = "~{genus}", help = "Genus name", metavar = "character"),
-        make_option(c("-s", "--species"), type = "character", default = "~{species}", help = "Species name", metavar = "character")
-    )
+    # option_list <- list(
+    #     make_option(c("-e", "--emapper_xlsx"), type = "character", default = "/data/work/0.peanut/orgdb/out.emapper.annotations.xlsx", help = "Path to emapper annotations xlsx file", metavar = "character"),
+    #     make_option(c("--kegg_info_RData"), type = "character", default = "/script/build_orgdb/kegg_info.RData", help = "Kegg info Rdata"),
+    #     #make_option(c("-k", "--kojson"), type = "character", default = "ko.json", help = "Path to KEGG ko JSON file", metavar = "character"),
+    #     make_option(c("-t", "--taxid"), type = "character", default = "3818", help = "Taxonomy ID", metavar = "character"),
+    #     make_option(c("-g", "--genus"), type = "character", default = "Arachis", help = "Genus name", metavar = "character"),
+    #     make_option(c("-s", "--species"), type = "character", default = "hypogaea", help = "Species name", metavar = "character")
 
-    opt_parser <- OptionParser(option_list = option_list)
-    opt <- parse_args(opt_parser)
-    emapper_annotations_xlsx <- opt$emapper_xlsx
-    #ko_json <- opt$kojson # Download the ko.json file from KEGG website[https://www.kegg.jp/kegg-bin/download_htext?htext=ko00001&format=json&filedir=]
-    tax_id <- opt$taxid
-    genus <- opt$genus
-    species <- opt$species
+    # )
+
+    # opt_parser <- OptionParser(option_list = option_list)
+    # opt <- parse_args(opt_parser)
+    # emapper_annotations_xlsx <- opt$emapper_xlsx
+    # kegg_info_RData <- opt$kegg_info_RData
+    # #ko_json <- opt$kojson # Download the ko.json file from KEGG website[https://www.kegg.jp/kegg-bin/download_htext?htext=ko00001&format=json&filedir=]
+    # tax_id <- opt$taxid
+    # genus <- opt$genus
+    # species <- opt$species
 
     emapper <- read_excel(emapper_annotations_xlsx, skip = 2) # Front 2 rows are annotations
     head(emapper)
@@ -135,8 +147,8 @@ task build_orgdb{
     gos <- emapper %>% dplyr::select(query, GOs) %>% na.omit()
     head(gos)
     gene2go = data.frame(GID =character(),
-                         GO = character(),
-                         EVIDENCE = character())
+                        GO = character(),
+                        EVIDENCE = character())
     setDT(gos)
     gene2go <- gos[, {
       the_gid <- query
@@ -180,7 +192,8 @@ task build_orgdb{
     #   save(pathway2name, ko2pathway, file = "kegg_info.RData")
     # }
     # update_kegg(ko_json)
-    load(file = "~{kegg_info_RData}") # stored in the image GO-R--02
+    #load(file = "/script/build_orgdb/kegg_info.RData") # stored in the image GO-R--02
+    load(kegg_info_RData)
     gene2pathway <- gene2ko %>% left_join(ko2pathway,by = "Ko") %>% dplyr::select(GID, Pathway) %>% na.omit()
 
     # delete duplication
@@ -192,17 +205,17 @@ task build_orgdb{
 
     # Check the information of species [https://www.ncbi.nlm.nih.gov/taxonomy]
     makeOrgPackage(gene_info=gene_info,
-                   go=gene2go,
-                   ko=gene2ko,
-                   pathway=gene2pathway,
-                   version="4.0",  #版本
-                   maintainer = "yd<2144752653@qq.com>",  #修改为你的名字和邮箱
-                   author = "yd<2144752653@qq.com>",  #修改为你的名字和邮箱
-                   outputDir = ".",  #输出文件位置
-                   tax_id=tax_id,
-                   genus=genus,
-                   species=species,
-                   goTable="go")
+                  go=gene2go,
+                  ko=gene2ko,
+                  pathway=gene2pathway,
+                  version="4.0",  #版本
+                  maintainer = "yd<2144752653@qq.com>",  #修改为你的名字和邮箱
+                  author = "yd<2144752653@qq.com>",  #修改为你的名字和邮箱
+                  outputDir = ".",  #输出文件位置
+                  tax_id=tax_id,
+                  genus=genus,
+                  species=species,
+                  goTable="go")
     #install.packages("org.Ahypogaea.eg.db/", repos = NULL, type = "sources")
     #library(org.Ahypogaea.eg.db)
     #print(head(keys(org.Ahypogaea.eg.db, keytype = "GID"), 10))
@@ -268,37 +281,51 @@ task enrich{
     String url
   }
   command <<<
-    mkdir enrich
-    cd enrich
     /opt/conda/bin/R --vanilla --slave <<EOF
-    # Date: 20250609
+    # Date: 20250610
     # Image: enrich-R--04
     # libraries: org.Cthalictroides.eg.db,org.Pcirratum.eg.db,org.Ahypogaea.eg.db
     # gene_csv: gene, cluster, p_val_adj
+
+    ############# input section ###########
+    gene_csv="~{gene_csv}"
+    db="~{DB}"
+    minp=~{minp}
+    genus="~{genus}"
+    species="~{species}"
+    kegg_info_RData="~{kegg_info_RData}"
+    ############################################
 
     library(ggplot2)
     library(tidyverse)
     library(dplyr)
     library(clusterProfiler)
+    library(tidyverse)
     library(optparse)
 
-    option_list <- list(
-    make_option(c("--gene_csv"), type = "character", default = "~{gene_csv}", help = "input the csv of leiden_0.5"),
-    make_option(c("--minp"), type = "numeric", default = ~{minp}, help = "filter marker gene limited by min pvalue_adj"),
-    make_option(c("--db"),type = "character", default = "~{DB}",help = "Name of built db for enrich"),
-    make_option(c("--genus"), type = "character", default = "~{genus}", help = "Genus name", metavar = "character"),
-    make_option(c("--species"), type = "character", default = "~{species}", help = "Species name", metavar = "character")
-    )
-    opt <- parse_args(OptionParser(option_list = option_list))
+    # option_list <- list(
+    #   make_option(c("--gene_csv"), type = "character", default = "/data/work/0.peanut/orgdb/preprocess.csv", help = "input the csv of leiden_0.5"),
+    #   make_option(c("--kegg_info_RData"), type = "character", default = "/script/build_orgdb/kegg_info.RData", help = "Kegg info Rdata"),
+    #   make_option(c("--minp"), type = "numeric", default = 0.05, help = "filter marker gene limited by min pvalue_adj"),
+    #   make_option(c("--db"),type = "character", default = "/data/work/0.peanut/orgdb/result",help = "Name of built db for enrich"),
+    #   make_option(c("--genus"), type = "character", default = "Arachis", help = "Genus name", metavar = "character"),
+    #   make_option(c("--species"), type = "character", default = "hypogaea", help = "Species name", metavar = "character")
+    # )
+    # opt <- parse_args(OptionParser(option_list = option_list))
+    # gene_csv <- opt$gene_csv
+    # kegg_info_RData <- opt$kegg_info_RData
+    # minp <- opt$minp
+    # db <- opt$db
+    # genus <- opt$genus
+    # species <- opt$species
 
     # Good for wdl
-    parent_dir <- opt$db
+    parent_dir <- db
     paths <- list.files(parent_dir, full.names = TRUE, recursive = FALSE)
     print(paths)
     DB <- paths[1]
-
     # library
-    db_name <- paste0("org.", substr(opt$genus, 1, 1), opt$species, ".eg.db")
+    db_name <- paste0("org.", substr(genus, 1, 1), species, ".eg.db")
     print(db_name)
     install.packages(DB, repos = NULL, type = "sources")
     do.call(library, list(db_name))
@@ -306,8 +333,7 @@ task enrich{
     columns(db)
 
 
-    markers <- read.csv(opt$gene_csv, header = TRUE, stringsAsFactors = FALSE)
-    head(markers) # gene, cluster, p_val_adj
+    markers <- read.csv(gene_csv, header = TRUE, stringsAsFactors = FALSE)
 
     check_marker_genes <- function(markers, db) {
         required_cols <- c("gene", "cluster", "p_val_adj")
@@ -318,6 +344,8 @@ task enrich{
                 paste(missing_cols, collapse = ", ")
             ))
         }
+        head(markers) # gene, cluster, p_val_adj
+
         # Check
         db_gid <- keys(db, keytype = "GID")
         common_genes <- markers$gene[markers$gene %in% db_gid]
@@ -341,19 +369,19 @@ task enrich{
 
     # pathway and kegg
     pathway2gene <- AnnotationDbi::select(db,keys = keys(db),columns = c("Pathway","Ko")) %>%
-    na.omit() %>%
-    dplyr::select(Pathway, GID)
-    load("~{kegg_info_RData}")
+      na.omit() %>%
+      dplyr::select(Pathway, GID)
+    load(kegg_info_RData)
 
     # Output dictionary
-    filepath <- paste0(opt$species, "_enrich")
+    filepath <- paste0(species, "_enrich")
     dir.create(filepath)
     setwd(filepath)
 
     for(i in unique(markers$cluster)){
         marker_subset <- filter(markers, cluster == i)
         length(marker_subset$gene)
-        gene_list <- marker_subset %>% filter(p_val_adj < opt$minp)
+        gene_list <- marker_subset %>% filter(p_val_adj < minp)
         gene_list <- gene_list$gene
         #gene_list <- paste0(gene_list, ".1") # gene_id == GID
         length(gene_list)
@@ -372,8 +400,9 @@ task enrich{
             data <- go_data
             print(paste0(i, " lacked enrichment kegg information"))
         }
+        data <- rbind(go_data, kegg_data)
         if (nrow(data) > 0) {
-            print(paste0("Proceeding: ", i))
+            print(paste0("Data is not empty, Proceeding ", i))
             length(data$ID)
             data$Name <- paste0(data$ID,"_",data$Description)
             write.table(data, file = paste0(i,"_enrich.txt"), sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
@@ -399,7 +428,7 @@ task enrich{
             print(plot1)
             dev.off()}
         } else {
-            print(paste0("Data of", i, "is empty. Skipping the code."))
+            print("Data is empty. Skipping the code.")
         }
     }
     EOF
@@ -410,8 +439,8 @@ task enrich{
     req_memory: "~{mem}Gi"
   }
   output {
-    File result="enrich"
-    Array[File] result_txt = glob("enrich/*.txt")
+    File result="${species}_enrich"
+    Array[File] result_txt = glob("${species}_enrich/*.txt")
   }
 }
 
@@ -493,6 +522,7 @@ task gofigure{
 
     result_name_file="../result_name.txt"
     output_file="../output_standard_gofigure_input.txt"
+    max_label=~{max_label}
 
     # 读取文件内容并按逗号分割
     IFS=',' read -r -a names <<< "$(cat "$result_name_file")"
@@ -504,33 +534,32 @@ task gofigure{
 
     # 确保两个数组长度一致
     if [ "$len_names" -ne "$len_outputs" ]; then
-    echo "Error: The number of names and outputs does not match."
-    exit 1
+      echo "Error: The number of names and outputs does not match."
+      exit 1
     fi
 
     # 循环处理每个名称和对应的输出文件
     i=0
     while [ $i -lt $len_names ]; do
-    name=${names[$i]}
-    output=${outputs[$i]}
+      name=${names[$i]}
+      output=${outputs[$i]}
 
-    echo "Processing $name with output file $output"
-    mkdir "$name"
-    tsv_path="$output"
-    max_label=~{max_label}
+      echo "Processing $name with output file $output"
+      mkdir "$name"
+      tsv_path="$output"
 
-    # run go-figure
-    mkdir "./$name/data"
-    cp ~{ic_tsv} "$name/data"
-    cp ~{relations_full_tsv} "$name/data"
-    cp ~{go_obo} "$name/data"
-    mkdir "$name/go-figure-output"
-    /software/miniconda/envs/go-figure/bin/python ~{gofigure_py} \
-        -i "$tsv_path" -j standard -m "$max_label" -o "$name/go-figure-output"
-    rm -r "$name/data"
+      # run go-figure
+      mkdir "./$name/data"
+      cp ~{ic_tsv} "$name/data"
+      cp ~{relations_full_tsv} "$name/data"
+      cp ~{go_obo} "$name/data"
+      mkdir "$name/go-figure-output"
+      /software/miniconda/envs/go-figure/bin/python ~{gofigure_py} \
+          -i "$tsv_path" -j standard -m "$max_label" -o "$name/go-figure-output"
+      rm -r "$name/data"
 
-    # 自增索引
-    i=$((i + 1))
+      # 自增索引
+      i=$((i + 1))
     done
   >>>
   runtime {

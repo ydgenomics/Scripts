@@ -1,7 +1,16 @@
-# Date: 20250609
+# Date: 20250610
 # Image: enrich-R--04
 # libraries: org.Cthalictroides.eg.db,org.Pcirratum.eg.db,org.Ahypogaea.eg.db
 # gene_csv: gene, cluster, p_val_adj
+
+############# input section ###########
+gene_csv="/data/work/0.peanut/orgdb/preprocess.csv"
+db="/data/work/0.peanut/orgdb/output"
+minp=0.05
+genus="Arachis"
+species="hypogaea"
+kegg_info_RData="/script/build_orgdb/kegg_info.RData"
+############################################
 
 library(ggplot2)
 library(tidyverse)
@@ -10,21 +19,29 @@ library(clusterProfiler)
 library(tidyverse)
 library(optparse)
 
-option_list <- list(
-  make_option(c("--gene_csv"), type = "character", default = "/data/work/0.peanut/orgdb/preprocess.csv", help = "input the csv of leiden_0.5"),
-  make_option(c("--minp"), type = "numeric", default = 0.05, help = "filter marker gene limited by min pvalue_adj"),
-  make_option(c("--db"),type = "character", default = "/data/work/0.peanut/orgdb/result",help = "Name of built db for enrich"),
-  make_option(c("--genus"), type = "character", default = "Arachis", help = "Genus name", metavar = "character"),
-  make_option(c("--species"), type = "character", default = "hypogaea", help = "Species name", metavar = "character")
-)
-opt <- parse_args(OptionParser(option_list = option_list))
+# option_list <- list(
+#   make_option(c("--gene_csv"), type = "character", default = "/data/work/0.peanut/orgdb/preprocess.csv", help = "input the csv of leiden_0.5"),
+#   make_option(c("--kegg_info_RData"), type = "character", default = "/script/build_orgdb/kegg_info.RData", help = "Kegg info Rdata"),
+#   make_option(c("--minp"), type = "numeric", default = 0.05, help = "filter marker gene limited by min pvalue_adj"),
+#   make_option(c("--db"),type = "character", default = "/data/work/0.peanut/orgdb/result",help = "Name of built db for enrich"),
+#   make_option(c("--genus"), type = "character", default = "Arachis", help = "Genus name", metavar = "character"),
+#   make_option(c("--species"), type = "character", default = "hypogaea", help = "Species name", metavar = "character")
+# )
+# opt <- parse_args(OptionParser(option_list = option_list))
+# gene_csv <- opt$gene_csv
+# kegg_info_RData <- opt$kegg_info_RData
+# minp <- opt$minp
+# db <- opt$db
+# genus <- opt$genus
+# species <- opt$species
+
 # Good for wdl
-parent_dir <- opt$db
+parent_dir <- db
 paths <- list.files(parent_dir, full.names = TRUE, recursive = FALSE)
 print(paths)
 DB <- paths[1]
 # library
-db_name <- paste0("org.", substr(opt$genus, 1, 1), opt$species, ".eg.db")
+db_name <- paste0("org.", substr(genus, 1, 1), species, ".eg.db")
 print(db_name)
 install.packages(DB, repos = NULL, type = "sources")
 do.call(library, list(db_name))
@@ -32,7 +49,7 @@ db <- get(db_name)
 columns(db)
 
 
-markers <- read.csv(opt$gene_csv, header = TRUE, stringsAsFactors = FALSE)
+markers <- read.csv(gene_csv, header = TRUE, stringsAsFactors = FALSE)
 
 check_marker_genes <- function(markers, db) {
     required_cols <- c("gene", "cluster", "p_val_adj")
@@ -70,17 +87,17 @@ check_marker_genes(markers, db)
 pathway2gene <- AnnotationDbi::select(db,keys = keys(db),columns = c("Pathway","Ko")) %>%
   na.omit() %>%
   dplyr::select(Pathway, GID)
-load("/script/build_orgdb/kegg_info.RData")
+load(kegg_info_RData)
 
 # Output dictionary
-filepath <- paste0(opt$species, "_enrich")
+filepath <- paste0(species, "_enrich")
 dir.create(filepath)
 setwd(filepath)
 
 for(i in unique(markers$cluster)){
     marker_subset <- filter(markers, cluster == i)
     length(marker_subset$gene)
-    gene_list <- marker_subset %>% filter(p_val_adj < opt$minp)
+    gene_list <- marker_subset %>% filter(p_val_adj < minp)
     gene_list <- gene_list$gene
     #gene_list <- paste0(gene_list, ".1") # gene_id == GID
     length(gene_list)
