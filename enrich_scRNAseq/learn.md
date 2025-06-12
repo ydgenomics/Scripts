@@ -31,3 +31,5 @@ columns(orgdb)  #查看OrgDb对象的数据类型
 #  [6] "GOALL"       "Ko"          "ONTOLOGY"    "ONTOLOGYALL" "Pathway" 
 saveDb(orgdb,file="/data/work/0.peanut/orgdb/output/Ahypogaea.Orgdb") #把Capra_hircus对象保存成Capra_hircus.OrgDb文件。
 ```
+
+enrichplot可视化和gsea分析后续补上
