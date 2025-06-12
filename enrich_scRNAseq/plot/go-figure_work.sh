@@ -1,20 +1,13 @@
-# date: 20250609
-# image: go-figure--01
-# parameters
+# date: 20250605 # image: go-figure
+# input: result_txt.txt, result_name.txt
+/opt/software/R/bin/Rscript /data/work/go-figure/deal_enrich_txt.R result_txt.txt
 
-# tsv_path="/data/work/go-figure/standard_example_input.tsv"
-# max_label=15
-# # run go-figure
-# mkdir data
-# cp /script/go-figure/ic.tsv ./data
-# cp /script/go-figure/relations_full.tsv ./data
-# cp /script/go-figure/go.obo ./data
-# mkdir go-figure-output
-# /software/miniconda/envs/go-figure/bin/python /script/go-figure/gofigure.py \
-# -i $tsv_path -j standard -m $max_label -o go-figure-output
-# 定义文件路径
+mkdir gofigure_result
+cd gofigure_result
+
 result_name_file="../result_name.txt"
 output_file="../output_standard_gofigure_input.txt"
+max_label=15
 
 # 读取文件内容并按逗号分割
 IFS=',' read -r -a names <<< "$(cat "$result_name_file")"
@@ -39,18 +32,15 @@ while [ $i -lt $len_names ]; do
   echo "Processing $name with output file $output"
   mkdir "$name"
   tsv_path="$output"
-  max_label=15
 
   # run go-figure
-  mkdir "./$name/data"
-  cp /data/work/go-figure/data/ic.tsv "$name/data"
-  cp /data/work/go-figure/data/relations_full.tsv "$name/data"
-  cp /data/work/go-figure/data/go.obo "$name/data"
-  mkdir "$name/go-figure-output"
+  mkdir "$name"
+  cp /data/work/go-figure/data/ic.tsv "data"
+  cp /data/work/go-figure/data/relations_full.tsv "data"
+  cp /data/work/go-figure/data/go.obo "data"
   /software/miniconda/envs/go-figure/bin/python /data/work/go-figure/gofigure.py \
-    -i "$tsv_path" -j standard -m "$max_label" -o "$name/go-figure-output"
-  rm -r "$name/data"
+    -i "$tsv_path" -j standard -m "$max_label" -o "$name"
 
-  # 自增索引
   i=$((i + 1))
 done
+rm -r "data"

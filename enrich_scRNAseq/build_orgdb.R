@@ -1,15 +1,15 @@
-# Date: 20250610
-# Image: enrich-R--04
+# Date: 20250610 # Image: enrich-R--04
 # Description: build_orgdb.R--This script is used to build orgdb database for peanut
+# Included: Four functions: main(required), deal_go_obo(), build_orgdb(required), build_go_gmt(required), build_ko_gmt(required)
 # Output: org.Ahypogaea.eg.db/db file
 
 ########################## input section #######################
-emapper_annotations_xlsx="/data/work/0.peanut/orgdb/out.emapper.annotations.xlsx"
-kegg_info_RData="/data/work/0.peanut/orgdb/kegg_info.RData"
-go_obo_csv="/data/work/0.peanut/orgdb/test2/go_obo_result.csv"
-tax_id="3818"
-genus="Arachis"
-species="hypogaea"
+# emapper_annotations_xlsx="/data/work/0.peanut/orgdb/out.emapper.annotations.xlsx"
+# kegg_info_RData="/data/work/0.peanut/orgdb/kegg_info.RData"
+# go_obo_csv="/data/work/0.peanut/orgdb/test2/go_obo_result.csv"
+# tax_id="3818"
+# genus="Arachis"
+# species="hypogaea"
 ##############################################################
 
 library(clusterProfiler)
@@ -26,25 +26,25 @@ library(readxl)
 library(jsonlite)
 library(optparse)
 
-# option_list <- list(
-#     make_option(c("-e", "--emapper_xlsx"), type = "character", default = "/data/work/0.peanut/orgdb/out.emapper.annotations.xlsx", help = "Path to emapper annotations xlsx file", metavar = "character"),
-#     make_option(c("--kegg_info_RData"), type = "character", default = "/script/build_orgdb/kegg_info.RData", help = "Kegg info Rdata"),
-#     make_option(c("--go_obo_csv"), type = "character", default = "/data/work/0.peanut/orgdb/test2/go_obo_result.csv", help = "Go info csv"),
-#     #make_option(c("-k", "--kojson"), type = "character", default = "ko.json", help = "Path to KEGG ko JSON file", metavar = "character"),
-#     make_option(c("-t", "--taxid"), type = "character", default = "3818", help = "Taxonomy ID", metavar = "character"),
-#     make_option(c("-g", "--genus"), type = "character", default = "Arachis", help = "Genus name", metavar = "character"),
-#     make_option(c("-s", "--species"), type = "character", default = "hypogaea", help = "Species name", metavar = "character")
+option_list <- list(
+    make_option(c("-e", "--emapper_xlsx"), type = "character", default = "/data/work/0.peanut/orgdb/out.emapper.annotations.xlsx", help = "Path to emapper annotations xlsx file", metavar = "character"),
+    make_option(c("--kegg_info_RData"), type = "character", default = "/script/build_orgdb/kegg_info.RData", help = "Kegg info Rdata"),
+    make_option(c("--go_obo_csv"), type = "character", default = "/data/work/0.peanut/orgdb/test2/go_obo_result.csv", help = "Go info csv"),
+    #make_option(c("-k", "--kojson"), type = "character", default = "ko.json", help = "Path to KEGG ko JSON file", metavar = "character"),
+    make_option(c("-t", "--taxid"), type = "character", default = "3818", help = "Taxonomy ID", metavar = "character"),
+    make_option(c("-g", "--genus"), type = "character", default = "Arachis", help = "Genus name", metavar = "character"),
+    make_option(c("-s", "--species"), type = "character", default = "hypogaea", help = "Species name", metavar = "character")
+)
 
-# )
-
-# opt_parser <- OptionParser(option_list = option_list)
-# opt <- parse_args(opt_parser)
-# emapper_annotations_xlsx <- opt$emapper_xlsx
-# kegg_info_RData <- opt$kegg_info_RData
-# #ko_json <- opt$kojson # Download the ko.json file from KEGG website[https://www.kegg.jp/kegg-bin/download_htext?htext=ko00001&format=json&filedir=]
-# tax_id <- opt$taxid
-# genus <- opt$genus
-# species <- opt$species
+opt_parser <- OptionParser(option_list = option_list)
+opt <- parse_args(opt_parser)
+emapper_annotations_xlsx <- opt$emapper_xlsx
+kegg_info_RData <- opt$kegg_info_RData
+go_obo_csv <- opt$go_obo_csv
+#ko_json <- opt$kojson # Download the ko.json file from KEGG website[https://www.kegg.jp/kegg-bin/download_htext?htext=ko00001&format=json&filedir=]
+tax_id <- opt$taxid
+genus <- opt$genus
+species <- opt$species
 
 deal_go_obo <- function(go_obo, output_csv = "go_obo_result.csv") {
   # 读取文件内容

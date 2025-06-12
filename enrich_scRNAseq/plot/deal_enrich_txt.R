@@ -1,6 +1,11 @@
-# Date: 20250609
+# Date: 20250612 # Title: deal_enrich_txt.R
+# Description: The preprocess of go-figure
 
-file_path <- "/data/work/0.peanut/enrich/result_txt.txt"
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) < 1) {
+  stop("Please provide the input file path as a command line argument.")
+}
+file_path <- args[1]
 file_content <- readLines(file_path, warn = FALSE)
 file_list <- strsplit(file_content, ",")[[1]]
 file_list <- trimws(file_list)
