@@ -7,7 +7,7 @@
 # emapper_annotations_xlsx="/data/work/0.peanut/orgdb/out.emapper.annotations.xlsx"
 # kegg_info_RData="/data/work/0.peanut/orgdb/kegg_info.RData"
 # go_obo_csv="/data/work/0.peanut/orgdb/test2/go_obo_result.csv"
-# tax_id="3818"
+# taxid="3818"
 # genus="Arachis"
 # species="hypogaea"
 ##############################################################
