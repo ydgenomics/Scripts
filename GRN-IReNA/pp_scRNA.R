@@ -41,7 +41,7 @@ expressed_tf <- expressed_tf[!expressed_tf%in%rownames(sig_genes)]
 ### Refine the seurat object
 refined_seurat <- subset(seurat_with_time, features = c(expressed_tf,rownames(sig_genes)))
 
-saveRDS(refined_seurat, file = "refined_seurat.rds")
+saveRDS(refined_seurat, file = "seurat_with_time.rds")
 # # if you already have identified DEGs, you just need to run subset function in seurat:
 # ### DEGs used here is the character class
 # seurat_with_time <- subset(seurat_with_time, features = DEGs)

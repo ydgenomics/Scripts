@@ -66,12 +66,6 @@ library(purrr)
 
 [pp.bulkATAC](https://jiang-junyao.github.io/IReNA/ATAC-seq-preprocessing)
 ```shell
-conda create -n macs3
-conda activate macs3
-conda install -c bioconda macs3 -y
-```
-
-```shell
 conda install bioconda::htseq -y
 ```
 [pp.scRNAseq](https://jiang-junyao.github.io/IReNA/scRNA-seq-preprocessing)
@@ -82,3 +76,25 @@ conda install bioconda::htseq -y
 [IReNA]() *Image: IReNA *
 [htseq](https://github.com/htseq/htseq) *Image: htseq*
 [hint](https://reg-gen.readthedocs.io/en/latest/hint/introduction.html) *Image: rgt-hint*
+
+
+```shell
+conda create -n fastqc -y
+conda activate fastqc
+conda install bioconda::fastqc -y
+conda install bioconda::fastp -y
+conda install bioconda::cutadapt -y
+conda install bioconda::bowtie2 -y
+fastp --version
+fastqc --version
+cutadapt --version
+bowtie2 --version
+
+conda create -n samtools -y
+conda activate samtools
+conda install bioconda::samtools -y
+
+conda create -n macs3 -y
+conda activate macs3
+conda install -c bioconda macs3 -y
+```
