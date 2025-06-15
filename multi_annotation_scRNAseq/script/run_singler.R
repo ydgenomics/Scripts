@@ -1,6 +1,4 @@
-# Title: singler.R
-# Date: 20250528
-# Coder: ydgenomics
+# Date: 20250615 # Title: run_singler.R # Coder: ydgenomics
 # Description: Using SingleR to annotate single-cell RNA-seq data based on a custom reference dataset.
 # Input: reference .rds has RNA, query .rds files, and a metadata key for clustering in the reference dataset
 # Output: `_refsingleR.Rdata` and `_singleR.rds files`
@@ -15,9 +13,9 @@ library(optparse)
 
 # option_list <- list(
 #     make_option(
-#         c("-r", "--input_ref_rds"), type = "character", default = "data/immune_ref.rds", help = "Path to the reference dataset"),
+#         c("-r", "--input_ref_rds"), type = "character", default = "/data/users/yangdong/yangdong_db936836d4034b638f5c86db02932db1/online/CRA004082_leaf_filtered_cg.rds", help = "Path to the reference dataset"),
 #     make_option(
-#         c("-q", "--input_query_rds"), type = "character", default = "data/immune_query.rds", help = "Path to the query dataset"),
+#         c("-q", "--input_query_rds"), type = "character", default = "/data/input/Files/huangpeilin/NipLSD-result-new1/1/NipLSD1_anno_merged_data_obj_after_choir.rds", help = "Path to the query dataset"),
 #     make_option(
 #         c("-k", "--ref_cluster_key"), type = "character", default = "Celltype",help = "Metadata key for clustering in the reference dataset")
 # )
@@ -28,8 +26,8 @@ library(optparse)
 
 # Step 1: Load the reference dataset and create a singleR reference Rdata object
 create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
-    ref_seu <- readRDS(input_ref_rds);print(ref_seu); print(colnames(ref_seu))
-    Idents(ref_seu) <- ref_seu@meta.data[[ref_cluster_key]]
+    ref_seu <- readRDS(input_ref_rds);print(ref_seu); print(head(rownames(ref_seu), n=10))
+    colnames(ref_seu@meta.data); Idents(ref_seu) <- ref_seu@meta.data[[ref_cluster_key]]
     av <- AggregateExpression(
         ref_seu, group.by = ref_cluster_key, assays = "RNA"
     )
@@ -39,7 +37,7 @@ create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
     )
     ref_sce <- scater::logNormCounts(ref_sce)
     colData(ref_sce)$Type <- colnames(ref_mat)
-    output_ref_rdata <- paste0(sub("\\.rds$", "", basename(input_ref_rds)), "_refsingleR.Rdata")
+    output_ref_rdata <- paste0(sub("\\.rds$", "", basename(input_ref_rds)), "_ref_singler.Rdata")
     save(ref_sce, file = output_ref_rdata)
     return(ref_sce)
 }
@@ -47,9 +45,9 @@ create_ref_singler <- function(input_ref_rds, ref_cluster_key) {
 
 # Step 2: Load the query dataset and run singleR for annotation
 run_singler <- function(query_seu, ref_sce) {
-    #query_seu <- readRDS(input_query_rds); DefaultAssay(query_seu) <- "RNA"
+    # query_seu <- readRDS(input_query_rds); DefaultAssay(query_seu) <- "RNA"
     DefaultAssay(query_seu) <- "RNA"
-    query_seu <- NormalizeData(query_seu, normalization.method = "LogNormalize", scale.factor = 10000)
+    # query_seu <- NormalizeData(query_seu, normalization.method = "LogNormalize", scale.factor = 10000)
     query_data <- GetAssayData(query_seu, slot = "data")
     common_genes <- intersect(rownames(query_data), rownames(ref_sce))
     num_common_genes <- length(common_genes)
@@ -62,10 +60,10 @@ run_singler <- function(query_seu, ref_sce) {
     pred <- SingleR(
         test = query_data, ref = ref_sce, labels = ref_sce$Type
     )
-    query_seu$singleR <- pred$labels
-    #output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_singleR.rds")
+    query_seu$singler <- pred$labels
+    #output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_singler.rds")
     #saveRDS(query_seu, file = output_query_rds)
     return(query_seu)
 }
 
-# run_singler(input_query_rds, ref_sce)
+# seu <- run_singler(query_seu, ref_sce)

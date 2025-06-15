@@ -1,6 +1,4 @@
-# Title: run_sctype.R
-# Date: 20250529
-# Coder: ydgenomics
+# Date: 20250529 # Title: run_sctype.R
 # Description: Using sctype to annotate single-cell RNA-seq data based on marker gene csv.
 # Input: marker_csv file, query .rds file, cluster key in query .rds object, and UMAP reduction name
 # Output: "_sctype.rds" and "_sctype_umap.pdf" files
@@ -109,10 +107,10 @@ run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="um
 
   #seu <- readRDS(input_query_rds); DefaultAssay(seu) <- "RNA" # set default assay to RNA
   DefaultAssay(seu) <- "RNA"; print(seu)
-  message("Running NormalizeData, FindVariableFeatures, and ScaleData.")
-  seu <- NormalizeData(seu, normalization.method = "LogNormalize", scale.factor = 10000)
-  seu <- FindVariableFeatures(seu)
-  seu <- ScaleData(seu)
+  # message("Running NormalizeData, FindVariableFeatures, and ScaleData.")
+  # seu <- NormalizeData(seu, normalization.method = "LogNormalize", scale.factor = 10000)
+  # seu <- FindVariableFeatures(seu)
+  # seu <- ScaleData(seu)
 
   # check Seurat object version (scRNA-seq matrix extracted differently in Seurat v4/v5)
   seurat_package_v5 <- isFALSE('counts' %in% names(attributes(seu[["RNA"]])));
