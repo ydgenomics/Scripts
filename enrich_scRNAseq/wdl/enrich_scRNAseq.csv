@@ -1,2 +1,2 @@
-EntityID,emapper_xlsx,gene_csv,kegg_info_RData,ic_tsv,relations_full_tsv,go_obo,gofigure_py,genus,species,taxid,minp
-yd_test,/Files/yangdong/enrich/NB20250514093245n6jpxyyq/out.emapper.annotations.xlsx,/Files/yangdong/enrich/preprocess.csv,/Files/yangdong/enrich/kegg_info.RData,/Files/yangdong/enrich/,/Files/yangdong/enrich/relations_full.tsv,/Files/yangdong/enrich/go.obo,/Files/yangdong/enrich/gofigure.py,Arachis,hypogaea,3818,0.05
+EntityID,emapper_xlsx,gene_csv,ko_json,go_obo,ic_tsv,relations_full_tsv,genus,species,taxid,minp
+yd_test,/Files/yangdong/enrich/NB20250514093245n6jpxyyq/out.emapper.annotations.xlsx,/Files/yangdong/enrich/enrich_input_genelist.csv,/Files/yangdong/enrich/ko00001.json,/Files/yangdong/enrich/go.obo,/Files/yangdong/enrich/,/Files/yangdong/enrich/relations_full.tsv,Arachis,hypogaea,3818,0.05
