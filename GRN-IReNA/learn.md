@@ -10,3 +10,21 @@ download.file(
   mode = "wb"
 )
 ```
+
+构建cotton的`motif1`
+```R
+> head(motif1)
+  Accession      ID   Name         TFs                             EnsemblID
+1    M00001 MYOD_01   MyoD       Myod1                    ENSMUSG00000009471
+2    M00002  E47_01    E47        Tcf3                    ENSMUSG00000020167
+3    M00004 CMYB_01  c-Myb         Myb                    ENSMUSG00000019982
+4    M00005  AP4_01   AP-4       Tfap4                    ENSMUSG00000005718
+5    M00006 MEF2_01 MEF-2A Mef2a;Mef2c ENSMUSG00000030557;ENSMUSG00000005583
+6    M00007 ELK1_01  Elk-1        Elk1                    ENSMUSG00000009406
+```
+这个是motif_blinding_tf的信息，最后一列即5列为`gene`
+```R
+> head(rownames(seurat_object), n=10)
+ [1] "Ga14g01907" "Ga05g03180" "Ga13g00005" "Ga14g01554" "Ga14g01555"
+ [6] "Ga14g01813" "Ga14g00262" "Ga01g00010" "Ga01g00022" "Ga01g00004"
+ ```
