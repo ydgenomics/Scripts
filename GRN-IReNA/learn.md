@@ -1,3 +1,97 @@
+这个项目是基于时序数据推断调控网络，从分子的调控网络去解释生物的生长发育的事件。
+如何去联合分析？
+
+> IReNA环境配置
+```shell
+conda create -n IReNA r-base=4.3 -y
+conda activate IReNA
+conda install bioconda::bioconductor-rsamtools -y
+conda install bioconda::bioconductor-chipseeker -y
+conda install bioconda::bioconductor-monocle -y
+conda install bioconda::bioconductor-rcistarget -y
+conda install bioconda::bioconductor-rcy3 -y
+conda install bioconda::bioconductor-clusterprofiler -y
+conda install conda-forge::r-devtools -y
+conda install conda-forge::r-remotes -y
+conda install conda-forge::r-pbapply -y
+conda install conda-forge::r-rocr -y
+conda install conda-forge::r-seurat -y # 5.3
+conda install bioconda::bioconductor-edger -y
+conda install bioconda::bioconductor-edger -y
+conda install conda-forge::r-furrr -y
+conda install conda-forge::r-future -y
+```
+
+```R
+devtools::install_github("jiang-junyao/IReNA")
+library(IReNA)
+library(pheatmap)
+library(DDRTree)
+library(RcisTarget)
+library(Rsamtools)
+library(GenomicRanges)
+library(ChIPseeker)
+library(IRanges)
+library(Biostrings)
+library(igraph)
+library(pbapply) # conda install conda-forge::r-pbapply -y
+library(RCy3)
+library(ROCR) # conda install conda-forge::r-rocr -y
+library(Seurat) # conda install conda-forge::r-seurat -y # 5.3
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+library(stats)
+library(utils)
+library(monocle)
+library(VGAM)
+library(BiocGenerics)
+library(clusterProfiler)
+library(edgeR) # conda install bioconda::bioconductor-edger -y
+library(limma)
+library(rlang)
+library(reshape2)
+library(stringr)
+library(furrr) # conda install conda-forge::r-furrr -y
+library(future) # conda install conda-forge::r-future -y
+library(purrr)
+```
+
+[pp.bulkATAC](https://jiang-junyao.github.io/IReNA/ATAC-seq-preprocessing)
+```shell
+conda install bioconda::htseq -y
+```
+[pp.scRNAseq](https://jiang-junyao.github.io/IReNA/scRNA-seq-preprocessing)
+
+## [bulkATAC+scRNAseq](https://jiang-junyao.github.io/IReNA/scATAC+scRNA)
+[samtools]() *Image: chromap*
+[MACS3](https://macs3-project.github.io/MACS/index.html) *Image: macs3*
+[IReNA]() *Image: IReNA *
+[htseq](https://github.com/htseq/htseq) *Image: htseq*
+[hint](https://reg-gen.readthedocs.io/en/latest/hint/introduction.html) *Image: rgt-hint*
+
+
+```shell
+conda create -n fastqc -y
+conda activate fastqc
+conda install bioconda::fastqc -y
+conda install bioconda::fastp -y
+conda install bioconda::cutadapt -y
+conda install bioconda::bowtie2 -y
+fastp --version
+fastqc --version
+cutadapt --version
+bowtie2 --version
+
+conda create -n samtools -y
+conda activate samtools
+conda install bioconda::samtools -y
+
+conda create -n macs3 -y
+conda activate macs3
+conda install -c bioconda macs3 -y
+```
+
 [树棉：*Gossypium arboreum*](https://baike.baidu.com/item/%E6%A0%91%E6%A3%89/1706952?fromModule=search-result_lemma)
 
 计算树棉基因组大小`awk '{sum += length($0)} END {print sum}' /data/input/Files/taoziyi/cotton_atac/NB2025053011270768166314/genome/genome.fa` **1444625381**
