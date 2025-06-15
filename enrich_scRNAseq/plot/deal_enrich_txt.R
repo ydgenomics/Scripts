@@ -1,18 +1,18 @@
-# Date: 20250612 # Title: deal_enrich_txt.R
+# Date: 20250615 # Title: deal_enrich_txt.R
 # Description: The preprocess of go-figure
 
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1) {
   stop("Please provide the input file path as a command line argument.")
 }
-file_path <- args[1]
-file_content <- readLines(file_path, warn = FALSE)
-file_list <- strsplit(file_content, ",")[[1]]
-file_list <- trimws(file_list)
-print(file_list)
+file_path <- args[1] # file_path <- "/data/work/0.peanut/orgdb/test5/hypogaea_enrich"
+txt_files <- list.files(file_path, pattern = "\\.txt$", full.names = TRUE)
+print(txt_files)
+new_array <- sub("_enrich.txt$", "", basename(txt_files))
+write(paste(new_array, collapse = ","), file = "result_name.txt")
 
 output_files <- c()
-for (file_path in file_list) {
+for (file_path in txt_files) {
   # 提取文件名
   file_name <- basename(file_path)
   
