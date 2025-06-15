@@ -1,9 +1,8 @@
-# date: 20250605 # image: go-figure
+# date: 20250615 # image: go-figure
 # input: result_txt.txt, result_name.txt
-/opt/software/R/bin/Rscript /data/work/go-figure/deal_enrich_txt.R result_txt.txt
-
 mkdir gofigure_result
 cd gofigure_result
+cp /data/users/yangdong/yangdong_8632f88957bb4c4f85daf59edaf6b059/online/go-figure/gofigure.py gofigure.py
 
 result_name_file="../result_name.txt"
 output_file="../output_standard_gofigure_input.txt"
@@ -23,6 +22,11 @@ if [ "$len_names" -ne "$len_outputs" ]; then
   exit 1
 fi
 
+mkdir data
+cp /data/users/yangdong/yangdong_8632f88957bb4c4f85daf59edaf6b059/online/go-figure/data/ic.tsv "data"
+cp /data/users/yangdong/yangdong_8632f88957bb4c4f85daf59edaf6b059/online/go-figure/data/relations_full.tsv "data"
+cp /data/users/yangdong/yangdong_8632f88957bb4c4f85daf59edaf6b059/online/go-figure/data/go.obo "data"
+
 # 循环处理每个名称和对应的输出文件
 i=0
 while [ $i -lt $len_names ]; do
@@ -35,12 +39,9 @@ while [ $i -lt $len_names ]; do
 
   # run go-figure
   mkdir "$name"
-  cp /data/work/go-figure/data/ic.tsv "data"
-  cp /data/work/go-figure/data/relations_full.tsv "data"
-  cp /data/work/go-figure/data/go.obo "data"
-  /software/miniconda/envs/go-figure/bin/python /data/work/go-figure/gofigure.py \
-    -i "$tsv_path" -j standard -m "$max_label" -o "$name"
 
+  /software/miniconda/envs/go-figure/bin/python gofigure.py \
+  -i "$tsv_path" -j standard -m "$max_label" -o "$name"
   i=$((i + 1))
 done
-rm -r "data"
+rm -r data
