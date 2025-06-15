@@ -21,7 +21,7 @@ library(optparse)
 
 option_list <- list(
   make_option(c("--gene_csv"), type = "character", default = "/data/work/0.peanut/orgdb/preprocess.csv", help = "input the csv of leiden_0.5"),
-  make_option(c("--kegg_info_RData"), type = "character", default = "/data/work/0.peanut/orgdb/kegg_info.RData", help = "Kegg info Rdata"),
+  make_option(c("--kegg_info_RData"), type = "character", default = "/data/work/0.peanut/orgdb/test5/kegg_info.RData", help = "Kegg info Rdata"),
   make_option(c("--db"),type = "character", default = "/data/work/0.peanut/orgdb/test4",help = "Name of built db for enrich"),
   make_option(c("--minp"), type = "numeric", default = 0.05, help = "filter marker gene limited by min pvalue_adj"),
   make_option(c("--genus"), type = "character", default = "Arachis", help = "Genus name", metavar = "character"),
