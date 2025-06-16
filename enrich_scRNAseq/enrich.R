@@ -102,12 +102,11 @@ for(i in unique(markers$cluster)){
     go_data <- enrichGO(gene = gene_list,OrgDb = db,keyType = 'GID',ont = 'ALL',qvalueCutoff = 0.05,pvalueCutoff = 0.05)
     go_data <- as.data.frame(go_data)
     kegg_result <- enricher(gene_list,TERM2GENE = pathway2gene, TERM2NAME = pathway2name,pvalueCutoff = 0.05,qvalueCutoff = 0.05)
-    kegg_data <- as.data.frame(kegg_result)
-    dim(kegg_data)
-    kegg_data$ONTOLOGY <- "KEGG"
-    col_names <- names(kegg_data)
-    kegg_data <- kegg_data[, c("ONTOLOGY", col_names[!col_names %in% "ONTOLOGY"])]
+    kegg_data <- as.data.frame(kegg_result); dim(kegg_data)
     if (nrow(go_data) > 0 && nrow(kegg_data) > 0) {
+        kegg_data$ONTOLOGY <- "KEGG"
+        col_names <- names(kegg_data)
+        kegg_data <- kegg_data[, c("ONTOLOGY", col_names[!col_names %in% "ONTOLOGY"])]
         data <- rbind(go_data, kegg_data)
     } else {
         data <- go_data
