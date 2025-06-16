@@ -126,3 +126,4 @@ download.file(
  E1_to_Ga的query基因为什么还有不同的后缀，有什么特殊意义吗？？
 
  rgt-hint需要rgtdata，而一般是人的，需要根据物种进行custom配置[customize-rgt-data-folder](https://reg-gen.readthedocs.io/en/latest/rgt/setup_data.html#customize-rgt-data-folder)
+ [2019(genome_biology)_Identification of transcription factorbinding sites using ATAC-seq]()
