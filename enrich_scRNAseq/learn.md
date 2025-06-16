@@ -17,6 +17,7 @@ gofigure的背景文件下载`ic.tsv`, `relations_full.tsv`, `go.obo` [gofigure 
 > [模式植物GO背景基因集制作](https://mp.weixin.qq.com/s/08hAZs24mi_KBOa4QZRLdQ)
 > [模式植物构建orgDb数据库 | 以org.Slycompersicum.eg.db为例](https://mp.weixin.qq.com/s/b8OrDKJJGdXwF9B1C7l6zg)
 > [基于AnnotationDbi非模式物种OrgDB下载制作](https://mp.weixin.qq.com/s/auyTKJhfos0wi_yPsA7O0g)
+> [从 gtf 文件构建 orgdb 和 txdb 数据库](https://mp.weixin.qq.com/s/w3FFimm-xF2OY20aoFRcSg)
 
 **解决了之前要安装包才能调用库的问题**
 ```R 

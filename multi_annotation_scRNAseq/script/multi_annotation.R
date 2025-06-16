@@ -27,7 +27,7 @@ source("/data/work/test0615/run_singler.R")
 load(input_ref_rdata) # load reference data
 seu <- run_singler(seu, ref_sce)
 anno_key2 <- paste0("singler_", cluster_key)
-seu@meta.data[[anno_key2]] <- paste0(seu$sctype,"_",seu@meta.data[[cluster_key]])
+seu@meta.data[[anno_key2]] <- paste0(seu$singler,"_",seu@meta.data[[cluster_key]])
 
 # save result
 colnames(seu@meta.data)
