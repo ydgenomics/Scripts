@@ -129,4 +129,16 @@ download.file(
  [2019(genome_biology)_Identification of transcription factorbinding sites using ATAC-seq]()
 
  Motif position weight matirx (PWM)
- 
+ [从 gtf 文件构建 orgdb 和 txdb 数据库](https://mp.weixin.qq.com/s/w3FFimm-xF2OY20aoFRcSg)
+ *TxDb 用于存储与基因组结构相关的信息，例如染色体、外显子、内含子、启动子、转录本等*
+```shell
+# txdbmaker只能装在大于等于4.4版本的R里面
+conda create -n txdbmaker r-base=4.4 -y
+conda activate txdbmaker
+conda install conda-forge::r-msigdbr -y
+conda install conda-forge::r-tidyverse -y
+conda install bioconda::bioconductor-annotationforge -y
+conda install bioconda::bioconductor-rtracklayer -y
+conda install bioconda::bioconductor-biomart -y
+conda install bioconda::bioconductor-txdbmaker -y
+ ```
