@@ -1,4 +1,4 @@
-# Date: 20250529 # Title: run_sctype.R
+# Date: 20250622 # Title: run_sctype.R
 # Description: Using sctype to annotate single-cell RNA-seq data based on marker gene csv.
 # Input: marker_csv file, query .rds file, cluster key in query .rds object, and UMAP reduction name
 # Output: "_sctype.rds" and "_sctype_umap.pdf" files
@@ -101,7 +101,7 @@ sctype_score <- function(scRNAseqData, scaled = !0, gs, gs2 = NULL, gene_names_t
   es.max
 }
 #' Run ScType for cell type annotation
-run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="umap", plot_width=14, plot_height=10){
+run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="umap", plot_width=14, plot_height=10, title="default"){
   # Input
   gs_list <- gene_sets_prepare(input_marker_csv, tissue); str(gs_list)
 
@@ -132,11 +132,14 @@ run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="um
       es.max.cl = sort(rowSums(es.max[ ,rownames(seu@meta.data[seu@meta.data[[cluster_key]]==cl, ])]), decreasing = !0)
       head(data.frame(cluster = cl, type = names(es.max.cl), scores = es.max.cl, ncells = sum(seu@meta.data[[cluster_key]]==cl)), 10)
   }))
+
   sctype_scores <- cL_resutls %>% group_by(cluster) %>% top_n(n = 1, wt = scores)  
 
   # set low-confident (low ScType score) clusters to "unknown"
   sctype_scores$type[as.numeric(as.character(sctype_scores$scores)) < sctype_scores$ncells/4] <- "Unknown"
   print(sctype_scores[,1:3])
+  sctype_scores_sorted <- sctype_scores %>% arrange(type)
+  write.csv(sctype_scores_sorted, paste0(title, "_sctype_scores_sorted.csv"), row.names = FALSE)
 
   seu@meta.data$sctype = ""
   for(j in unique(sctype_scores$cluster)){
@@ -151,6 +154,7 @@ run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="um
 
   # prepare edges
   cL_resutls <- cL_resutls[order(cL_resutls$cluster),]; edges = cL_resutls; edges$type = paste0(edges$type,"_",edges$cluster); edges$cluster = paste0("cluster ", edges$cluster); edges = edges[,c("cluster", "type")]; colnames(edges) = c("from", "to"); rownames(edges) <- NULL
+  write.csv(cL_resutls, paste0(title, "_cL_resutls.csv"), row.names = FALSE)
 
   # prepare nodes
   nodes_lvl1 <- sctype_scores[,c("cluster", "ncells")]; nodes_lvl1$cluster = paste0("cluster ", nodes_lvl1$cluster); nodes_lvl1$Colour = "#f1f1ef"; nodes_lvl1$ord = 1; nodes_lvl1$realname = nodes_lvl1$cluster; nodes_lvl1 = as.data.frame(nodes_lvl1); nodes_lvl2 = c(); 
@@ -197,7 +201,7 @@ run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="um
 
   #output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_sctype.rds")
   #output_umap <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_sctype_umap.pdf")
-  output_umap <- "output_sctype_umap.pdf"
+  output_umap <- paste0(title, "_output_sctype_umap.pdf")
   pdf(output_umap, width = plot_width, height = plot_height)
   print(p4)
   dev.off()
@@ -205,3 +209,13 @@ run_sctype <- function(seu, cluster_key, input_marker_csv, tissue, umap_name="um
   #saveRDS(seu, output_query_rds)
   return(seu)
 }
+
+# Example usage
+# run_sctype(seu = seu, 
+#            cluster_key = "Seurat_clusters", 
+#            input_marker_csv = "/data/work/multi_anno/sctype/at_marker_sctype.csv", 
+#            tissue = "Root",
+#            umap_name = "umap",
+#            plot_width = 14,
+#            plot_height = 10,
+#            title = "AT_root_SRP273996.rh.hr_")
