@@ -15,6 +15,7 @@ GRN-pySCENIC/data
 
 GRN-IReNA/data/E1_to_G2.txt
 GRN-IReNA/data/G2_to_E1.csv
+GRN-IReNA/data/motif
 
 multi_annotation_scRNAseq/data/20250613新Marker.xlsx
 multi_annotation_scRNAseq/data/rice_leaf_marker_raw.xlsx

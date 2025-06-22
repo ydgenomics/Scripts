@@ -77,3 +77,33 @@ system(shell_code1,,wait=TRUE)
 system(shell_code2,,wait=TRUE)
 system(shell_code3,,wait=TRUE)
 
+# [optional]
+library(ATACseqQC)
+library(Rsamtools)
+bamfilepath1 <- 'SSC1_filter.bam'
+bamfilepath2 <- 'SSC2_filter.bam'
+bamfilepath3 <- 'esc_filter.bam'
+indexBam(bamfilepath1)
+gal1 <- readBamFile(bamfilepath1, tag=tags, asMates=TRUE, bigFile=TRUE)
+gal2 <- readBamFile(bamfilepath2, tag=tags, asMates=TRUE, bigFile=TRUE)
+gal3 <- readBamFile(bamfilepath3, tag=tags, asMates=TRUE, bigFile=TRUE)
+galout1 <- shiftGAlignmentsList(gal, 'SSC1_filter_shift.bam')
+galout2 <- shiftGAlignmentsList(gal, 'SSC2_filter_shift.bam')
+galout3 <- shiftGAlignmentsList(gal, 'esc_filter_shift.bam')
+
+### calculate cuts of each each position in footprints
+bamfilepath1 <- 'SSC1_filter.bam'
+bamfilepath2 <- 'SSC2_filter.bam'
+bamfilepath3 <- 'esc_filter.bam'
+### set parameter 'workers' to make this function run in parallel
+cuts1 <- cal_footprint_cuts(bamfilepath = bamfilepath1,bedfile = list2[[1]],workers = 40,index_bam = T)
+cuts2 <- cal_footprint_cuts(bamfilepath = bamfilepath2,bedfile = list2[[1]],workers = 40,index_bam = T)
+cuts3 <- cal_footprint_cuts(bamfilepath = bamfilepath3,bedfile = list2[[1]],workers = 40,index_bam = T)
+cut_list <- list(cuts1,cuts2,cuts3)
+### get related genes of footprints with high FOS
+potential_regulation <- Footprints_FOS(cut_list,list2[[2]], FOS_threshold = 0.1)
+### Use information of footprints with high FOS to refine regulatory relationships
+filtered_regulatory <- filter_ATAC(potential_regulation,regulatory_relationships)
+
+# Part 3: Regulatory network analysis and visualization
+# filtered_regulatory_relationships Kmeans_clustering_ENS
