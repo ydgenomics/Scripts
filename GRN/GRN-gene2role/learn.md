@@ -1,0 +1,1 @@
+[2025(BMC bioinformatics)_Gene2role: a role-based gene embedding method for comparative analysis of signed gene regulatory networks]()

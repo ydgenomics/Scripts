@@ -9,6 +9,8 @@ enrich_scRNAseq/data/tomato
 enrich_scRNAseq/data/enrichplot
 enrich_scRNAseq/data/out.emapper.annotations.xlsx
 
+GRN/GRN-IReNA/data
+
 GRN-hdWGCNA/data
 
 GRN-pySCENIC/data

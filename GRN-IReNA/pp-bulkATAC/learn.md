@@ -1,1 +1,0 @@
-![ga_run_rgthint](../png/ga_run_rgthint.png)
