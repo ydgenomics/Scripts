@@ -1,5 +1,5 @@
 EntityID,Data1,Data2,SampleID,readStructure,outBam,model,ForceFrag,refDir,cpu,mem,Species
-Zimia_7112_V2ATAC2501200003,/Files/RawData/FP270008868_L01_80_1.fq.gz,/Files/RawData/FP270008868_L01_80_2.fq.gz,V2ATAC2501200003,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref,4,100,Zimia
-Zimia_7112_V2ATAC2501200004,/Files/RawData/FP270008868_L01_81_1.fq.gz,/Files/RawData/FP270008868_L01_81_2.fq.gz,V2ATAC2501200004,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref,4,100,Zimia
-Zimia_7112_V2ATAC2501200005,/Files/RawData/FP270008868_L01_82_1.fq.gz,/Files/RawData/FP270008868_L01_82_2.fq.gz,V2ATAC2501200005,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref,4,100,Zimia
-Zimia_7112_V2ATAC2501200006,/Files/RawData/FP270008868_L01_83_1.fq.gz,/Files/RawData/FP270008868_L01_83_2.fq.gz,V2ATAC2501200006,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref,4,100,Zimia
+Zimia_7112_V2ATAC2501200003,/Files/RawData/FP270008868_L01_80_1.fq.gz,/Files/RawData/FP270008868_L01_80_2.fq.gz,V2ATAC2501200003,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref/,4,100,Zimia
+Zimia_7112_V2ATAC2501200004,/Files/RawData/FP270008868_L01_81_1.fq.gz,/Files/RawData/FP270008868_L01_81_2.fq.gz,V2ATAC2501200004,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref/,4,100,Zimia
+Zimia_7112_V2ATAC2501200005,/Files/RawData/FP270008868_L01_82_1.fq.gz,/Files/RawData/FP270008868_L01_82_2.fq.gz,V2ATAC2501200005,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref/,4,100,Zimia
+Zimia_7112_V2ATAC2501200006,/Files/RawData/FP270008868_L01_83_1.fq.gz,/Files/RawData/FP270008868_L01_83_2.fq.gz,V2ATAC2501200006,newT1,FALSE,FALSE,0,/Files/yangdong/Ref/zimia/scATAC_ref/,4,100,Zimia

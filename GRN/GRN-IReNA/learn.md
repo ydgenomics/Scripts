@@ -3,8 +3,12 @@
 
 > IReNA环境配置
 ```shell
+source /opt/software/miniconda3/bin/activate
 conda create -n IReNA r-base=4.3 -y
 conda activate IReNA
+conda install bioconda::bioconductor-annotationdbi -y
+conda install bioconda::bioconductor-genie3 -y
+
 conda install bioconda::bioconductor-rsamtools -y
 conda install bioconda::bioconductor-chipseeker -y
 conda install bioconda::bioconductor-monocle -y
@@ -143,8 +147,9 @@ conda install bioconda::bioconductor-biomart -y
 conda install bioconda::bioconductor-txdbmaker -y
  ```
 
-https://meme-suite.org/meme/doc/install.html
+[meme fimo](https://meme-suite.org/meme/doc/install.html)
 ```shell
+# sudo cp /data/work/SCPipelines/meme-5.5.8.tar.gz .
 wget https://meme-suite.org/meme/meme-software/5.5.8/meme-5.5.8.tar.gz
 tar zxf meme-5.5.8.tar.gz
 cd meme-5.5.8
@@ -154,4 +159,5 @@ make test
 make install
 
 export PATH=$HOME/meme/bin:$HOME/meme/libexec/meme-5.5.8:$PATH
+export PATH=$PATH:~/meme/bin
 ```

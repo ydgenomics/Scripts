@@ -3,9 +3,9 @@
 
 ## Undering building……
 
-### [GRN-IReNA](GRN-IReNA): *Learning IReNA do combinational analysis of both scRNA and bulk-ATAC*
+### [GRN/GRN-IReNA](GRN/GRN-IReNA): *Learning IReNA do combinational analysis of both scRNA and bulk-ATAC*
 
-### [GRN-hdWGCNA](GRN-hdWGCNA): *Do moduling data and extract gene regulatory network*
+### [GRN-hdWGCNA](GRN/GRN-hdWGCNA): *Do moduling data and extract gene regulatory network*
 
 ### [scATAC](scATAC): *Learning new tool about handing scATAC-seq data*
 
@@ -30,7 +30,7 @@
 
   ### [**Ortho_gene**](Ortho_gene): *Compare datasets between two groups to identify orthologous relationships (e.g., using BLASTP).*
 
-  ### [**GRN-pySCENIC**](GRN-pySCENIC): *Construct gene regulatory networks with pySCENIC.*
+  ### [**GRN/GRN-pySCENIC**](GRN/GRN-pySCENIC): *Construct gene regulatory networks with pySCENIC.*
 
   ### [**cell_similarity**](cell_similarity): *Calculate and visualize similarity across multiple groups using Jaccard, hclust, and MetaNeighbor.*
 
