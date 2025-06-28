@@ -6,6 +6,13 @@
 
 ---
 
+# 公共数据下载
+启动个性分析资源选`install software`就有联网权限，可使用`wget`或其它工具e.g.`sratools`来下载数据
+*注意联网时该容器不可以挂载数据，建议专门留一个容器用于`install`*
+![使用sratools下载sra数据](png/使用sratools下载sra数据.png)
+> 下载数据比笔记本电脑快，大约2个小时可以下10G
+
+
 # 个性分析
 1. 启动 (镜像-资源-数据挂载)
 2. 目录结构 (/data/work; /data/input; /data/output; /data/users)
