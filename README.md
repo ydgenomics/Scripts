@@ -5,9 +5,9 @@
   - 论先merge再标准化和先标准化再merge的差异
 
 ## Undering building……
+> If you interested in various GRNs, you could see a a repo named [GRNs](https://github.com/ydgenomics/GRNs)
 
 ### [GRN/GRN-IReNA](GRN/GRN-IReNA): *Learning IReNA do combinational analysis of both scRNA and bulk-ATAC*
-
 ### [GRN-hdWGCNA](GRN/GRN-hdWGCNA): *Do moduling data and extract gene regulatory network*
 
 ### [scATAC](scATAC): *Learning new tool about handing scATAC-seq data*
