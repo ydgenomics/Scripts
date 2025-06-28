@@ -1,6 +1,9 @@
 # Scripts
 *First important work is sum all workflow and get a gold standard!*
 
+## Q&A
+  - 论先merge再标准化和先标准化再merge的差异
+
 ## Undering building……
 
 ### [GRN/GRN-IReNA](GRN/GRN-IReNA): *Learning IReNA do combinational analysis of both scRNA and bulk-ATAC*
