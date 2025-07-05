@@ -5,6 +5,9 @@
 [VScode: wsl+ubuntu](https://blog.csdn.net/yao00037/article/details/119858692)
 
 ---
+拟南芥数据与棉花数据做跨物种注释
+  - 拟南芥数据恢复为rds/h5ad文件
+  - 拟南芥
 
 # 公共数据下载
 启动个性分析资源选`install software`就有联网权限，可使用`wget`或其它工具e.g.`sratools`来下载数据
