@@ -1,5 +1,5 @@
 # Scripts
-*First important work is sum all workflow and get a gold standard!*
+*First important work is suming some pipelines and get a gold standard!*
 ![ydgenomics logo](pngs/ydgenomics_bar_logo.png)
 
 ---
