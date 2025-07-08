@@ -1,8 +1,8 @@
-SampleID,inh5ads,groups,resolutions,TASK,cpus,mems,species,Orharmony,Orsctharmony
-rice_sheath,/Files/ResultData/Workflow/W202507060005056/glob-96a595b0780f81a55d1f2c044f948367/D1_0626.rh.h5ad,D1,0.5,unintegration,8,64,rice_sheath,1,1
-rice_sheath,/Files/ResultData/Workflow/W202507060005056/glob-96a595b0780f81a55d1f2c044f948367/D2_0626.rh.h5ad,D2,0.5,scvi,32,32,,,
-rice_sheath,/Files/ResultData/Workflow/W202507060005056/glob-96a595b0780f81a55d1f2c044f948367/D3_0626.rh.h5ad,D3,0.5,harmony,16,128,,,
-rice_sheath,/Files/ResultData/Workflow/W202507060005056/glob-96a595b0780f81a55d1f2c044f948367/D5_0626.rh.h5ad,D5,0.5,sct_cca,16,128,,,
-rice_sheath,/Files/ResultData/Workflow/W202507060005056/glob-96a595b0780f81a55d1f2c044f948367/NipLSD10_2.rh.h5ad,D10,0.5,sct_harmony,16,128,,,
-rice_sheath,/Files/ResultData/Workflow/W202507060005056/glob-96a595b0780f81a55d1f2c044f948367/D30_0626.rh.h5ad,D30,0.5,rliger_inmf,8,64,,,
-rice_sheath,,,0.5,bbknnr,4,32,,,
+SampleID,inh5ads,groups,resolutions,TASK,cpus,mems,species,Orharmony,Orsctharmony,mem_concat,mem_convert
+rice_sheath,/Files/yangdong/rice/data/NB2025070810284923549369/D1_0626.rh.h5ad,D1,0.5,unintegration,8,64,rice_sheath,1,1,50,64
+rice_sheath,/Files/yangdong/rice/data/NB2025070810284923549369/D2_0626.rh.h5ad,D2,0.5,scvi,32,32,,,,,
+rice_sheath,/Files/yangdong/rice/data/NB2025070810284923549369/D3_0626.rh.h5ad,D3,0.5,harmony,16,128,,,,,
+rice_sheath,/Files/yangdong/rice/data/NB2025070810284923549369/D5_0626.rh.h5ad,D5,0.5,sct_cca,16,128,,,,,
+rice_sheath,/Files/yangdong/rice/data/NB2025070810284923549369/NipLSD10_2.rh.h5ad,D10,0.5,sct_harmony,16,128,,,,,
+rice_sheath,/Files/yangdong/rice/data/NB2025070810284923549369/D30_0626.rh.h5ad,D30,0.5,rliger_inmf,8,64,,,,,
+rice_sheath,,,0.5,bbknnr,4,32,,,,,
