@@ -34,7 +34,8 @@ for i in range(len(indataget)):
         value.layers["counts"] = value.X.copy()
     value.X = value.layers["counts"] #ensure concat used by raw data
     adatas[key] = value
-    adata = ad.concat(adatas, label=group_key, join="inner") # inner
+
+adata = ad.concat(adatas, label=group_key, join="inner") # inner
 adata.obs_names_make_unique()
 print(adata.obs[group_key].value_counts())
 print(adata.obs.columns)
