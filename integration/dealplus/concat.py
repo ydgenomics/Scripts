@@ -1,4 +1,4 @@
-# Date: 250707 Title: concat.py
+# Date: 250711 Title: concat.py
 
 import pandas as pd
 import scanpy as sc
@@ -8,6 +8,7 @@ files_txt_path = sys.argv[1]
 projects_txt_path = sys.argv[2]
 species=sys.argv[3]
 group_key=sys.argv[4] #"biosample"
+
 with open(files_txt_path, 'r') as file:
     file_content = file.read().strip()
 indataget = file_content.split(',')
@@ -21,9 +22,6 @@ for i in range(len(indataget)):
     key = projects[i]
     value = indataget[i]
     value = sc.read_h5ad(value)
-    if 'celltype' in value.obs.columns:
-        print('The raw key included `celltype` column, value of raw celltype named to celltype0')
-        value.obs['celltype0']=value.obs['celltype']
     if 'biosample' in value.obs.columns:
         print('The raw key included `biosample` column, value of raw biosample named to biosample0')
         value.obs['biosample0']=value.obs['biosample']
@@ -36,6 +34,9 @@ for i in range(len(indataget)):
     adatas[key] = value
 
 adata = ad.concat(adatas, label=group_key, join="inner") # inner
+if 'celltype' in adata.obs.columns:
+    print('The raw key included `celltype` column, value of raw celltype named to celltype0')
+    adata.obs['celltype0']=adata.obs['celltype']
 adata.obs_names_make_unique()
 print(adata.obs[group_key].value_counts())
 print(adata.obs.columns)
