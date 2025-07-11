@@ -1,4 +1,4 @@
-# Date: 20250615 # Image: enrich-R--04
+# Date: 20250711 # Image: enrich-R--04
 # Description: build_orgdb.R--This script is used to build orgdb database for peanut
 # Included: Four functions: main(required), deal_go_obo(required), build_orgdb(required), build_go_gmt(required), build_ko_gmt(required)
 # Output: org.Ahypogaea.eg.db/db file
@@ -78,6 +78,7 @@ build_orgdb <- function(
   # 读取emapper注释文件，前2行为注释
   emapper <- read_excel(emapper_annotations_xlsx, skip = 2)
   head(emapper)
+  emapper <- emapper %>% distinct(query, .keep_all = TRUE)
   options(stringsAsFactors = FALSE)
   emapper[emapper == ""] <- NA
 
