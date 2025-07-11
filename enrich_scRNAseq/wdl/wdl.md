@@ -69,6 +69,7 @@
 - **Prospect:** Focused on innovative, competitive, open-source projects.
 - **Repository:** [Scripts/enrich_scRNAseq](https://github.com/ydgenomics/Scripts/tree/main/enrich_scRNAseq)
 - **Log:**
+  - 20250711 Added the check query column of eggmapper, deleting repeat rows.
   - 20250616 update wdl.md(description)
   - Visualization with enrichplot will be optimized later; GSEA analysis will be added.
   - For building orgDb, input should be `go_obo` for consistency and authority, as required by Go-Figure visualization.
