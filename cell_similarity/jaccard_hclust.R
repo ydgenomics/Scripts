@@ -1,4 +1,4 @@
-# Date: 20250603
+# Date: 20250714
 # Image: metaNeighbor-R--02 /opt/conda/bin/R
 # 做了jaccard相似性的计算基于SCT的FindAllMarkers的基因和hclust基于SCT的counts的基因表达
 # Â© EMBL-European Bioinformatics Institute, 2023
@@ -15,19 +15,19 @@ library(optparse)
 
 option_list <- list(
   make_option(c("-i", "--input_file"),
-    type = "character", default = "/data/work/integration/input/Peanut-unsoupx.cg.rds",
+    type = "character", default = "/data/work/script/rename0626/D1/D1_0626.rds",
     help = "Path to input file"
   ),
   make_option(c("-o", "--output_name"),
-    type = "character", default = "peanut",
+    type = "character", default = "D1",
     help = "Output file prefix name"
   ),
   make_option(c("-b", "--batch_key"),
-    type = "character", default = "biosample",
+    type = "character", default = "sample",
     help = "Batch key for integration"
   ),
   make_option(c("-c", "--cluster_key"),
-    type = "character", default = "leiden_res_0.50",
+    type = "character", default = "rename0626",
     help = "Cluster key for integration"
   )
 )
@@ -36,6 +36,11 @@ input_file <- opt$input_file
 out_put_name <- opt$output_name
 batch_key <- opt$batch_key
 cluster_key <- opt$cluster_key
+
+# input_file <- "/data/work/script/rename0626/D1/D1_0626.rds" 
+# output_name <- "D1" 
+# batch_key <- "sample" 
+# cluster_key <- "rename0626"
 
 scRNA <- readRDS(input_file)
 scRNA
@@ -204,4 +209,4 @@ dev.off()
 # Assay RNA changing from Assay5 to Assay
 #obj[["RNA"]] <- as(obj[["RNA"]], "Assay")
 
-#saveRDS(obj, file = out_rds)
+saveRDS(scRNA, file = paste0(out_put_name, "_sct.rds"))

@@ -1,4 +1,4 @@
-# Date: 2025-0603
+# Date: 20250714
 # Image: metaNeighbor-R--02 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/tVxalBWsxLn58RJkpb-PaQ
 # 基于RNA/SCT做分析
@@ -140,58 +140,58 @@ print(p1)
 print(p2)
 print(p3)
 
-# Using circlize do circle-heatmap
-mycol <- colorRamp2(c(0, 0.5, 1), c("#393781", "white", "#f22942"))
-bordercol <- "white"
-# 调整圆环首尾间的距离
-circos.par(gap.after = c(90)) 
-# 绘制环状热图
-circos.heatmap(celltype_NV, col = mycol,
-               # 聚类放在环形内侧
-               dend.side = "inside", 
-               # 基因名放在环形外侧；二者不能在同一侧
-               rownames.side = "outside",
-               rownames.col = "black",
-               # 字体大小
-               rownames.cex = 0.8, 
-               # 字体粗细
-               rownames.font = 2,  # 注意：字体粗细应该是一个整数，例如 1（普通）、2（加粗）
-               bg.border = bordercol,
-               cluster = TRUE,
-               cell.border = bordercol,
-               track.height = 0.5)
+# # Using circlize do circle-heatmap
+# mycol <- colorRamp2(c(0, 0.5, 1), c("#393781", "white", "#f22942"))
+# bordercol <- "white"
+# # 调整圆环首尾间的距离
+# circos.par(gap.after = c(90)) 
+# # 绘制环状热图
+# circos.heatmap(celltype_NV, col = mycol,
+#                # 聚类放在环形内侧
+#                dend.side = "inside", 
+#                # 基因名放在环形外侧；二者不能在同一侧
+#                rownames.side = "outside",
+#                rownames.col = "black",
+#                # 字体大小
+#                rownames.cex = 0.8, 
+#                # 字体粗细
+#                rownames.font = 2,  # 注意：字体粗细应该是一个整数，例如 1（普通）、2（加粗）
+#                bg.border = bordercol,
+#                cluster = TRUE,
+#                cell.border = bordercol,
+#                track.height = 0.5)
 
-# 定义图例的位置
-x_pos <- 0.75
-y_pos <- 0.65
-# 创建图例
-lg <- Legend(title = "AUROC", col_fun = mycol,
-             direction = "vertical",
-             title_position = "topcenter")
+# # 定义图例的位置
+# x_pos <- 0.75
+# y_pos <- 0.65
+# # 创建图例
+# lg <- Legend(title = "AUROC", col_fun = mycol,
+#              direction = "vertical",
+#              title_position = "topcenter")
 
-# 绘制图例
-draw(lg, x = unit(x_pos, "npc"), y = unit(y_pos, "npc"), just = c("right", "center"))
+# # 绘制图例
+# draw(lg, x = unit(x_pos, "npc"), y = unit(y_pos, "npc"), just = c("right", "center"))
 
-# 设置间距因子
-spacing_factor <- 0.72
-# 设置 y 轴偏移量，可以根据需要调整
-y_offset <- 2
-# 设置 x 轴偏移量，可以根据需要调整
-x_offset <- -0.3
-fontsize <- 0.6 # 字体大小
+# # 设置间距因子
+# spacing_factor <- 0.72
+# # 设置 y 轴偏移量，可以根据需要调整
+# y_offset <- 2
+# # 设置 x 轴偏移量，可以根据需要调整
+# x_offset <- -0.3
+# fontsize <- 0.6 # 字体大小
 
-# 添加自定义文本
-circos.track(track.index = get.current.track.index(), panel.fun = function(x, y) {
-  if (CELL_META$sector.numeric.index == 1) { 
-    cn <- colnames(celltype_NV)
-    n <- length(cn)
-    base_x <- CELL_META$cell.xlim[2] - convert_x(x_offset, "mm") 
-    circos.text(rep(base_x, n), 
-                y_offset + (n:1) * spacing_factor,
-                cn, cex = fontsize, adj = c(0, 0.5), facing = "inside")
-  }
-}, bg.border = NA)
-circos.clear()
+# # 添加自定义文本
+# circos.track(track.index = get.current.track.index(), panel.fun = function(x, y) {
+#   if (CELL_META$sector.numeric.index == 1) { 
+#     cn <- colnames(celltype_NV)
+#     n <- length(cn)
+#     base_x <- CELL_META$cell.xlim[2] - convert_x(x_offset, "mm") 
+#     circos.text(rep(base_x, n), 
+#                 y_offset + (n:1) * spacing_factor,
+#                 cn, cex = fontsize, adj = c(0, 0.5), facing = "inside")
+#   }
+# }, bg.border = NA)
+# circos.clear()
 dev.off()
 
 top_hits = topHits(cell_NV = celltype_NV,
