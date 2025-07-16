@@ -48,3 +48,7 @@ singleR: 拿到参考数据集的RNA@counts矩阵后，计算每种细胞的平�
 我有一个疑问,构建reference对counts做的logcounts处理和查询数据做了Normalization的data，在计算方式上不一样，这样会影响singleR注释。假设不考虑两次数据实验误差。我想到了，如果singleR设计的时候查看的是不同基因的波动而非专注于某个值的话，就不会在意这个问题
 logcounts()：对原始计数数据进行对数转换，减少数据的偏态分布。输出对数转换后的矩阵，值的范围通常在0到10之间。
 Normalization()：对原始计数数据进行归一化处理，调整每个细胞的总读数。输出归一化后的矩阵，值的范围通常在0到1之间。
+
+# Interpretation of Results
+根圆（ord == 1 的 cluster 节点） 的半径 ∝ nodes_lvl1$ncells（即该 cluster 的细胞总数）。
+子圆（ord == 2 的 cell-type 节点） 的半径 ∝ nodes_lvl2$ncells（即该类型在该 cluster 中的 scores，你把它赋给了 ncells）

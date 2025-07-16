@@ -1,5 +1,5 @@
-# Date: 20250714
-# Image: metaNeighbor-R--02 /opt/conda/bin/R
+# Date: 20250716
+# Image: metaNeighbor-R--04 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/tVxalBWsxLn58RJkpb-PaQ
 # 基于RNA/SCT做分析
 
@@ -31,13 +31,18 @@ option_list <- list(
   make_option(c("-c", "--cluster_key"),
     type = "character", default = "leiden_res_0.50",
     help = "Cluster key for integration"
+  ),
+  make_option(c("-t", "--threshold_value"),
+    type = "numeric", default = 0.95,
+    help = "Threshold value for top hits"
   )
 )
 opt <- parse_args(OptionParser(option_list = option_list))
 input_file <- opt$input_file
-out_put_name <- opt$output_name
+output_name <- opt$output_name
 batch_key <- opt$batch_key
 cluster_key <- opt$cluster_key
+threshold_value <- opt$threshold_value
 
 
 sdata <- readRDS(input_file)
@@ -120,7 +125,7 @@ cols = rev(colorRampPalette(RColorBrewer::brewer.pal(11,"RdYlBu"))(100))
 breaks = seq(0, 1, length=101)
 
 # in work directory output a pdf
-pdf(paste0(out_put_name,"_metaNeighbor.pdf"))
+pdf(paste0(output_name,"_metaNeighbor.pdf"))
 # Using heatmap do heatmap
 gplots::heatmap.2(celltype_NV,
                   margins=c(8,8),
@@ -193,11 +198,11 @@ print(p3)
 # }, bg.border = NA)
 # circos.clear()
 dev.off()
-
+write.csv(file=paste0(output_name,"_metaNeighbor.csv"),celltype_NV,quote=FALSE,row.names=TRUE)
 top_hits = topHits(cell_NV = celltype_NV,
                    dat = sdata,
                    study_id = sdata@colData[[batch_key]],
                    cell_type = sdata@colData[[cluster_key]],
-                   threshold = 0.9)
+                   threshold = threshold_value)
 
-write.csv(file=paste0(out_put_name,"_metaNeighbor_tophits.csv"),top_hits,quote=FALSE,row.names=FALSE)
+write.csv(file=paste0(output_name,"_metaNeighbor_tophits.csv"),top_hits,quote=FALSE,row.names=FALSE)
