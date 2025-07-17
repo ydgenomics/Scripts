@@ -29,10 +29,46 @@ sctype：csv格式的marker基因列表。关注查询数据集的scale.data的�
   7. 修改后的可视化解决了三个问题，umap分群颜色和圆圈图颜色对应、大圈大小与细胞数正相关、小圈大小为得分占比乘以细胞数大小(保证小圈永远小于大圈大小)
 
 **Input**
+  - 
 
 **Script**
 
 **Output**
+
+```shell
+####### _nodes.csv:
+head -n 3 NipLSD3_anno_merged_data_obj_after_choir_sctype_nodes.csv
+# "cluster","ncells","Colour","ord","shortName","realname"
+# "Epidermis_0",3551.34632226944,"gray82",2,"Epidermis","Epidermis"
+# "Epidermis_8",404.634348967905,"gray65",2,"Epidermis","Epidermis"
+
+head -n 3 NipLSD3_anno_merged_data_obj_after_choir_sctype_sctype_scores_sorted.csv
+"cluster","type","scores","ncells"
+"21","Epidermis",260.197952331253,270
+"3","Epidermis",1614.05538104017,2264
+
+NipLSD3_anno_merged_data_obj_after_choir_sctype_sctype_umap.pdf
+
+head report.txt
+###These marker genes are not found in the input scale.data of scRNA-seq data:
+ [1] "LOC-Os10g26340" "LOC-Os01g67410" "LOC-Os05g45460" "LOC-Os06g44750"
+ [5] "LOC-Os04g04330" "LOC-Os04g52920" "LOC-Os02g07770" "LOC-Os07g07950"
+ [9] "LOC-Os01g20160" "LOC-Os07g04180" "LOC-Os04g51830" "LOC-Os08g08820"
+[13] "LOC-Os07g37030" "LOC-Os01g55350" "LOC-Os08g44810" "LOC-Os07g34640"
+[17] "LOC-Os04g16680" "LOC-Os03g16050" "LOC-Os02g47020" "LOC-Os02g05830"
+[21] "LOC-Os11g26160" "LOC-Os08g06630" "LOC-Os04g48390" "LOC-Os03g48000"
+[25] "LOC-Os02g45520" "LOC-Os01g69030" "LOC-Os03g43290" "LOC-Os05g42350"
+[29] "LOC-Os03g09940"
+```
+![alt text](image.png)
+NipLSD3_anno_merged_data_obj_after_choir_sctype_sctype.rds
+
+![Bundle sheath_DoHeatmap.pdf](image-1.png)
+![Bundle sheath_FeaturePlot.pdf](image-2.png)
+![Epidermis_VlnPlot.pdf](image-3.png)
+![pheatmap_allgenes.pdf](image-4.png)
+![UMAP_plot.pdf](image-5.png)
+
 
 **Interpretation of Results**
 根圆（ord == 1 的 cluster 节点） 的半径 ∝ nodes_lvl1$ncells（即该 cluster 的细胞总数）。

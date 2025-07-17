@@ -1,16 +1,5 @@
 # Date: 250717 # Visualize different plots(cell&gene)
 # Image: metaNeighbor--07
-# input_rds="/data/work/script/sctype0614/output/day3/NipLSD3_anno_merged_data_obj_after_choir_sctype.rds"
-# markers_csv="/data/work/script/sctype0614/rice_leaf_marker0614.csv"
-# cluster_color_csv="/data/work/cluster_color.csv"
-# cell_type="leaf"
-# cluster_key="sctype_resolution0.8"
-# reduction_key="umap"
-
-# /opt/conda/bin/Rscript visual_cg.R \
-# --input_rds $input_rds --markers_csv $markers_csv \
-# --cluster_color_csv $cluster_color_csv --cell_type $cell_type \
-# --cluster_key $cluster_key --reduction_key $reduction_key
 
 library(Seurat)
 library(scCustomize)
@@ -73,10 +62,10 @@ reduction_key <- opt$reduction_key
 write_report <- function(..., append = FALSE) {
   con <- file("report.txt", if (append) "at" else "wt")
   sink(con, type = "output")
-  sink(con, type = "message")
+  #sink(con, type = "message")
   eval.parent(substitute(...))
   sink(type = "output")
-  sink(type = "message")
+  #sink(type = "message")
   close(con)
 }
 
@@ -85,13 +74,17 @@ write_report({
 seu <- readRDS(input_rds);
 cat("### Info of Seurat object \n")
 print(seu)
+cat("Columns of meta.data: \n")
+print(colnames(seu@meta.data))
+cat(paste0("Looked column: ", cluster_key, "\n"))
+print(unique(seu@meta.data[[cluster_key]]))
+    
 cell_markers <- read.csv(markers_csv)
-
 cell_markers = cell_markers[cell_markers$tissueType == cell_type,] 
 cell_markers$geneSymbolmore1 = gsub(" ","",cell_markers$geneSymbolmore1); cell_markers$geneSymbolmore2 = gsub(" ","",cell_markers$geneSymbolmore2)
 cell_markers$geneSymbolmore1 = gsub("///",",",cell_markers$geneSymbolmore1);cell_markers$geneSymbolmore1 = gsub(" ","",cell_markers$geneSymbolmore1)
 cell_markers$geneSymbolmore2 = gsub("///",",",cell_markers$geneSymbolmore2);cell_markers$geneSymbolmore2 = gsub(" ","",cell_markers$geneSymbolmore2)
-cat("### Head markers of cell annotation \n")
+cat("\n###Head markers of cell annotation \n")
 print(head(cell_markers))
 
 # color <- c(paletteer_d("awtools::bpalette"),paletteer_d("awtools::a_palette"),paletteer_d("awtools::mpalette"))
@@ -101,31 +94,30 @@ cluster_color <- if (file.exists(cluster_color_csv)) {
                  } else {
                    NULL
                  }
+cl_seu <- sort(unique(as.character(seu@meta.data[[cluster_key]])))
 if (is.null(cluster_color)) {
   cat("Cluster color CSV file not found. Generating random colors. \n")
-  num_clusters <- length(unique(seu@meta.data[[cluster_key]]))
+  num_clusters <- length(cl_seu)
   set.seed(123) # 保证可复现
   color <- grDevices::colors()[sample(length(grDevices::colors()), num_clusters)]
-  col_map <- setNames(color, cl_seu)
 } else {
   cat("Cluster color CSV file found. Using provided colors. \n")
   head(cluster_color)
-  cl_seu <- sort(unique(as.character(seu@meta.data[[cluster_key]])))
   cl_tbl <- sort(unique(as.character(cluster_color$cluster)))
   if (identical(cl_seu, cl_tbl)) {
     cat("✓ Cluster colors match the Seurat object. \n")
+    color <- cluster_color$color
     cl_seu <- unique(as.character(cluster_color$cluster))
     col_map <- setNames(cluster_color$color, cl_seu)
   } else {
     cat("✗ Cluster mismatch. \n")
     # 根据聚类数量生成不重复的随机颜色
-    num_clusters <- length(unique(seu@meta.data[[cluster_key]]))
+    num_clusters <- length(cl_seu)
     set.seed(123) # 保证可复现
     color <- grDevices::colors()[sample(length(grDevices::colors()), num_clusters)]
-    # print(color)
-    col_map <- setNames(color, cl_seu)
   }
 }
+col_map <- setNames(color, cl_seu)
 cat("View match relationship between cluster and color \n")
 print(col_map)
 
@@ -163,7 +155,7 @@ for (row in seq_len(nrow(cell_markers))) {
         ) + NoAxes()
     }
     # p <- wrap_plots(plots, ncol = 4)
-    p <- wrap_plots(plots, ncol = 4) +
+    p <- wrap_plots(plots, ncol = 3) +
       plot_annotation(
         title = celltype,
         # subtitle = "可选副标题",
@@ -174,8 +166,8 @@ for (row in seq_len(nrow(cell_markers))) {
     ggsave(
         p,
         file = paste0(celltype, "_FeaturePlot.pdf"),
-        width = min(4 * side_length, 50),
-        height = min(ceiling(length(genes)/4) * side_length, 50),
+        width = min(3 * side_length, 50),
+        height = min(ceiling(length(genes)/3) * side_length, 50),
         dpi = 300
     )
 
@@ -195,8 +187,8 @@ for (row in seq_len(nrow(cell_markers))) {
     p2 <- p1 + NoLegend()
     ggsave(p2,
         file = paste0(celltype, "_VlnPlot.pdf"),
-        height = length(genes)/2,
-        width = length(unique(seu@meta.data[[cluster_key]]))/2,
+        height = 1 + length(genes)/2,
+        width = 1 + length(unique(seu@meta.data[[cluster_key]]))/2,
         dpi = 300
     )
 

@@ -1,4 +1,4 @@
-# Date: 250711 anno_sctype.R
+# Date: 250717 anno_sctype.R
 # Description: Using sctype to annotate single-cell RNA-seq data based on marker gene csv.
 # Input: marker_csv file, query .rds file, cluster key in query .rds object, and UMAP reduction name
 # Output: "_sctype.rds" and "_sctype_umap.pdf" files
@@ -109,6 +109,8 @@ sctype_score <- function(scRNAseqData, scaled = !0, gs, gs2 = NULL, gene_names_t
 
 seu <- readRDS(input_query_rds); DefaultAssay(seu) <- "RNA" # set default assay to RNA
 gs_list <- gene_sets_prepare(input_marker_csv, tissue); str(gs_list)
+gene_vector <- unlist(c(gs_list$gs_positive, gs_list$gs_negative))[unlist(c(gs_list$gs_positive, gs_list$gs_negative)) != "NA"]
+gene_vector <- unique(as.character(gene_vector))
 
 #seu <- readRDS(input_query_rds); DefaultAssay(seu) <- "RNA" # set default assay to RNA
 DefaultAssay(seu) <- "RNA"; print(seu)
@@ -123,6 +125,23 @@ print(sprintf("Seurat object %s is used", ifelse(seurat_package_v5, "v5", "v4"))
 
 # extract scaled scRNA-seq matrix
 scRNAseqData_scaled <- if (seurat_package_v5) as.matrix(seu[["RNA"]]$scale.data) else as.matrix(seu[["RNA"]]@scale.data)
+missing_genes <- setdiff(gene_vector, rownames(scRNAseqData_scaled))
+
+# 放在脚本第一行即可
+write_report <- function(..., append = FALSE) {
+  con <- file("report.txt", if (append) "at" else "wt")
+  sink(con, type = "output")
+  sink(con, type = "message")
+  eval.parent(substitute(...))
+  sink(type = "output")
+  sink(type = "message")
+  close(con)
+}
+
+write_report({
+  cat("###These marker genes are not found in the input scale.data of scRNA-seq data:\n")
+  print(missing_genes)
+})
 
 # run ScType
 es.max <- sctype_score(scRNAseqData = scRNAseqData_scaled, scaled = TRUE, gs = gs_list$gs_positive, gs2 = gs_list$gs_negative)
@@ -254,7 +273,7 @@ col_map <- setNames(unique(nodes_lvl2$Colour), unique(cL_resutls$cluster))
 #         label      = TRUE,
 #         repel      = TRUE,
 #         cols       = col_map[cl_order])  # 保证顺序完全一致
-p4 <- DimPlot(seu, reduction = umap_name, label = TRUE, repel = TRUE, cols = col_map[cl_order])+ gggr
+p4 <- DimPlot(seu, reduction = umap_name, group.by = cluster_key, label = TRUE, repel = TRUE, cols = col_map[cl_order])+ gggr
 
 output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_sctype.rds")
 output_umap <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_sctype_umap.pdf")
