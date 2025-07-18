@@ -19,7 +19,9 @@
 
 # Using [sctype](https://github.com/IanevskiAleksandr/sc-type) do annotation of cells/clusters
 **Overview**
-sctype：csv格式的marker基因列表。关注查询数据集的scale.data的矩阵，按查询分群来做注释，一个群可能会被分到多个细胞类型，取最优，同时如果太差会被认定为Unknown。csv的marker基因要尽可能多的存在于查询数据的scale.data的基因中
+sctype：*Fully-automated and ultra-fast cell-type identification using specific marker combinations from single-cell transcriptomic data*。输入csv格式的marker基因列表，关注查询数据集的scale.data的矩阵，按查询分群来做注释，一个群可能会被分到多个细胞类型，取最优，同时如果太差会被认定为Unknown。csv的marker基因要尽可能多的存在于查询数据的scale.data的基因中。
+
+**Pipline of sctype**
   1. 提取seurat对象scale.data矩阵数据，所以marker是hvg很重要！；
   2. 根据细胞类型对应的marker基因得到**细胞类型×细胞名**的表格，值为基因表达值(scale.data)计算得到的`sctype_score`，所以marker基因一定要为hvg，或者就没法在scale.data找到。实现了将几千的维度降低到二位数以内，而且维度与细胞类型直接关联
   3. 关注每个细胞在各个细胞类型的得分，基于得分高低可以把每个细胞注释为得分最高的细胞，对于我们关注的cluster而言，一个cluster的每个细胞都是单独注释的，这样就可以得到这个cluster里面有多少个细胞注释为该细胞类型，对应的得分应该是累计的，最后将该cluster注释到的细胞类型得分进行排序，只展示前10得分
@@ -43,8 +45,8 @@ sctype：csv格式的marker基因列表。关注查询数据集的scale.data的�
 |cluster_color_csv|File|是|`-`|`cluster_key`唯一值与颜色的对应关系|
 
   - input_query_rds: 包含RNA(counts, data, scale.data); 分群的键名，降维储存的键(reduction)
-  - marker_csv: Four columns(`tissueType`,`cellName`,`geneSymbolmore1`,`geneSymbolmore2`,`shortName`), `geneSymbolmore1` stores high expression genes and `geneSymbolmore2` stores low expression genes. Template marker.csv [download]()
-  - cluster_color_csv: Two columns(`cluster`,`color`). Template cluster_color.csv [download]()
+  - marker_csv: Four columns(`tissueType`,`cellName`,`geneSymbolmore1`,`geneSymbolmore2`,`shortName`), `geneSymbolmore1` stores high expression genes and `geneSymbolmore2` stores low expression genes. Template marker.csv [download](https://github.com/ydgenomics/Scripts/blob/main/multi_annotation_scRNAseq/wdl/marker.csv)
+  - cluster_color_csv: Two columns(`cluster`,`color`). Template cluster_color.csv [download](https://github.com/ydgenomics/Scripts/blob/main/multi_annotation_scRNAseq/wdl/cluster_color.csv)
 
 **Script**
 rds_check: Check data structure of Seurat object, must include three matrixes and reduction, if you want to do NormalizeData or Scaledata, this section is easy for you.
