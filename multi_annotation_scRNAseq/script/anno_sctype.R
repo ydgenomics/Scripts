@@ -108,6 +108,9 @@ sctype_score <- function(scRNAseqData, scaled = !0, gs, gs2 = NULL, gene_names_t
 #' Run ScType for cell type annotation
 
 seu <- readRDS(input_query_rds); DefaultAssay(seu) <- "RNA" # set default assay to RNA
+if ("sctype" %in% colnames(seu@meta.data)) {
+  seu$sctype0 <- seu$sctype
+}
 gs_list <- gene_sets_prepare(input_marker_csv, tissue); str(gs_list)
 gene_vector <- unlist(c(gs_list$gs_positive, gs_list$gs_negative))[unlist(c(gs_list$gs_positive, gs_list$gs_negative)) != "NA"]
 gene_vector <- unique(as.character(gene_vector))
@@ -274,12 +277,14 @@ col_map <- setNames(unique(nodes_lvl2$Colour), unique(cL_resutls$cluster))
 #         repel      = TRUE,
 #         cols       = col_map[cl_order])  # 保证顺序完全一致
 p4 <- DimPlot(seu, reduction = umap_name, group.by = cluster_key, label = TRUE, repel = TRUE, cols = col_map[cl_order])+ gggr
-
+p5 <- DimPlot(seu, reduction = umap_name, group.by = "sctype", label = TRUE, repel = TRUE)
 output_query_rds <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_sctype.rds")
 output_umap <- paste0(sub("\\.rds$", "", basename(input_query_rds)), "_sctype_umap.pdf")
 plot_height=8
 pdf(output_umap, width = 2.5 * plot_height, height = plot_height)
 print(p4)
+print(p5)
 dev.off()
 
+print(colnames(seu@meta.data))
 saveRDS(seu, output_query_rds)
