@@ -40,6 +40,7 @@ function (object, features, cols = NULL, pt.size = NULL, alpha = 1,
 
 
 [单细胞分析细胞marker基因热图展示，美化热图](https://mp.weixin.qq.com/s/r6b6qWrNBQhVqRJE4XaVaw)
+[如何为热图添加行/列分类注释色块？](https://mp.weixin.qq.com/s/vgwMTx3L1l2_MGRupN62Yw)
 ```R
 pheatmap
 function (mat, color = colorRampPalette(rev(brewer.pal(n = 7, 
@@ -104,3 +105,4 @@ function (mat, color = colorRampPalette(rev(brewer.pal(n = 7,
 | **heatmap\_legend\_param**                            | 传给图例的额外参数列表。                  |
 | **...**                                               | 传递给底层 `grid::draw` 的其他图形参数。   |
 | **run\_draw**                                         | FALSE 时仅返回热图对象而不绘制。           |
+
