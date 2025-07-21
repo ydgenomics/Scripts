@@ -39,6 +39,7 @@ function (object, features, cols = NULL, pt.size = NULL, alpha = 1,
 | **raster**      | 逻辑 / NULL           | TRUE 时把点栅格化，加速大样本绘图；NULL 自动。       |
 
 
+[ComplexHeatmap：终极热图绘制工具](https://mp.weixin.qq.com/s/yuGTP_HFCj5XGcb5aEqDhw)
 [单细胞分析细胞marker基因热图展示，美化热图](https://mp.weixin.qq.com/s/r6b6qWrNBQhVqRJE4XaVaw)
 [如何为热图添加行/列分类注释色块？](https://mp.weixin.qq.com/s/vgwMTx3L1l2_MGRupN62Yw)
 ```R

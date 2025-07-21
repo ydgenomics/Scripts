@@ -1,4 +1,4 @@
-# Date: 250717 # Visualize different plots(cell&gene)
+# Date: 250719 # Visualize different plots(cell&gene)
 # Image: metaNeighbor--07
 
 library(Seurat)
@@ -150,7 +150,7 @@ for (row in seq_len(nrow(cell_markers))) {
         plots[[i]] <- FeaturePlot_scCustom(
             seurat_object = seu,
             colors_use = colorRampPalette(c("#3288BD", "white", "#D53E4F"))(50),
-            reduction = "CHOIR_P0_reduction_UMAP",
+            reduction = reduction_key,
             features = genes[i]
         ) + NoAxes()
     }
@@ -170,47 +170,46 @@ for (row in seq_len(nrow(cell_markers))) {
         height = min(ceiling(length(genes)/3) * side_length, 50),
         dpi = 300
     )
-
-    ######### Violin Plot #########
-    p1  <- VlnPlot(
-        seu,
-        features = genes,
-        group.by = cluster_key,
-        fill.by = 'ident',
-        flip = TRUE,
-        stack = TRUE,
-        cols = col_map[cl_seu],
-    ) +
-    ggtitle(celltype) +
-    theme(plot.title = element_text(hjust = 0.5, size = 14))
-    
-    p2 <- p1 + NoLegend()
-    ggsave(p2,
-        file = paste0(celltype, "_VlnPlot.pdf"),
-        height = 1 + length(genes)/2,
-        width = 1 + length(unique(seu@meta.data[[cluster_key]]))/2,
-        dpi = 300
-    )
-
-    ######### DotPlot #########
-    p3 <- DoHeatmap(
-        seu, # 绘制热图，附加自定义颜色和渐变色
-        features = as.character(unique(genes)),
-        group.by = cluster_key,
-        assay = "RNA",
-        slot = "data", # Default is 'scale.data'
-        label = FALSE,
-        group.colors = col_map[cl_seu],
-    ) +
-    ggtitle(celltype) +
-    theme(plot.title = element_text(hjust = 0.5, size = 14)) + # 自定义群组颜色
-    scale_fill_gradientn(colors = c("white", "grey", "firebrick3")) # 颜色渐变
-    
-    ggsave(p3,
-        file = paste0(celltype, "_DoHeatmap.pdf"),
-        dpi = 300
-    )
 }
+######### Violin Plot #########
+p1  <- VlnPlot(
+    seu,
+    features = unique(all_genes),
+    group.by = cluster_key,
+    fill.by = 'ident',
+    flip = TRUE,
+    stack = TRUE,
+    cols = col_map[cl_seu],
+) +
+ggtitle("All genes") +
+theme(plot.title = element_text(hjust = 0.5, size = 14))
+
+p2 <- p1 + NoLegend()
+ggsave(p2,
+    file = "All_genes_VlnPlot.pdf",
+    height = 1 + length(unique(all_genes))/4,
+    width = 1 + length(unique(seu@meta.data[[cluster_key]]))/2,
+    dpi = 300
+)
+
+######### DotPlot #########
+p3 <- DoHeatmap(
+    seu, # 绘制热图，附加自定义颜色和渐变色
+    features = as.character(unique(all_genes)),
+    group.by = cluster_key,
+    assay = "RNA",
+    slot = "data", # Default is 'scale.data'
+    label = FALSE,
+    group.colors = col_map[cl_seu],
+) +
+ggtitle("All genes") +
+theme(plot.title = element_text(hjust = 0.5, size = 14)) + # 自定义群组颜色
+scale_fill_gradientn(colors = c("white", "grey", "firebrick3")) # 颜色渐变
+
+ggsave(p3,
+    file = "All_genes_DoHeatmap.pdf",
+    dpi = 300
+)
 
 ############ Heatmap of AverageExpression ############
 cat("\n###Average Expression in .data of Seurat object \n")
@@ -250,7 +249,7 @@ p4 <- pheatmap(
     angle_col = "45",
     cluster_rows = TRUE,          # 如不想打乱行序
     cluster_cols = TRUE)
-pdf("pheatmap_allgenes.pdf")
+pdf("All_genes_pheatmap.pdf")
 print(p4)
 dev.off()
 })

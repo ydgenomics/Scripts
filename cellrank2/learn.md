@@ -16,6 +16,7 @@ conda install -c conda-forge -c bioconda palantir -y #python要求3.12
 conda install conda-forge::certifi -y
 conda install conda-forge::ipykernel -y
 
+
 # 
 python -m ipykernel install --user --name cellrank2 --display-name "Python (cellrank2)"
 ```
