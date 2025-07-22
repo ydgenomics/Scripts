@@ -38,7 +38,6 @@ def main(unintegrated_h5ad, integrated_file, methods_file, pcas_file, deals_file
         tests = file.read().strip().split(',')
     print(tests)
     
-    prefix="zimia"
     out_benchpdf=prefix+"_scIB.pdf"; print(out_benchpdf)
     out_benchcsv=prefix+"_scIB.csv"; print(out_benchcsv)
     out_h5ad=prefix+"_scIB.h5ad"; print(out_h5ad)
@@ -110,4 +109,3 @@ def main(unintegrated_h5ad, integrated_file, methods_file, pcas_file, deals_file
 
 if __name__ == "__main__":
     main()
-    
