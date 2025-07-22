@@ -1,5 +1,7 @@
-# /software/conda/Anaconda/bin/python 
-# scib_metrics_benchmarking_test.py
+# Date: 250723
+# Image: /software/conda/Anaconda/bin/python 
+# Coder: ydgenomics(yangdong@genomics.cn)
+
 import numpy as np
 import scanpy as sc
 import matplotlib.pyplot as plt
@@ -16,42 +18,48 @@ import click
 @click.argument("tests_file", type=click.Path(exists=True))
 @click.option('--batch_key', type=str, default=None, help="Batch key")
 @click.option('--label_key', type=str, default=None, help="Storying the information of biological cell name")
-@click.option('--cluster_key', type=str, default=None, help="Cluster key in data to use as labels to marker different clusters")
 @click.option('--n_jobs', type=int, default=None, help="Number of jobs to use for parallelization of neighbor search")
-@click.argument("out_rawpdf", type=click.Path(exists=False), default=None)
-@click.argument("out_benchpdf", type=click.Path(exists=False), default="benchmark_results.pdf")
-@click.argument("out_benchcsv", type=click.Path(exists=False), default="benchmark_results.csv")
-def main(unintegrated_h5ad, integrated_file, methods_file, pcas_file, deals_file, tests_file, batch_key, label_key, cluster_key, n_jobs, out_rawpdf, out_benchpdf, out_benchcsv):
+@click.argument("prefix", type=click.Path(exists=False), default="zimia")
+def main(unintegrated_h5ad, integrated_file, methods_file, pcas_file, deals_file, tests_file, batch_key, label_key, n_jobs, prefix):
     # Read files and split by comma
     with open(integrated_file, 'r') as file:
         files = file.read().strip().split(',')
+    print(len(files));print(files)
     with open(methods_file, 'r') as file:
         methods = file.read().strip().split(',')
+    methods=methods[0:len(files)];print(methods)
     with open(pcas_file, 'r') as file:
         pcas = file.read().strip().split(',')
+    pcas=pcas[0:len(files)];print(pcas)
     with open(deals_file, 'r') as file:
         deals = file.read().strip().split(',')
+    deals=deals[0:len(files)];print(deals)
     with open(tests_file, 'r') as file:
         tests = file.read().strip().split(',')
     print(tests)
     
+    prefix="zimia"
+    out_benchpdf=prefix+"_scIB.pdf"; print(out_benchpdf)
+    out_benchcsv=prefix+"_scIB.csv"; print(out_benchcsv)
+    out_h5ad=prefix+"_scIB.h5ad"; print(out_h5ad)
+
     # Process unintegrated data
     orig_ad = sc.read_h5ad(unintegrated_h5ad)
-    sc.set_figure_params(dpi_save=200, frameon=False, figsize=(10, 5))
-    sc.pp.normalize_total(orig_ad, target_sum=1e4)
-    sc.pp.log1p(orig_ad)
-    sc.pp.highly_variable_genes(orig_ad, min_mean=0.0125, max_mean=3, min_disp=0.5)
-    sc.pp.scale(orig_ad, max_value=10)
-    sc.tl.pca(orig_ad, svd_solver="arpack")
-    sc.pp.neighbors(orig_ad, n_neighbors=20, n_pcs=20)
-    sc.tl.leiden(orig_ad, resolution=0.5, key_added=cluster_key, flavor='igraph', n_iterations=2, directed=False)
-    sc.tl.umap(orig_ad, min_dist=0.3)
-    sc.pl.umap(orig_ad, color=[batch_key, label_key, cluster_key])
-    plt.savefig(out_rawpdf, dpi=300, bbox_inches='tight')
+    # sc.set_figure_params(dpi_save=200, frameon=False, figsize=(10, 5))
+    # sc.pp.normalize_total(orig_ad, target_sum=1e4)
+    # sc.pp.log1p(orig_ad)
+    # sc.pp.highly_variable_genes(orig_ad, min_mean=0.0125, max_mean=3, min_disp=0.5)
+    # sc.pp.scale(orig_ad, max_value=10)
+    # sc.tl.pca(orig_ad, svd_solver="arpack")
+    # sc.pp.neighbors(orig_ad, n_neighbors=20, n_pcs=20)
+    # sc.tl.leiden(orig_ad, resolution=0.5, key_added=cluster_key, flavor='igraph', n_iterations=2, directed=False)
+    # sc.tl.umap(orig_ad, min_dist=0.3)
+    # sc.pl.umap(orig_ad, color=[batch_key, label_key, cluster_key])
+    # plt.savefig(out_rawpdf, dpi=300, bbox_inches='tight')
     orig_ad.obsm["Unintegrated"] = orig_ad.obsm["X_pca"]
 
     # Process integrated data and merge with unintegrated data
-    for i in range(len(pcas)):
+    for i in range(len(files)):
         adata = sc.read_h5ad(files[i])
         if deals[i] == 'N':
             adata.obsm[methods[i]] = adata.obsm[pcas[i]]
@@ -67,8 +75,6 @@ def main(unintegrated_h5ad, integrated_file, methods_file, pcas_file, deals_file
             adata.obsm[methods[i]] = adata.obsm[pcas[i]]
             sc.pp.neighbors(adata, n_neighbors=20, n_pcs=20, use_rep=pcas[i])
             orig_ad.obsm[methods[i]] = adata.obsm[methods[i]]
-
-    #adata.write("merged_obsm_ad.h5ad", compression="gzip")
 
     methods.append('Unintegrated')
 
@@ -90,6 +96,7 @@ def main(unintegrated_h5ad, integrated_file, methods_file, pcas_file, deals_file
     )
     bm.benchmark()
     end = time.time()
+    orig_ad.write(out_h5ad, compression="gzip")
     print(f"Time: {int((end - start) / 60)} min {int((end - start) % 60)} sec")
 
     bm.plot_results_table()
@@ -103,3 +110,4 @@ def main(unintegrated_h5ad, integrated_file, methods_file, pcas_file, deals_file
 
 if __name__ == "__main__":
     main()
+    
