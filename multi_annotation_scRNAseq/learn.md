@@ -110,14 +110,20 @@ head report.txt
 
 # Using [singleR](https://github.com/dviraran/SingleR) do annotation of cells/clusters
 **Overview**
-singleR: 拿到参考数据集的RNA@counts矩阵后，计算每种细胞的平均表达量后做log处理。而查询数据集的data矩阵按每个细胞去拟合参考数据集的细胞类型表达模式，所有两个数据集共同所有的基因数很重要。参考数据集获取可以来自于scRNA，也可以bulkRNA，因为最终是对数据集bulk化，参考数据集最终是**细胞类型×基因**的矩阵。
+singleR: 对每个细胞做注释，而非对cluster做注释！拿到参考数据集的RNA@counts矩阵后，计算每种细胞的平均表达量后做log处理。而查询数据集的data矩阵按每个细胞去拟合参考数据集的细胞类型表达模式，所有两个数据集共同所有的基因数很重要。参考数据集获取可以来自于scRNA，也可以bulkRNA，因为最终是对数据集bulk化，参考数据集最终是**细胞类型×基因**的矩阵。
 我有一个疑问,构建reference对counts做的logcounts处理和查询数据做了Normalization的data，在计算方式上不一样，这样会影响singleR注释。假设不考虑两次数据实验误差。我想到了，如果singleR设计的时候查看的是不同基因的波动而非专注于某个值的话，就不会在意这个问题
 logcounts()：对原始计数数据进行对数转换，减少数据的偏态分布。输出对数转换后的矩阵，值的范围通常在0到10之间。
 Normalization()：对原始计数数据进行归一化处理，调整每个细胞的总读数。输出归一化后的矩阵，值的范围通常在0到1之间。
 
 **Input**
+ref_data需要有RNA的counts层
+query_data需要有RNA的data层
 
 **Script**
+ref和query对象的基因名一致性较好√
+ref和query对象的基因名注释体系完全不一样
+  - 拿到ref.protein.fa和query.protein.fa做blastp比对拿到一对一关系，根据一对一关系对ref.rds取子集后对基因重命名
+  - 只拿到cds.fa文件，做DNA的blastn
 
 **Output**
 
