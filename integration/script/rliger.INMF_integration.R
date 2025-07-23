@@ -1,12 +1,15 @@
-# rliger.INMF_integration.R 250711
-# https://welch-lab.github.io/liger/articles/Integrating_multi_scRNA_data.html#r-session-info
-# https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/rliger_integration_UINMF_multiple_species.R
-library(optparse)
+### Date: 250723 rliger.INMF_integration.R
+### Image: integration-R-- /opt/conda/bin/R
+### Coder: ydgenomics
+### Ref: https://welch-lab.github.io/liger/articles/Integrating_multi_scRNA_data.html#r-session-info 
+### https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/rliger_integration_UINMF_multiple_species.R
+
 library(rliger)
 library(Seurat)
 library(SeuratWrappers)
 library(ggplot2)
 library(magrittr)
+library(optparse)
 
 option_list <- list(
   make_option(c("-i", "--input_rds"),
@@ -41,29 +44,6 @@ option_list <- list(
 
 # parse input
 opt <- parse_args(OptionParser(option_list = option_list))
-
-if (is.null(opt$input_rds)){
-  opt$input_rds <- "/data/work/convert/Cer_test_convert.rds"
-}
-if (is.null(opt$out_rds)){
-  opt$out_rds <- "/data/work/liger/Cer_test_convert_rliger.INMF_integrated.rds"
-}
-if (is.null(opt$out_UMAP)){
-  opt$out_UMAP <- "/data/work/liger/Cer_test_convert_rliger.INMF_integrated_UMAP.pdf"
-}
-if (is.null(opt$batch_key)){
-  opt$batch_key <- "biosample"
-}
-if (is.null(opt$sample_key)){
-  opt$sample_key <- "sample"
-}
-if (is.null(opt$cluster_key)){
-  opt$cluster_key <- "celltype"
-}
-if (is.null(opt$resolution_set)){
-  opt$ resolution_set <- 1.0
-}
-#
 input_rds <- opt$input_rds
 out_rds <- opt$out_rds
 out_UMAP <- opt$out_UMAP

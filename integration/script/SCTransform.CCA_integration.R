@@ -1,5 +1,8 @@
-# SCTransform.CCA_integration.R 250711
-# https://satijalab.org/seurat/archive/v4.3/sctransform_v2_vignette
+### Date: 250723 SCTransform.CCA_integration.R
+### Image: integration-R-- /opt/conda/bin/R
+### Coder: ydgenomics
+### Ref: https://satijalab.org/seurat/archive/v4.3/sctransform_v2_vignette
+
 library(Seurat) # make sure you are running SeuratV5
 options(Seurat.object.assay.version = 'v5')
 library(SeuratData)
@@ -40,29 +43,6 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
-
-if (is.null(opt$input_rds)){
-  opt$input_rds <- "/data/work/convert/Cer_test_convert.rds"
-}
-if (is.null(opt$out_rds)){
-  opt$out_rds <- "/data/work/sct/Cer_test_convert_SCTransform.CCA_integrated.rds"
-}
-if (is.null(opt$out_UMAP)){
-  opt$out_UMAP <- "/data/work/sct/Cer_test_convert_SCTransform.CCA_integrated_UMAP.pdf"
-}
-if (is.null(opt$batch_key)){
-  opt$batch_key <- "biosample"
-}
-if (is.null(opt$sample_key)){
-  opt$sample_key <- "sample"
-}
-if (is.null(opt$cluster_key)){
-  opt$cluster_key <- "celltype"
-}
-if (is.null(opt$ resolution_set)){
-  opt$ resolution_set <- 1.0
-}
-
 input_rds <- opt$input_rds
 out_rds <- opt$out_rds
 out_UMAP <- opt$out_UMAP

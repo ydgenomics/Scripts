@@ -1,5 +1,8 @@
-## harmony_integration.py 250711
-# https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/harmony_integration.py
+### Date: 250723
+### Image: harmony-py--
+### Coder: ydgenomics
+### Ref: https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/harmony_integration.py
+
 import click
 import matplotlib.pyplot as plt
 import scanpy as sc

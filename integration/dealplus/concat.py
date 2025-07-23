@@ -1,9 +1,12 @@
-# Date: 250711 Title: concat.py
+### Date: 250723
+### Image: harmony-py--
+### Coder: ydgenomics
 
 import pandas as pd
 import scanpy as sc
 import anndata as ad
 import sys
+
 files_txt_path = sys.argv[1]
 projects_txt_path = sys.argv[2]
 species=sys.argv[3]
@@ -11,12 +14,16 @@ group_key=sys.argv[4] #"biosample"
 
 with open(files_txt_path, 'r') as file:
     file_content = file.read().strip()
+
 indataget = file_content.split(',')
+print(indataget)
+
 with open(projects_txt_path, 'r') as filen:
     file_content = filen.read().strip()
+
 projects = file_content.split(',')
-print(indataget)
 print(projects)
+
 adatas={}
 for i in range(len(indataget)): 
     key = projects[i]
@@ -33,10 +40,11 @@ for i in range(len(indataget)):
     value.X = value.layers["counts"] #ensure concat used by raw data
     adatas[key] = value
 
-adata = ad.concat(adatas, label=group_key, join="inner") # inner
+adata = ad.concat(adatas, label=group_key, join="inner") # 'inner' or 'outer'
 if 'celltype' in adata.obs.columns:
     print('The raw key included `celltype` column, value of raw celltype named to celltype0')
     adata.obs['celltype0']=adata.obs['celltype']
+
 adata.obs_names_make_unique()
 print(adata.obs[group_key].value_counts())
 print(adata.obs.columns)

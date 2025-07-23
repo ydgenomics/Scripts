@@ -1,5 +1,7 @@
-# dealplus.R
-# /opt/conda/bin/R
+### Date: 250723 dealplus.R
+### Image: integration-R-- /opt/conda/bin/R
+### Coder: ydgenomics
+
 library(Seurat)
 library(optparse)
 library(ggplot2)
@@ -28,17 +30,6 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
-
-if (is.null(opt$input_rds)){
-  opt$input_rds <- "/data/work/sct/Cer_test_convert_SCTransform.CCA_integrated.rds"
-}
-if (is.null(opt$out_rds)){
-  opt$out_rds <- "/data/work/dealplus/Cer_test_convert_SCTransform.CCA_integrated.rds"
-}
-if (is.null(opt$out_UMAP)){
-  opt$out_UMAP <- "/data/work/dealplus/Cer_test_convert_SCTransform.CCA_integrated_UMAP.pdf"
-}
-
 input_rds <- opt$input_rds
 out_rds <- opt$out_rds
 out_UMAP <- opt$out_UMAP
@@ -67,7 +58,7 @@ if (all(required_features %in% colnames(obj@meta.data))) {
 
 # 检查 meta.data 中是否存在这两个列
 if (other1_key %in% colnames(obj@meta.data) && other2_key %in% colnames(obj@meta.data)) {
-  # 检查是否满足条件：other1_key 不等于 "biosample" 且 other2_key 不等于 "celltype"
+  # 检查是否满足条件：other1_key 不等于 "biosample" 或 other2_key 不等于 "celltype"
   if (other1_key != "biosample" || other2_key != "celltype") {
     obj$other1_other2 <- paste0(
       obj@meta.data[[other1_key]], "_", obj@meta.data[[other2_key]]

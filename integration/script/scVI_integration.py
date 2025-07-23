@@ -1,12 +1,15 @@
-# scVI_integration.py 250711
-# https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/scvi_integration.py
-import click
+### Date: 250723
+### Image: scvi-py-- /opt/conda/bin/R
+### Coder: ydgenomics
+### Ref: https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/scvi_integration.py
+
 import matplotlib.pyplot as plt
 import scanpy as sc
 import scvi
 import pandas
 import leidenalg
 from matplotlib.backends.backend_pdf import PdfPages
+import click
 
 @click.command()
 @click.argument("input_h5ad", type=click.Path(exists=True))

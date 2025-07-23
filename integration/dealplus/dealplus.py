@@ -1,4 +1,7 @@
-# dealplus.python
+### Date: 250723 dealplus.py
+### Image: integration-R-- /opt/conda/bin/python
+### Coder: ydgenomics
+
 import click
 import matplotlib.pyplot as plt
 import scanpy as sc
@@ -34,7 +37,7 @@ def run_dealplus(input_h5ad, out_h5ad, out_umap, other1_key, other2_key):
             print("obs lacked total_counts or n_genes column")
     # 检查 obs 中是否存在这两个列
     if other1_key in adata.obs.columns and other2_key in adata.obs.columns:
-        # 检查是否满足条件：other1_key 不等于 "biosample" 且 other2_key 不等于 "celltype"
+        # 检查是否满足条件：other1_key 不等于 "biosample" 或 other2_key 不等于 "celltype"
         if other1_key != "biosample" or other2_key != "celltype":
             # 添加组合列
             adata.obs['other1_other2'] = adata.obs[other1_key].astype(str) + '_' + adata.obs[other2_key].astype(str)
