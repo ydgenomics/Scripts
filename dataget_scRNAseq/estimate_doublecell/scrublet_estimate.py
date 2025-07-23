@@ -1,5 +1,7 @@
-# Date: 20250607
-# Attention: how to rationally get a multi-matrix anndata including FilterMatrix, SpliceMatrix and UnspliceMatrix.
+### Date: 250723 scrublet_estimate.py
+### Image: scrublet-py-- /opt/conda/bin/python
+### Coder: ydgenomics
+### Output:
 # Marker_csv: gene, cluster, p_val_adj, avg_log2FC
 
 import numpy as np
@@ -32,22 +34,25 @@ parser.add_argument('--mito_genes', type=str, default="None_mito_genes.csv", hel
 parser.add_argument('--mito_threshold', type=float, default=0.05, help='Mitochondrial gene threshold')
 
 args = parser.parse_args()
-species = "peanut"
-group_key = "sample"
-matrix_txt = "Matrix.txt"
-splice_txt = "SpliceMatrix.txt"
-unsplice_txt = "UnspliceMatrix.txt"
-sample_txt = "samples.txt"
-input_mingenes = 100
-input_mincells = 3
-mito_genes = ""
-if mito_genes == "":
-    mito_genes = "None_mito_genes.csv"
+species = args.species
+group_key = args.group_key
+matrix_txt = args.matrix_txt
+splice_txt = args.splice_txt
+unsplice_txt = args.unsplice_txt
+sample_txt = args.sample_txt
+input_mingenes = args.input_mingenes
+input_mincells = args.input_mincells
+mito_genes = args.mito_genes
+mito_threshold = args.mito_threshold
 
-try:
-    mito_threshold = float("") 
-except ValueError:
-    mito_threshold = 0.05
+# --- Check mito_genes ---
+suffix = os.path.splitext(mito_genes)[1].lower()
+if suffix == ".csv":
+    print("mito_genes is .csv, will filter mito_genes")
+else:
+    print("mito_genes isn't .csv file, escape filter mito_genes")
+    mito_genes = "None_mito_genes.csv"
+print("Mito genes file is: " + mito_genes)
 
 def copy_and_process(matrixfile, featuresfile, barcodesfile, target_folder):
     """
@@ -167,6 +172,10 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
         print(adata.obs_names[:10])
         adatas[key] = adata
     adata = ad.concat(adatas, label=group_key, join="outer")
+    biosample_value = species
+    adata.obs['biosample'] = biosample_value
+    print("--------- Concatenated AnnData object ---------")
+    print(adata.obs.columns)
     print(adata.obs[group_key].value_counts())
 
     # Set parameters for figures
@@ -252,7 +261,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
         # Write top 10 cell and gene names
         f.write('\nTop 10 cells:\n' + ','.join(adata.obs_names[:10]) + '\n')
         f.write('\nTop 10 genes:\n' + ','.join(adata.var_names[:10]) + '\n')
-    adata.X = adata.layers["counts"] # Save the raw counts in the X attribute
+    adata.X = adata.layers["counts"].copy() # Save the raw counts in the X attribute
     adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
 
 # Main function to run the scrublet analysis
