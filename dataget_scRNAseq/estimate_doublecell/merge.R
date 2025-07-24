@@ -1,16 +1,17 @@
-### Date: 250628 merge.R
-### Image: convert-merge--01(sceasy-schard--08)
+### Date: 250724
+### Image: sceasy-schard--
 ### Coder: ydgenomics
 
 library(Seurat)
 library(dplyr)
+library(presto)
 library(optparse)
 
 option_list <- list(
-    make_option(c("-p", "--prefix"), type = "character", default = "merge0627",
+    make_option(c("-p", "--prefix"), type = "character", default = "test",
                 help = "Prefix for output files [default %default]"),
     make_option(c("-r", "--rds_files"), type = "character",
-                default = "./Za_Root_BBKNNR_integrated.rds,./Za_Root_harmony_integrated.hr.rds,./Za_Root_rliger.INMF_integrated.rds,./Za_Root_scVI_integrated.hr.rds,./Za_Root_SCTransform.CCA_integrated.rds",
+                default = "/data/input/W202507240000066_1/Dataget/call-merge/execution/peanut_merge/H1314.hr.rds,/data/input/W202507240000066_1/Dataget/call-merge/execution/peanut_merge/H2014.hr.rds",
                 help = "Comma-separated list of RDS files [default %default]")
 )
 
@@ -38,6 +39,7 @@ print(head(seu@meta.data))
 print("--------------- Normalization and Clustering -----------------")
 seu <- NormalizeData(seu)
 seu <- FindVariableFeatures(seu, nfeatures = 3000)
+# seu <- FindVariableFeatures(seu, selection.method = "mean.var.plot", nfeatures = 2000)
 seu <- ScaleData(seu)
 seu <- RunPCA(seu, features = VariableFeatures(object = seu), verbose = FALSE)
 seu <- FindNeighbors(seu, dims = 1:30)
@@ -56,7 +58,7 @@ DimPlot(seu, reduction = "umap", group.by = "leiden_res_0.50", shuffle = TRUE, l
 DimPlot(seu, reduction = "umap", group.by = "leiden_res_0.80", shuffle = TRUE, label = TRUE)
 DimPlot(seu, reduction = "umap", group.by = "leiden_res_1.00", shuffle = TRUE, label = TRUE)
 DimPlot(seu, reduction = "umap", group.by = "leiden_res_1.30", shuffle = TRUE, label = TRUE)
-DimPlot(seu, reduction = "umap", group.by = "leiden_res_1.30", shuffle = TRUE, label = TRUE)
+DimPlot(seu, reduction = "umap", group.by = "leiden_res_1.60", shuffle = TRUE, label = TRUE)
 DimPlot(seu, reduction = "umap", group.by = "merge_res0.5", shuffle = TRUE, label = TRUE)
 dev.off()
 

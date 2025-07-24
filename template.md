@@ -1,20 +1,16 @@
-# Using multi-methods do Integration and Eliminate batch effects (Integration)
-- **Brief:** 实验差异引起的非生物学差异(批次效应)干扰下游分析，不同整合去批次方法在多样的数据中表现效果各异，通过多种方法
+# Title
+- **Brief:**
 - **Log:**
 - **Tradition:**
 ---
 
 # Input
 - **Variable**
-  - h5ad(Array[File])：layers['counts']为原始数据 || layers['counts']不存在时.X为原始数据
-  - 
 
 ---
 
 # Output
-- **Structure**
-- **Interpretation**
-- **Downstream analysis**
+- **Variable**
 
 ---
 
