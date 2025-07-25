@@ -44,6 +44,8 @@ seu <- ScaleData(seu)
 seu <- RunPCA(seu, features = VariableFeatures(object = seu), verbose = FALSE)
 seu <- FindNeighbors(seu, dims = 1:30)
 seu <- FindClusters(seu, resolution = 0.5, cluster.name = "merge_res0.5")
+print("------------- meta.data columns after clustering -------------")
+print(colnames(seu@meta.data))
 seu <- RunUMAP(seu, dims = 1:20, verbose = FALSE)
 #
 variable_features <- VariableFeatures(seu)
@@ -59,7 +61,7 @@ DimPlot(seu, reduction = "umap", group.by = "leiden_res_0.80", shuffle = TRUE, l
 DimPlot(seu, reduction = "umap", group.by = "leiden_res_1.00", shuffle = TRUE, label = TRUE)
 DimPlot(seu, reduction = "umap", group.by = "leiden_res_1.30", shuffle = TRUE, label = TRUE)
 DimPlot(seu, reduction = "umap", group.by = "leiden_res_1.60", shuffle = TRUE, label = TRUE)
-DimPlot(seu, reduction = "umap", group.by = "merge_res0.5", shuffle = TRUE, label = TRUE)
+DimPlot(seu, reduction = "umap", group.by = "seurat_clusters", shuffle = TRUE, label = TRUE)
 dev.off()
 
 saveRDS(seu, paste0(prefix,"_merge.rds"))
