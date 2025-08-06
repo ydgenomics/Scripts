@@ -1,20 +1,19 @@
 # Title
 - **Brief:**
+- **Fature**
 - **Log:**
 - **Tradition:**
----
 
+---
 # Input
 - **Variable**
 
 ---
-
 # Output
 - **Variable**
 
 ---
-
-# Workflow
+# Detail
 - **Overview**
 
 - **Software**
@@ -22,14 +21,15 @@
 - **Image**
 
 ---
+# Cite
 
+---
 # Reference
 > 
 
 
 ---
-
-# Coder info
+# Coder
 - **Editor:** yangdong (yangdong@genomics.cn)
 - **GitHub:** [ydgenomics](https://github.com/ydgenomics)
 - **Prospect:** Focused on innovative, competitive, open-source projects.
