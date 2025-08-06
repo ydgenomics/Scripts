@@ -1,5 +1,7 @@
 # Using multi-methods do Integration and Eliminate batch effects (Integration)
 - **Brief:** 实验差异引起的非生物学差异(批次效应)干扰下游分析，不同整合去批次方法在多样的数据中表现效果各异，做多种方法的整合去批次供选择
+- **Need**
+  - 为python方法的umap添加参数`legend_loc="on data"`，使其标签显示在umap图上
 - **Log:**
   - 250724 优化了任务运行条件判断`whether_sct`
 - **Tradition:*multi_samples_scRNAseq_integration*
