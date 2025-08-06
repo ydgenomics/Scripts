@@ -1,4 +1,5 @@
 # 资料
+[https://www.sc-best-practices.org/preamble.html](https://www.sc-best-practices.org/preamble.html)
 [DCS doc](https://cloud.stomics.tech/helpcenter/zh/)
 [runoob.com](https://www.runoob.com/)
 [shell doc](https://www.runoob.com/linux/linux-shell.html)
