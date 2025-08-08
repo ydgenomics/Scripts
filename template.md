@@ -21,10 +21,7 @@
 - **Image**
 
 ---
-# Cite
-
----
-# Reference
+# Reference & Citation
 > 
 
 
