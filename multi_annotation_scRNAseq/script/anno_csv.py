@@ -1,4 +1,4 @@
-### 2500806 anno_csv.py
+### 2500808 anno_csv.py
 ### 为h5ad的细胞添加新的注释，input_csv的第一列为h5ad原来的列和值，第二列为新建的列和值
 ### 确保输入的h5ad的.obsm是X_umap
 
@@ -11,13 +11,13 @@ parser = argparse.ArgumentParser(description="Process input file paths.")
 parser.add_argument(
     "--input_h5ad",
     type=str,
-    default="/data/users/yangdong/yangdong_faff775391984da0a355d4bd70217714/online/cotton/output/dataget/C1/cotton_C1.h5ad",
+    default="/data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201/01_dataget/H1314_dataget/H1314.h5ad",
     help="Path to the input h5ad file. (default: %(default)s)"
 )
 parser.add_argument(
     "--input_csv",
     type=str,
-    default="/data/work/anno.csv",
+    default="/data/input/Files/yangdong/wdl/SCP/Annotation/anno_H1314.csv",
     help="Path to the input CSV file. (default: %(default)s)"
 )
 # parser.add_argument(
@@ -35,6 +35,7 @@ input_csv = args.input_csv
 adata = sc.read_h5ad(input_h5ad)
 # read mapping csv
 mapping_df = pd.read_csv(input_csv)
+mapping_df = mapping_df.astype(str)
 # construct dictionary between new name and old name
 rename_dict = dict(zip(mapping_df[mapping_df.columns[0]].astype(str),
                        mapping_df[mapping_df.columns[1]].astype(str)))
@@ -44,7 +45,8 @@ if mapping_df.columns[1] in adata.obs.columns:
 # check all valuse of old column
 print("--- old column included unique values ---")
 print(adata.obs[mapping_df.columns[0]].unique())
-adata.obs[mapping_df.columns[1]] = adata.obs[mapping_df.columns[0]].cat.rename_categories(rename_dict)
+# adata.obs[mapping_df.columns[1]] = adata.obs[mapping_df.columns[0]].cat.rename_categories(rename_dict)
+adata.obs[mapping_df.columns[1]] = (adata.obs[mapping_df.columns[0]].map(mapping_df.set_index(mapping_df.columns[0])[mapping_df.columns[1]]))
 file_name = os.path.basename(input_h5ad)
 base_name = os.path.splitext(file_name)[0] # 提取文件名（不包括扩展名）
 output_h5ad = base_name + "_anno.h5ad" # 构造输出文件名
