@@ -3,6 +3,7 @@
 - **Need**
   - 为python方法的umap添加参数`legend_loc="on data"`，使其标签显示在umap图上
 - **Log:**
+  - 250812 取消可视化`sample`，python的umap添加`legend_loc='on data'`，是图更易阅读
   - 250724 优化了任务运行条件判断`whether_sct`
 - **Tradition:*multi_samples_scRNAseq_integration*
 ---
@@ -58,6 +59,6 @@
 # Coder info
 - **Editor:** yangdong (yangdong@genomics.cn)
 - **GitHub:** [ydgenomics](https://github.com/ydgenomics)
-- **Prospect:** Focused on innovative, competitive, open-source projects.
-- **Repository:** [Scripts/enrich_scRNAseq](https://github.com/ydgenomics/Scripts/tree/main/enrich_scRNAseq)
+- **Prospect:** Focused on innovative, competitive, open-source projects and collaboration.
+- **Repository:** []()
 ---

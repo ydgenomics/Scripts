@@ -1,4 +1,4 @@
-### Date: 250723 dealplus.py
+### Date: 250812 dealplus.py
 ### Image: integration-R-- /opt/conda/bin/python
 ### Coder: ydgenomics
 
@@ -22,7 +22,7 @@ def run_dealplus(input_h5ad, out_h5ad, out_umap, other1_key, other2_key):
     print(adata.obs["biosample.celltype"].unique())
     #visual
     with PdfPages(out_umap) as pdf:
-        sc.pl.umap(adata, color=["biosample", "sample", "celltype", "biosample.celltype"], ncols=1)
+        sc.pl.umap(adata, color=["biosample", "celltype", "biosample.celltype"], legend_loc='on data', ncols=1)
         plt.savefig(pdf, format='pdf', dpi=300, bbox_inches='tight')
         plt.close()
         required_cols = ['total_counts', 'n_genes']
@@ -47,7 +47,7 @@ def run_dealplus(input_h5ad, out_h5ad, out_umap, other1_key, other2_key):
 
             # 绘制 UMAP 并保存为 PDF
             with PdfPages('other'+out_umap) as pdf:
-                sc.pl.umap(adata, color=[other1_key, "sample", other2_key, "other1_other2"], ncols=1, show=False)
+                sc.pl.umap(adata, color=[other1_key, other2_key, "other1_other2"], legend_loc='on data', ncols=1, show=False)
                 plt.savefig(pdf, format='pdf', dpi=300, bbox_inches='tight')
                 plt.close()
         else:

@@ -1,4 +1,4 @@
-### Date: 250723 dealplus.R
+### Date: 250812 dealplus.R
 ### Image: integration-R-- /opt/conda/bin/R
 ### Coder: ydgenomics
 
@@ -45,7 +45,7 @@ unique(obj$biosample.celltype)
 pdf(out_UMAP, width=12, height=8)
 DimPlot(obj, reduction = "umap", split.by = "biosample")
 DimPlot(obj, reduction = "umap", group.by = "biosample", shuffle = TRUE, label = TRUE)
-DimPlot(obj, reduction = "umap", group.by = "sample", shuffle = TRUE, label = TRUE)
+# DimPlot(obj, reduction = "umap", group.by = "sample", shuffle = TRUE, label = TRUE)
 DimPlot(obj, reduction = "umap", group.by = "celltype", shuffle = TRUE, label = TRUE)
 DimPlot(obj, reduction = "umap", group.by = "biosample.celltype", shuffle = TRUE, label = TRUE)
 # 检查 meta.data 中是否包含指定列

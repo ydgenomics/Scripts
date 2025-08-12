@@ -1,4 +1,4 @@
-### Date: 250723
+### Date: 250812
 ### Image: harmony-py--
 ### Coder: ydgenomics
 ### Ref: https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/harmony_integration.py
@@ -45,7 +45,7 @@ def run_harmony(input_h5ad, out_h5ad, out_umap, batch_key, sample_key, cluster_k
     adata.obs['celltype'].unique()
     sc.tl.umap(adata, neighbors_key = 'neighbors') ## to match min_dist in seurat
     with PdfPages(out_umap) as pdf:
-        sc.pl.umap(adata, color=[batch_key, sample_key, cluster_key], ncols=1)
+        sc.pl.umap(adata, color=[batch_key, cluster_key], legend_loc='on data', ncols=1)
         plt.savefig(pdf, format='pdf', dpi=300, bbox_inches='tight')
         plt.close()
     #adata.obsm['X_umapharmony'] = adata.obsm['X_umap']

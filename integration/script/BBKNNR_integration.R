@@ -1,4 +1,4 @@
-### Date: 250723
+### Date: 250812
 ### Image: integration-R-- /opt/conda/bin/R
 ### Coder: ydgenomics
 ### Ref: https://mp.weixin.qq.com/s/ZkY8R3yZEEsIuV8lDIAdlA
@@ -83,6 +83,6 @@ saveRDS(obj, file = out_rds)
 pdf(out_UMAP)
 DimPlot(obj, reduction = "umap", split.by = batch_key)
 DimPlot(obj, reduction = "umap", group.by = batch_key, shuffle = TRUE, label = TRUE)
-DimPlot(obj, reduction = "umap", group.by = sample_key, shuffle = TRUE, label = TRUE)
+# DimPlot(obj, reduction = "umap", group.by = sample_key, shuffle = TRUE, label = TRUE)
 DimPlot(obj, reduction = "umap", group.by = cluster_key, shuffle = TRUE, label = TRUE)
 dev.off()

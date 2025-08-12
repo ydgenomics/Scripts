@@ -1,4 +1,4 @@
-### Date: 250723 SCTransform.harmony_integration.R
+### Date: 250812 SCTransform.harmony_integration.R
 ### Image: integration-R-- /opt/conda/bin/R
 ### Coder: ydgenomics
 ### Ref: https://satijalab.org/seurat/articles/seurat5_integration
@@ -87,7 +87,7 @@ str(obj)
 pdf(out_UMAP)
 DimPlot(obj, reduction = "umap", split.by = batch_key)
 DimPlot(obj, reduction = "umap", group.by = batch_key, shuffle = TRUE, label = TRUE)
-DimPlot(obj, reduction = "umap", group.by = sample_key, shuffle = TRUE, label = TRUE)
+# DimPlot(obj, reduction = "umap", group.by = sample_key, shuffle = TRUE, label = TRUE)
 DimPlot(obj, reduction = "umap", group.by = cluster_key, shuffle = TRUE, label = TRUE)
 # VlnPlot(obj, features = c("nCount_RNA", "nFeature_RNA"), group.by= batch_key)
 dev.off()
