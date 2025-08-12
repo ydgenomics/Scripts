@@ -1,0 +1,3 @@
+SampleID,h5ad,biosample_value,species,whether_sct,other1_key,other2_key
+test_peanut,/Files/yangdong/wdl/SCP/Annotation/W202508090004764/H1314_anno.h5ad,H1314,peanut,yes,biosample,anno1
+test_peanut,/Files/yangdong/wdl/SCP/Annotation/W202508090004764/H2014_anno.h5ad,H2014,,,,
