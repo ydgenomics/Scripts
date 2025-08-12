@@ -1,3 +1,5 @@
+[基因id转换 数据分析中常用基因名转换的5种方法 - 生信大碗的文章 - 知乎](https://zhuanlan.zhihu.com/p/568379221)
+
 环境搭建
 [clusterprofiler安装-六种方法](https://mp.weixin.qq.com/s/BYydet8hoBdbfZQgdc2dIA)
 ```shell

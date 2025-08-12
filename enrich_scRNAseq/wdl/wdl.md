@@ -47,6 +47,7 @@
   > [生信干货 | AnnotationHub包-非模式物种OrgDB下载制作](https://mp.weixin.qq.com/s/auyTKJhfos0wi_yPsA7O0g)
   > [超详细非模式物种GO数据库全新代码构建](https://mp.weixin.qq.com/s/b23itzn5RNT8mJ1Ok8RzzA)
   > [非模式基因GO富集分析：以玉米为例+使用OrgDb](https://mp.weixin.qq.com/s/lHKZtzpN2k9uPN7e6HjH3w) 和[非模式物种做GO富集分析](https://mp.weixin.qq.com/s/MgOxWjpZlMvgVqwOa2XUAQ)使用`AnnotationHub`来获取Orgdb库
+  > [基因id转换 数据分析中常用基因名转换的5种方法 - 生信大碗的文章 - 知乎](https://zhuanlan.zhihu.com/p/568379221)
 
 
 - **Using eggnog-mapper to Prepare Background Database Files** (related workflow: **Build_orgdb**)
