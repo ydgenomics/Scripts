@@ -1,4 +1,4 @@
-### Date: 250723
+### Date: 250812
 ### Image: scvi-py-- /opt/conda/bin/R
 ### Coder: ydgenomics
 ### Ref: https://github.com/Papatheodorou-Group/BENGAL/blob/main/bin/scvi_integration.py
@@ -61,7 +61,7 @@ def run_scVI(input_h5ad, out_h5ad, out_umap, batch_key, sample_key, cluster_key,
     #
     sc.tl.umap(adata, neighbors_key='neighbors', min_dist=0.3) ## to match min_dist in seurat
     with PdfPages(out_umap) as pdf:
-        sc.pl.umap(adata, color=[batch_key, sample_key, cluster_key], ncols=1)
+        sc.pl.umap(adata, color=[batch_key, cluster_key], legend_loc='on data', ncols=1)
         plt.savefig(pdf, format='pdf', dpi=300, bbox_inches='tight')
         plt.close()
         # sc.pl.violin(adata, keys=['total_counts'], log=False, groupby=batch_key)

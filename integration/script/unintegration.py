@@ -1,4 +1,4 @@
-### Date: 250723
+### Date: 250812
 ### Image: harmony-py--
 ### Coder: ydgenomics
 
@@ -37,7 +37,7 @@ def run_unintegration(input_h5ad, out_h5ad, out_umap, batch_key, sample_key, clu
     #cluster_key="celltype"
     #out_umap="/data/work/unintegration/Cer_test_unintegration_integrated_UMAP.pdf"
     #out_h5ad="/data/work/unintegration/Cer_test_unintegration_integrated.h5ad"
-    sc.pl.umap(orig_ad, color=[batch_key, sample_key, cluster_key])
+    sc.pl.umap(orig_ad, color=[batch_key, cluster_key], legend_loc='on data', ncols=1)
     plt.savefig(out_umap, dpi=300,  bbox_inches='tight') 
     orig_ad.write(filename=out_h5ad,compression="gzip")
 

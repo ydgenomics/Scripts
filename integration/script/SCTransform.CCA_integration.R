@@ -1,4 +1,4 @@
-### Date: 250723 SCTransform.CCA_integration.R
+### Date: 250812 SCTransform.CCA_integration.R
 ### Image: integration-R-- /opt/conda/bin/R
 ### Coder: ydgenomics
 ### Ref: https://satijalab.org/seurat/archive/v4.3/sctransform_v2_vignette
@@ -88,7 +88,7 @@ str(obj)
 pdf(out_UMAP)
 DimPlot(obj, reduction = "umap", split.by = batch_key)
 DimPlot(obj, reduction = "umap", group.by = batch_key, label = TRUE, shuffle = TRUE)
-DimPlot(obj, reduction = "umap", group.by = sample_key, label = TRUE, shuffle = TRUE)
+# DimPlot(obj, reduction = "umap", group.by = sample_key, label = TRUE, shuffle = TRUE)
 DimPlot(obj, reduction = "umap", group.by = cluster_key, label = TRUE, shuffle = TRUE)
 # VlnPlot(obj, features = c("nCount_SCT", "nFeature_SCT"), group.by= batch_key)
 dev.off()

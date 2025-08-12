@@ -1,4 +1,4 @@
-### Date: 250723 rliger.INMF_integration.R
+### Date: 250812 rliger.INMF_integration.R
 ### Image: integration-R-- /opt/conda/bin/R
 ### Coder: ydgenomics
 ### Ref: https://welch-lab.github.io/liger/articles/Integrating_multi_scRNA_data.html#r-session-info 
@@ -78,7 +78,7 @@ saveRDS(obj, file = out_rds)
 pdf(out_UMAP)
 DimPlot(obj, reduction = "umap", split.by = batch_key)
 DimPlot(obj, reduction = "umap", group.by = batch_key, shuffle = TRUE, label = TRUE)
-DimPlot(obj, reduction = "umap", group.by = sample_key, shuffle = TRUE, label = TRUE)
+# DimPlot(obj, reduction = "umap", group.by = sample_key, shuffle = TRUE, label = TRUE)
 DimPlot(obj, reduction = "umap", group.by = cluster_key, shuffle = TRUE, label = TRUE)
 # VlnPlot(obj, features = c("nCount_RNA", "nFeature_RNA"), group.by= batch_key)
 dev.off()
