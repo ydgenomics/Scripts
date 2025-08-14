@@ -31,14 +31,7 @@ Use these results to assess annotation consistency, validate new cell types, or 
 场景二：使用特定标记基因进行人工注释当缺乏已知的参考数据集时，可以使用特定于研究对象的标记基因进行人工注释：标记基因选择：选择非模式植物特有的、已知功能的标记基因。人工注释：使用这些标记基因对数据进行人工注释，确定细胞类型。跨数据集验证：比如我研究一种新的植物-菜花！现有两个菜花数据集，我在这两个数据集中都能注释出相同的细胞亚型（例如，细胞类型A、B、C）。在各个数据集中注释出的相同标签的细胞类型应表现出高度的表达相似性，这有助于证明注释的稳健性和一致性。
 这里计算的是矩阵，应该也涉及到reference数据基因名和test数据基因名覆盖度的问题
 
-```R
-#使用MetaNeighbor计算每个批次中细胞类型之间的相关性
-Aurocs_matrix = MetaNeighborUS(var_genes = global_hvgs, 
-                               dat = cca.results.sce, 
-                               study_id = cca.results.sce$batch, 
-                               cell_type = cca.results.sce$celltype, 
-                               fast_version = T)
-```
+
 计算的是矩阵的那一层呢？counts还是data。计算的是SCT，先判断是否具有SCT，然后在做计算，如果还存在批次的话可以使用harmony做一个整合去批次
 
 ## Jaccard指数和hclust [jaccard_hclust.R](https://github.com/ydgenomics/Scripts/blob/main/metaneighbor/jaccard_hclust.R)

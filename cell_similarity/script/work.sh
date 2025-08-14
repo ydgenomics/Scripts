@@ -3,10 +3,13 @@ output_name="~{output_name}"
 batch_key="~{batch_key}"
 cluster_key="~{cluster_key}"
 threshold_value=0.95
+only_metaNeighbor="yes"  # Set to "yes" to skip Jaccard clustering
 
-/opt/conda/bin/Rscript /script/cell_similarity/jaccard_hclust.R \
---input_file $rds --output_name $output_name --batch_key $batch_key --cluster_key $cluster_key
-rm Rplots.pdf
+if [ "$only_metaNeighbor" != "yes" ]; then
+    /opt/conda/bin/Rscript /script/cell_similarity/jaccard_hclust.R \
+    --input_file $rds --output_name $output_name --batch_key $batch_key --cluster_key $cluster_key
+    rm Rplots.pdf
+fi
 
 /opt/conda/bin/Rscript /script/cell_similarity/metaNeighbor.R \
 --input_file $rds --output_name $output_name --batch_key $batch_key --cluster_key $cluster_key --threshold_value $threshold_value

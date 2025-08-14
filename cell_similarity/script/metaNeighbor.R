@@ -1,7 +1,7 @@
-# Date: 20250716
+# Date: 250814
 # Image: metaNeighbor-R--04 /opt/conda/bin/R
 # Reference: https://mp.weixin.qq.com/s/tVxalBWsxLn58RJkpb-PaQ
-# 基于RNA/SCT做分析
+# 基于RNA@counts做分析
 
 library(MetaNeighbor)
 library(SummarizedExperiment)
@@ -17,15 +17,15 @@ library(optparse)
 
 option_list <- list(
   make_option(c("-i", "--input_file"),
-    type = "character", default = "/data/work/integration/input/Peanut-unsoupx.cg.rds",
+    type = "character", default = "/data/work/SCPipelines/bulk_RNA_scRNA_singleR/bulk_anno_seu.rds",
     help = "Path to input file"
   ),
   make_option(c("-o", "--output_name"),
-    type = "character", default = "peanut",
+    type = "character", default = "cotton",
     help = "Output file prefix name"
   ),
   make_option(c("-b", "--batch_key"),
-    type = "character", default = "biosample",
+    type = "character", default = "time",
     help = "Batch key for integration"
   ),
   make_option(c("-c", "--cluster_key"),
@@ -48,7 +48,8 @@ threshold_value <- opt$threshold_value
 sdata <- readRDS(input_file)
 sdata
 colnames(sdata@meta.data)
-sdata <- as.SingleCellExperiment(sdata)
+sdata <- as.SingleCellExperiment(sdata, assay = "RNA", slot = "counts")
+# print(assay(sdata, "counts")[1:5, 1:5])
 head(colData(sdata))
 
 var_genes = variableGenes(dat = sdata, exp_labels = sdata@colData[[batch_key]])
@@ -128,75 +129,22 @@ breaks = seq(0, 1, length=101)
 pdf(paste0(output_name,"_metaNeighbor.pdf"))
 # Using heatmap do heatmap
 gplots::heatmap.2(celltype_NV,
-                  margins=c(8,8),
-                  keysize=1,
-                  key.xlab="AUROC",
-                  key.title="NULL",
-                  trace = "none",
-                  density.info = "none",
                   col = cols,
                   breaks = breaks,
+                  key.xlab = "AUROC",
+                  margins = c(8, 8),
+                  trace = "none",
+                  density.info = "none",
                   offsetRow=0.1,
                   offsetCol=0.1,
                   cexRow = 0.7,
                   cexCol = 0.7)
+
 # ggcor
 print(p1)
 print(p2)
 print(p3)
 
-# # Using circlize do circle-heatmap
-# mycol <- colorRamp2(c(0, 0.5, 1), c("#393781", "white", "#f22942"))
-# bordercol <- "white"
-# # 调整圆环首尾间的距离
-# circos.par(gap.after = c(90)) 
-# # 绘制环状热图
-# circos.heatmap(celltype_NV, col = mycol,
-#                # 聚类放在环形内侧
-#                dend.side = "inside", 
-#                # 基因名放在环形外侧；二者不能在同一侧
-#                rownames.side = "outside",
-#                rownames.col = "black",
-#                # 字体大小
-#                rownames.cex = 0.8, 
-#                # 字体粗细
-#                rownames.font = 2,  # 注意：字体粗细应该是一个整数，例如 1（普通）、2（加粗）
-#                bg.border = bordercol,
-#                cluster = TRUE,
-#                cell.border = bordercol,
-#                track.height = 0.5)
-
-# # 定义图例的位置
-# x_pos <- 0.75
-# y_pos <- 0.65
-# # 创建图例
-# lg <- Legend(title = "AUROC", col_fun = mycol,
-#              direction = "vertical",
-#              title_position = "topcenter")
-
-# # 绘制图例
-# draw(lg, x = unit(x_pos, "npc"), y = unit(y_pos, "npc"), just = c("right", "center"))
-
-# # 设置间距因子
-# spacing_factor <- 0.72
-# # 设置 y 轴偏移量，可以根据需要调整
-# y_offset <- 2
-# # 设置 x 轴偏移量，可以根据需要调整
-# x_offset <- -0.3
-# fontsize <- 0.6 # 字体大小
-
-# # 添加自定义文本
-# circos.track(track.index = get.current.track.index(), panel.fun = function(x, y) {
-#   if (CELL_META$sector.numeric.index == 1) { 
-#     cn <- colnames(celltype_NV)
-#     n <- length(cn)
-#     base_x <- CELL_META$cell.xlim[2] - convert_x(x_offset, "mm") 
-#     circos.text(rep(base_x, n), 
-#                 y_offset + (n:1) * spacing_factor,
-#                 cn, cex = fontsize, adj = c(0, 0.5), facing = "inside")
-#   }
-# }, bg.border = NA)
-# circos.clear()
 dev.off()
 write.csv(file=paste0(output_name,"_metaNeighbor.csv"),celltype_NV,quote=FALSE,row.names=TRUE)
 top_hits = topHits(cell_NV = celltype_NV,
