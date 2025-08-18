@@ -1,5 +1,6 @@
 ### Date: 250818
 ### 集取子集，整合，标准化，降维聚类为一体的Rscript
+### 应用场景：1.多个数据的整合；2.多个数据的取子集；3.多个数据取子集之后再整合
 
 library(Seurat)
 library(dplyr)
@@ -79,16 +80,17 @@ merged_data <- seurat_pipeline(merged_data, r_value, plot_keys, prefix=basename(
 
 if (length(file_paths) > 1) {
     for (i in 2:length(file_paths)) {
-        temp_data <- readRDS(file_paths[[i]]); DefaultAssay(merged_data) <- "RNA"
-        temp_data <- seurat_pipeline(temp_data, r_value, plot_keys, prefix=basename(file_paths[[i]]))
-        print(paste0("Dealing: ", file_paths[[i]]))
-        DefaultAssay(temp_data) <- "RNA"
+        temp_data <- readRDS(file_paths[[i]]); DefaultAssay(temp_data) <- "RNA"
         if (!unlist(strsplit(cluster_value[[i]], split = ","))[1] == "all"){
+            print(paste0("Dealing: ", file_paths[[i]]))
             temp_data <- subset(temp_data, subset = !!sym(cluster_key[[i]]) == unlist(strsplit(cluster_value[[i]], split = ",")))
         }
+        temp_data <- seurat_pipeline(temp_data, r_value, plot_keys, prefix=basename(file_paths[[i]]))
         merged_data <- merge(merged_data, temp_data)
     }
 }
+merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value),"_0")]] <- merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value))]]
+plot_keys <- c(plot_keys, paste0("RNA_snn_res.",as.character(r_value),"_0"))
 merged_data <- seurat_pipeline(merged_data, r_value, plot_keys, prefix=name)
 print(merged_data$RNA@counts[1:5,1:5])
 print(merged_data$RNA@data[1:5,1:5])
