@@ -1,8 +1,8 @@
-### Date: 250723 scrublet_estimate.py
+### Date: 250814 scrublet_estimate.py
 ### Image: scrublet-py-- /opt/conda/bin/python
 ### Coder: ydgenomics
-### Output:
-# Marker_csv: gene, cluster, p_val_adj, avg_log2FC
+### Output: Marker_csv: gene, cluster, p_val_adj, avg_log2FC
+### 如果缺少splice和unsplice矩阵，可以直接都用filter矩阵
 
 import numpy as np
 import pandas as pd
@@ -77,18 +77,15 @@ def copy_and_process(matrixfile, featuresfile, barcodesfile, target_folder):
 def complete_genes(adata, all_genes, gene_symbols_col='gene_symbols'):
     """
     Complete missing genes in the AnnData object and set their values to 0.
-    
     Args:
         adata (AnnData): AnnData object to be completed.
         all_genes (set): Complete set of genes.
         gene_symbols_col (str): Column name for gene symbols, default is 'gene_symbols'.
-    
     Returns:
         AnnData: AnnData object with completed genes.
     """
     current_genes = set(adata.var_names)
     missing_genes = all_genes - current_genes
-
     if len(missing_genes) > 0:
         print(f"Completing missing genes: {len(missing_genes)}")
         missing_genes_df = pd.DataFrame(
@@ -109,17 +106,14 @@ def complete_genes(adata, all_genes, gene_symbols_col='gene_symbols'):
 def complete_cells(adata, all_cells):
     """
     Complete missing cells in the AnnData object and set their values to 0.
-    
     Args:
         adata (AnnData): AnnData object to be completed.
         all_cells (set): Complete set of cells.
-    
     Returns:
         AnnData: AnnData object with completed cells.
     """
     current_cells = set(adata.obs_names)
     missing_cells = all_cells - current_cells
-
     if len(missing_cells) > 0:
         print(f"Completing missing cells: {len(missing_cells)}")
         missing_cells_df = pd.DataFrame(
@@ -178,11 +172,11 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     print(adata.obs.columns)
     print(adata.obs[group_key].value_counts())
 
-    # Set parameters for figures
-    sc.settings.verbosity = 3
-    sc.logging.print_versions()
-    sc.settings.set_figure_params(dpi=80, facecolor='white')
-    
+    # # Set parameters for figures
+    # sc.settings.verbosity = 3
+    # sc.logging.print_versions()
+    # sc.settings.set_figure_params(dpi=80, facecolor='white')
+
     # Check mitochondrial genes and filter
     if os.path.exists(mito_genes):
         mt_genes = pd.read_csv(mito_genes, header=None, names=["gene_name"])
@@ -199,6 +193,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     else:
         print("mitochondrial list not exist")
         sc.pp.calculate_qc_metrics(adata, inplace=True, log1p=True)
+    # Interpretation: https://scanpy.readthedocs.io/en/stable/generated/scanpy.pp.calculate_qc_metrics.html#scanpy.pp.calculate_qc_metrics
     sns.jointplot(data=adata.obs, x="log1p_total_counts", y="log1p_n_genes_by_counts", kind="hex")
     savefig("qc.pdf")
 
@@ -206,6 +201,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     sc.pp.filter_cells(adata, min_genes=input_mingenes)
     sc.pp.filter_genes(adata, min_cells=input_mincells)
     sc.external.pp.scrublet(adata, batch_key=group_key)
+    adata = adata[adata.obs['predicted_doublet'] == False] # Only keep as False 
 
     adata.layers["counts"] = adata.X.copy()
 
@@ -233,13 +229,14 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     sc.tl.leiden(adata, resolution=1)
     adata.obs['predicted_doublet'] = adata.obs['predicted_doublet'].astype('category')
     sc.pl.umap(adata, color=["leiden", "log1p_n_genes_by_counts", "predicted_doublet", "doublet_score"], ncols=2, save="_quality.pdf")
+    # Whether need to delete double cell?
     for res in [0.02, 0.2, 0.5, 0.8, 1.0, 1.3, 1.6, 2.0]:
         sc.tl.leiden(adata, key_added=f"leiden_res_{res:4.2f}", resolution=res)
     sc.pl.umap(adata, color=["leiden_res_0.02", "leiden_res_0.20", "leiden_res_0.50", "leiden_res_0.80", "leiden_res_1.00", "leiden_res_1.30", "leiden_res_1.60", "leiden_res_2.00"], legend_loc="on data", save="_leiden_clus.pdf")
     # Marker
     output_dir = "marker_csv"
     os.makedirs(output_dir)
-    resolutions = ["leiden_res_0.50", "leiden_res_0.80", "leiden_res_1.00"]
+    resolutions = ["leiden_res_0.20", "leiden_res_0.50", "leiden_res_0.80", "leiden_res_1.00", "leiden_res_1.30", "leiden_res_1.60", "leiden_res_2.00"]
     for res in resolutions:
         sc.tl.rank_genes_groups(adata, groupby=res, method="wilcoxon")
         sc.pl.rank_genes_groups_dotplot(adata, groupby=res, standard_scale="var", n_genes=5, save=f"{res}_marker.pdf")
@@ -261,7 +258,8 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
         # Write top 10 cell and gene names
         f.write('\nTop 10 cells:\n' + ','.join(adata.obs_names[:10]) + '\n')
         f.write('\nTop 10 genes:\n' + ','.join(adata.var_names[:10]) + '\n')
-    adata.X = adata.layers["counts"].copy() # Save the raw counts in the X attribute
+    print("!!!! Note: .X stored normalized data and .layers['counts'] is raw data !!!")
+    # adata.X = adata.layers["counts"].copy() # Save the raw counts in the X attribute
     adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
 
 # Main function to run the scrublet analysis
@@ -279,16 +277,27 @@ def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, inpu
     with open(sample_txt, 'r') as filen:
         sample_names = filen.read().strip().split(',')
 
+    matrix_files = [f for f in matrix_files if f != '']
+    splice_files = [f for f in splice_files if f != '']
+    unsplice_files = [f for f in unsplice_files if f != '']
     # Preprocess the loaded data
     trans_matrix_list = []
     trans_splice_list = []
     trans_unsplice_list = []
 
-    process_types = [
-        ("filter", matrix_files),
-        ("splice", splice_files),
-        ("unsplice", unsplice_files)
-    ]
+    # process_types = [
+    #     ("filter", matrix_files),
+    #     ("splice", splice_files),
+    #     ("unsplice", unsplice_files)
+    # ]
+    print(splice_files); print(matrix_files); print(len(splice_files)); print(len(matrix_files))
+    process_types = (
+        [("filter", matrix_files), ("splice", splice_files), ("unsplice", unsplice_files)]
+        if (len(splice_files) == len(matrix_files) == len(unsplice_files) and
+            all(s != m for s, m in zip(splice_files, matrix_files)) and
+            len(set(splice_files) & set(unsplice_files)) == 0)
+        else [("filter", matrix_files)]
+    )
     if len(matrix_files) > 0:
         for i in range(len(sample_names)):
             sample = sample_names[i]
@@ -312,7 +321,16 @@ def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, inpu
                     featuresfile = file_list[i] + '/features.tsv.gz'
                     barcodesfile = file_list[i] + '/barcodes.tsv.gz'
                 copy_and_process(matrixfile, featuresfile, barcodesfile, folder_path)
-        print(trans_matrix_list); print(trans_splice_list); print(trans_unsplice_list); print(sample_names)
+        if len(trans_matrix_list) == len(trans_splice_list) == len(trans_unsplice_list) == len(sample_names):
+            print("Three matrices all exist")
+        else:
+            print("Missing splice/unsplice matrices; falling back to filter only")
+            trans_splice_list   = trans_matrix_list
+            trans_unsplice_list = trans_matrix_list
+        print("trans_matrix_list:",  trans_matrix_list)
+        print("trans_splice_list:",  trans_splice_list)
+        print("trans_unsplice_list:", trans_unsplice_list)
+        print("sample_names:",        sample_names)
         run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mito_genes, mito_threshold)
     else:
         print("No samples to process")
