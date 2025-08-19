@@ -88,10 +88,10 @@ if (length(file_paths) > 1) {
         temp_data <- seurat_pipeline(temp_data, r_value, plot_keys, prefix=basename(file_paths[[i]]))
         merged_data <- merge(merged_data, temp_data)
     }
+    merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value),"_0")]] <- merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value))]]
+    plot_keys <- c(plot_keys, paste0("RNA_snn_res.",as.character(r_value),"_0"))
+    merged_data <- seurat_pipeline(merged_data, r_value, plot_keys, prefix=name)
 }
-merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value),"_0")]] <- merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value))]]
-plot_keys <- c(plot_keys, paste0("RNA_snn_res.",as.character(r_value),"_0"))
-merged_data <- seurat_pipeline(merged_data, r_value, plot_keys, prefix=name)
 print(merged_data$RNA@counts[1:5,1:5])
 print(merged_data$RNA@data[1:5,1:5])
 print(colnames(merged_data@meta.data))
