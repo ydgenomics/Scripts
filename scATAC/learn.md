@@ -1,7 +1,17 @@
-# 学习ATAC(buk + sc)
+# Learning ATAC(buk + sc)
 
 ---
+[https://archive.plantontology.org/](https://archive.plantontology.org/)
 
+```shell
+source /opt/software/miniconda3/bin/activate
+conda create -n signac r-base=4.4 -y
+conda activate signac
+conda install conda-forge::r-seurat -y
+conda install conda-forge::signac -y
+conda install conda-forge::r-irkernel -y
+conda install conda-forge::r-optparse -y
+```
 ATAC-Seq可以用来：
   1. 生成表观基因组学特征
   2. 在不同组织或条件下绘制可及染色质图谱
