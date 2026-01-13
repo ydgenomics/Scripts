@@ -24,8 +24,7 @@ download_eggnog_data.py -y -f -H -d 2759 --data_dir /data/work/eggnog
 
 ```shell
 # 如果我们的输入是蛋白序列则使用
-nohup emapper.py -i proteins.fa --data_dir \
--o myeggnog --cpu 12 --dbmem -m diamond &
+nohup emapper.py -i arahy.Tifrunner.gnm2.ann2.PVFB.protein.faa --data_dir /data/work/eggnog -o myeggnog --cpu 12 --dbmem -m diamond &
 # 如果我们的是核酸序列则需要先翻译，此时使用命令
 nohup emapper.py -i gene.fa --itype genome -o myeggnog --translate --cpu 12 --dbmem -m diamond &
 ```

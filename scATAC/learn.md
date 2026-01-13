@@ -2,6 +2,7 @@
 
 ---
 [https://archive.plantontology.org/](https://archive.plantontology.org/)
+[https://www.sc-best-practices.org/chromatin_accessibility/introduction.html](https://www.sc-best-practices.org/chromatin_accessibility/introduction.html)
 
 ```shell
 source /opt/software/miniconda3/bin/activate
@@ -19,6 +20,7 @@ ATAC-Seq可以用来：
   4. 识别重要的转录因子
   5. 生成转录因子的占用特征（足迹分析）
 
+[scATAC-seq数据分析之数据读入及质控](https://mp.weixin.qq.com/s/uizofK9PaDMV4Aq0s-LJ4Q)
 [*生信技能树*·ATAC-Seq](https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzAxMDkxODM1Ng==&scene=1&album_id=3825619502127398912&count=3#wechat_redirect)
 ![ATAC-Seq](png/ATAC-Seq.png)
 
