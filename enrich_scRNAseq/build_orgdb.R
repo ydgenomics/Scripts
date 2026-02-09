@@ -76,7 +76,13 @@ build_orgdb <- function(
   species
 ) {
   # 读取emapper注释文件，前2行为注释
-  emapper <- read_excel(emapper_annotations_xlsx, skip = 2)
+  # 读取eggnog注释文件，前2行为注释; 若用Galaxy-eggnog则第一行即为列名
+  emapper <- read_excel(emapper_annotations_xlsx)
+  if (emapper[2, 1] == 'query'){
+      emapper <- read_excel(emapper_annotations_xlsx, skip = 2)
+  } else {
+      colnames(emapper)[1] <- 'query'
+  }
   head(emapper)
   emapper <- emapper %>% distinct(query, .keep_all = TRUE)
   options(stringsAsFactors = FALSE)

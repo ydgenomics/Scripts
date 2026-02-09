@@ -58,8 +58,11 @@
 ## CAR: Correction of Ambient RNA
 
 ```shell
-source /opt/software/miniconda3/bin/activate
-conda create -n CAR r-base=4.5 -y
+source /opt/software/miniforge/bin/activate
+mamba create -n CAR r-base=4.4 -c conda-forge -y
+# mamba search r-base
+# install.packages('BiocManager')
+# BiocManager::install("anndataR")
 conda activate CAR
 conda install conda-forge::r-seurat -y
 conda install bioconda::bioconductor-decontx -y
@@ -77,6 +80,30 @@ conda install conda-forge::r-soupx -y
 - 2023_Unsupervised removal of systematic background noise from droplet-based single-cell experiments using CellBender
 - 2024_scCDC a computational method for gene-specific contamination detection and correction in single-cell and single-nucleus RNA-seq data
 - 2025_Mitigating ambient RNA and doublets effects on single cell transcriptomics analysis in cancer research
+
+---
+
+# 四、去除双细胞
+
+---
+
+## FD: Filter Doublet
+
+---
+
+# 五、细胞分群
+
+---
+
+## Cluster
+
+---
+
+# 六、细胞注释：从细胞群到细胞类型
+
+---
+
+## CA: Cell Annotation
 
 ---
 
