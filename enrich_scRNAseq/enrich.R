@@ -48,14 +48,17 @@ columns(db)
 
 markers <- read.csv(gene_csv, header = TRUE, stringsAsFactors = FALSE)
 
-check_marker_genes <- function(markers, db) {
-    required_cols <- c("gene", "cluster", "p_val_adj")
+check_marker_genes <- function(markers, db, gene_csv) {
+    required_cols <- c("gene", "p_val_adj")
     missing_cols <- setdiff(required_cols, colnames(markers))
     if (length(missing_cols) > 0) {
         stop(paste(
             "Error: The following required columns are missing in gene_csv:",
             paste(missing_cols, collapse = ", ")
         ))
+    }
+    if (!("cluster" %in% colnames(markers))) {
+        markers$cluster <- basename(gene_csv)
     }
     head(markers) # gene, cluster, p_val_adj
 
@@ -75,9 +78,10 @@ check_marker_genes <- function(markers, db) {
     cat("\nNumber of genes present in database:", num_common_genes, "\n")
     cat("Percentage of input genes matched to database:",
             round(percentage, 2), "%\n")
+    return(markers)
 }
 
-check_marker_genes(markers, db)
+markers <- check_marker_genes(markers, db, gene_csv)
 
 
 # pathway and kegg
